@@ -28,7 +28,7 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | Finetune_with_XTuner.ipynb                | Finetune Gemma with the XTuner library.                                      |
 | Finetune_with_LLaMA_Factory.ipynb         | Finetune a Gemma model using the LLaMA Factory tool.                         |
 | **PaliGemma**                             |
-| Image_captioning_using_PaliGemma.ipynb    | Demonstrates how to use PaliGemma to generate image captions.                |
+| Image_captioning_using_PaliGemma.ipynb    | Use PaliGemma to generate image captions.                                    |
 
 
 ## Get help
