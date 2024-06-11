@@ -23,7 +23,8 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | Deploy_with_vLLM.ipynb                    | Deploy a Gemma model using the vLLM tool.                                    |
 | RAG_with_ChromaDB.ipynb                   | Build a Retrieval Augmented Generation (RAG) system with Gemma and ChromaDB. |
 | Minimal_RAG.ipynb                         | Minimal example of building a RAG system with Gemma and UniSim.              |
-| Integrate_with_OneTwo.ipynb               | Integrate Gemma with the OneTwo platform.                                    |
+| Integrate_with_Mesop.ipynb                | Integrate Gemma with Google Mesop.                                           |
+| Integrate_with_OneTwo.ipynb               | Integrate Gemma with Google OneTwo.                                          |
 | Finetune_with_Axolotl.ipynb               | Finetune a Gemma model using the Axolotl framework.                          |
 | Finetune_with_XTuner.ipynb                | Finetune Gemma with the XTuner library.                                      |
 | Finetune_with_LLaMA_Factory.ipynb         | Finetune a Gemma model using the LLaMA Factory tool.                         |
