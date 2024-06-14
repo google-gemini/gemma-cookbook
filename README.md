@@ -26,11 +26,12 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | Integrate_with_Mesop.ipynb                       | Integrate Gemma with [Google Mesop](https://google.github.io/mesop/).                                                                                    |
 | Integrate_with_OneTwo.ipynb                      | Integrate Gemma with [Google OneTwo](https://github.com/google-deepmind/onetwo).                                                                         |
 | Finetune_with_Axolotl.ipynb                      | Finetune Gemma using [Axolotl](https://github.com/OpenAccess-AI-Collective/axolotl).                                                                     |
-| Finetune_with_XTuner.ipynb                       | Finetune Gemma using [XTuner](https://github.com/InternLM/xtuner) .                                                                                      |
+| Finetune_with_XTuner.ipynb                       | Finetune Gemma using [XTuner](https://github.com/InternLM/xtuner).                                                                                       |
 | Finetune_with_LLaMA_Factory.ipynb                | Finetune Gemma using [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory).                                                                          |
 | **PaliGemma**                                    |
 | Image_captioning_using_PaliGemma.ipynb           | Use PaliGemma to generate image captions using Keras.                                                                                                    |
 | Image_captioning_using_finetuned_PaliGemma.ipynb | Compare the image captioning results using different PaliGemma versions with [Hugging Face](https://huggingface.co/).                                    |
+| Finetune_PaliGemma_for_image_description.ipynb   | Finetune PaliGemma for image description using [JAX](https://github.com/google/jax).                                                                     |
 
 
 ## Get help
