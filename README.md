@@ -18,7 +18,6 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | Guess_the_word.ipynb                             | Play a word guessing game with Gemma using Keras.                                                                                                        |
 | Game_Design_Brainstorming.ipynb                  | Use Gemma to brainstorm ideas during game design using Keras.                                                                                            |
 | Translator_of_Old_Korean_Literature.ipynb        | Use Gemma to translate old Korean literature using Keras.                                                                                                |
-| Work_with_PDF_files.ipynb                        | Work with PDF files using Gemma using Keras.                                                                                                             |
 | Run_with_Ollama.ipynb                            | Run Gemma models using [Ollama](https://www.ollama.com/).                                                                                                |
 | Deploy_with_vLLM.ipynb                           | Deploy a Gemma model using [vLLM](https://github.com/vllm-project/vllm).                                                                                 |
 | RAG_with_ChromaDB.ipynb                          | Build a Retrieval Augmented Generation (RAG) system with Gemma using [ChromaDB](https://www.trychroma.com/) and [Hugging Face](https://huggingface.co/). |
