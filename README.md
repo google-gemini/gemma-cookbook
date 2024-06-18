@@ -15,7 +15,7 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | Name                                             | Description                                                                                                                                              |
 | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Gemma**                                        |
-| Gemma_Basics_with_HF.ipynb                       | Load, run, finetune and deploy Gemma using [Hugging Face](https://huggingface.co/).                                                                      |
+| [Gemma_Basics_with_HF.ipynb](Gemma/Gemma_Basics_with_HF.ipynb)                       | Load, run, finetune and deploy Gemma using [Hugging Face](https://huggingface.co/).                                                                      |
 | Guess_the_word.ipynb                             | Play a word guessing game with Gemma using Keras.                                                                                                        |
 | Game_Design_Brainstorming.ipynb                  | Use Gemma to brainstorm ideas during game design using Keras.                                                                                            |
 | Translator_of_Old_Korean_Literature.ipynb        | Use Gemma to translate old Korean literature using Keras.                                                                                                |
