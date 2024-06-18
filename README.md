@@ -34,6 +34,16 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | Finetune_PaliGemma_for_image_description.ipynb   | Finetune PaliGemma for image description using [JAX](https://github.com/google/jax).                                                                     |
 
 
+## WIP notebooks
+
+| Description            |
+| ---------------------- |
+| Langchain integration  |
+| LlamaIndex integration |
+| Common use cases       |
+| Prompt chaining        |
+| Advanced prompting     |
+
 ## Get help
 Ask a Gemma cookbook-related question on the new [Build with Google AI Forum](https://discuss.ai.google.dev/), or open an [issue](https://github.com/google-gemini/gemma-cookbook/issues) on GitHub.
 
