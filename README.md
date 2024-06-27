@@ -48,7 +48,7 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 Ask a Gemma cookbook-related question on the new [Build with Google AI Forum](https://discuss.ai.google.dev/), or open an [issue](https://github.com/google-gemini/gemma-cookbook/issues) on GitHub.
 
 ## Wish list
-If you want to see addtional cookbooks implemented for specific features/integrations, please send us a pull request by adding your feature request(s) in the [wish list](https://github.com/google-gemini/gemma-cookbook/blob/main/WISHLIST.md). 
+If you want to see additional cookbooks implemented for specific features/integrations, please send us a pull request by adding your feature request(s) in the [wish list](https://github.com/google-gemini/gemma-cookbook/blob/main/WISHLIST.md). 
 
 If you want to make contributions to the Gemma Cookbook project, you are welcome to pick any idea in the [wish list](https://github.com/google-gemini/gemma-cookbook/blob/main/WISHLIST.md) and implement it.
 
