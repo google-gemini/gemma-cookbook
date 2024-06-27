@@ -32,10 +32,10 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | [Image_captioning_using_PaliGemma.ipynb](PaliGemma/Image_captioning_using_PaliGemma.ipynb)                     | Use PaliGemma to generate image captions using Keras.                                                                                                    |
 | [Image_captioning_using_finetuned_PaliGemma.ipynb](PaliGemma/Image_captioning_using_finetuned_PaliGemma.ipynb) | Compare the image captioning results using different PaliGemma versions with [Hugging Face](https://huggingface.co/).                                    |
 | [Finetune_PaliGemma_for_image_description.ipynb](PaliGemma/Finetune_PaliGemma_for_image_description.ipynb)     | Finetune PaliGemma for image description using [JAX](https://github.com/google/jax).                                                                     |
-| [ZeroShot_Object_Detection_in_images.ipynb](https://github.com/NSTiwari/PaliGemma/blob/main/ZeroShot_Object_Detection_in_images.ipynb)     | Zero-shot Object Detection in images using PaliGemma.  |
-| [ZeroShot_Object_Detection_in_videos.ipynb](https://github.com/NSTiwari/PaliGemma/blob/main/ZeroShot_Object_Detection_in_videos.ipynb)     | Zero-shot Object Detection in videos using PaliGemma.  |
-| [Referring_Expression_Segmentation_images_PaliGemma.ipynb](https://github.com/NSTiwari/PaliGemma/blob/main/Referring_Expression_Segmentation_images_PaliGemma.ipynb)     | Referring Expression Segmentation in images using PaliGemma.  |
-| [Referring_Expression_Segmentation_videos_PaliGemma.ipynb](https://github.com/NSTiwari/PaliGemma/blob/main/Referring_Expression_Segmentation_videos_PaliGemma.ipynb)     | Referring Expression Segmentation in videos using PaliGemma.  |
+| [Zero_shot_object_detection_in_images_using_PaliGemma.ipynb](PaliGemma/Zero_shot_object_detection_in_images_using_PaliGemma.ipynb)     | Zero-shot Object Detection in images using PaliGemma.  |
+| [Zero_shot_object_detection_in_videos_using_PaliGemma.ipynb](PaliGemma/Zero_shot_object_detection_in_videos_using_PaliGemma.ipynb)     | Zero-shot Object Detection in videos using PaliGemma.  |
+| [Referring_expression_segmentation_in_images_using_PaliGemma.ipynb](PaliGemma/Referring_expression_segmentation_in_images_using_PaliGemma.ipynb)     | Referring Expression Segmentation in images using PaliGemma.  |
+| [Referring_expression_segmentation_in_videos_using_PaliGemma.ipynb](PaliGemma/Referring_expression_segmentation_in_videos_using_PaliGemma.ipynb)     | Referring Expression Segmentation in videos using PaliGemma.  |
 
 
 ## WIP notebooks
