@@ -14,6 +14,7 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 
 | Name                                                                                                           | Description                                                                                                                                                                             |
 | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Common_use_cases.ipynb](Common_use_cases.ipynb)                                                               | Illustrate some common use cases for Gemma, CodeGemma and PaliGemma.                                                                                                                    |
 | **Gemma**                                                                                                      |
 | [Keras_Gemma_2_Quickstart.ipynb](Gemma/Keras_Gemma_2_Quickstart.ipynb)                                         | Gemma 2 pre-trained 9B model quickstart tutorial with Keras.                                                                                                                            |
 | [Keras_Gemma_2_Quickstart_Chat.ipynb](Gemma/Keras_Gemma_2_Quickstart_Chat.ipynb)                               | Gemma 2 instruction-tuned 9B model quickstart tutorial with Keras. Referenced in this [blog](https://developers.googleblog.com/en/fine-tuning-gemma-2-with-keras-hugging-face-update/). |
@@ -24,10 +25,14 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | [Guess_the_word.ipynb](Gemma/Guess_the_word.ipynb)                                                             | Play a word guessing game with Gemma using Keras.                                                                                                                                       |
 | [Game_Design_Brainstorming.ipynb](Gemma/Game_Design_Brainstorming.ipynb)                                       | Use Gemma to brainstorm ideas during game design using Keras.                                                                                                                           |
 | [Translator_of_Old_Korean_Literature.ipynb](Gemma/Translator_of_Old_Korean_Literature.ipynb)                   | Use Gemma to translate old Korean literature using Keras.                                                                                                                               |
+| [Prompt_chaining.ipynb](Gemma/Prompt_chaining.ipynb)                                                           | Illustrate prompt chaining and iterative generation with Gemma.                                                                                                                         |
+| [Advanced_Prompting_Techniques.ipynb](Gemma/Advanced_Prompting_Techniques.ipynb)                               | Illustrate advanced prompting techniques with Gemma.                                                                                                                                    |
 | [Run_with_Ollama.ipynb](Gemma/Run_with_Ollama.ipynb)                                                           | Run Gemma models using [Ollama](https://www.ollama.com/).                                                                                                                               |
 | [Deploy_with_vLLM.ipynb](Gemma/Deploy_with_vLLM.ipynb)                                                         | Deploy a Gemma model using [vLLM](https://github.com/vllm-project/vllm).                                                                                                                |
 | [RAG_with_ChromaDB.ipynb](Gemma/RAG_with_ChromaDB.ipynb)                                                       | Build a Retrieval Augmented Generation (RAG) system with Gemma using [ChromaDB](https://www.trychroma.com/) and [Hugging Face](https://huggingface.co/).                                |
 | [Minimal_RAG.ipynb](Gemma/Minimal_RAG.ipynb)                                                                   | Minimal example of building a RAG system with Gemma using [Google UniSim](https://github.com/google/unisim) and [Hugging Face](https://huggingface.co/).                                |
+| [Using_Gemma_with_LangChain.ipynb](Gemma/Using_Gemma_with_LangChain.ipynb)                                     | Examples to demonstrate using Gemma with [LangChain](https://www.langchain.com/).                                                                                                       |
+| [Gemma_RAG_LlamaIndex.ipynb](Gemma/Gemma_RAG_LlamaIndex.ipynb)                                                 | RAG example with [LlamaIndex](https://www.llamaindex.ai/) using Gemma.                                                                                                                  |
 | [Integrate_with_Mesop.ipynb](Gemma/Integrate_with_Mesop.ipynb)                                                 | Integrate Gemma with [Google Mesop](https://google.github.io/mesop/).                                                                                                                   |
 | [Integrate_with_OneTwo.ipynb](Gemma/Integrate_with_OneTwo.ipynb)                                               | Integrate Gemma with [Google OneTwo](https://github.com/google-deepmind/onetwo).                                                                                                        |
 | [Finetune_with_Axolotl.ipynb](Gemma/Finetune_with_Axolotl.ipynb)                                               | Finetune Gemma using [Axolotl](https://github.com/OpenAccess-AI-Collective/axolotl).                                                                                                    |
@@ -37,17 +42,6 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | [Image_captioning_using_PaliGemma.ipynb](PaliGemma/Image_captioning_using_PaliGemma.ipynb)                     | Use PaliGemma to generate image captions using Keras.                                                                                                                                   |
 | [Image_captioning_using_finetuned_PaliGemma.ipynb](PaliGemma/Image_captioning_using_finetuned_PaliGemma.ipynb) | Compare the image captioning results using different PaliGemma versions with [Hugging Face](https://huggingface.co/).                                                                   |
 | [Finetune_PaliGemma_for_image_description.ipynb](PaliGemma/Finetune_PaliGemma_for_image_description.ipynb)     | Finetune PaliGemma for image description using [JAX](https://github.com/google/jax).                                                                                                    |
-
-
-## WIP notebooks
-
-| Description            |
-| ---------------------- |
-| Langchain integration  |
-| LlamaIndex integration |
-| Common use cases       |
-| Prompt chaining        |
-| Advanced prompting     |
 
 ## Get help
 Ask a Gemma cookbook-related question on the new [Build with Google AI Forum](https://discuss.ai.google.dev/), or open an [issue](https://github.com/google-gemini/gemma-cookbook/issues) on GitHub.

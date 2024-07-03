@@ -2,7 +2,7 @@ A wish list of cookbooks showcasing:
 
 * Inference
   * Integration with [Google GenKit](https://firebase.google.com/products/genkit)
-  * PaliGemma ntegration with [Google Mesop](https://github.com/google/mesop)
+  * PaliGemma integration with [Google Mesop](https://github.com/google/mesop)
   * ElasticSearch integration
 
 * Fintuning
