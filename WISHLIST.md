@@ -4,6 +4,7 @@ A wish list of cookbooks showcasing:
   * Integration with [Google GenKit](https://firebase.google.com/products/genkit)
   * Llamafile demo
   * llama.cpp demo
+  * HF local-gemma demo
   * PaliGemma integration with [Google Mesop](https://github.com/google/mesop)
   * ElasticSearch integration
 
