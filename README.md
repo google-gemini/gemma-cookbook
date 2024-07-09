@@ -44,6 +44,7 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | [Image_captioning_using_PaliGemma.ipynb](PaliGemma/Image_captioning_using_PaliGemma.ipynb)                     | Use PaliGemma to generate image captions using Keras.                                                                                                                                   |
 | [Image_captioning_using_finetuned_PaliGemma.ipynb](PaliGemma/Image_captioning_using_finetuned_PaliGemma.ipynb) | Compare the image captioning results using different PaliGemma versions with [Hugging Face](https://huggingface.co/).                                                                   |
 | [Finetune_PaliGemma_for_image_description.ipynb](PaliGemma/Finetune_PaliGemma_for_image_description.ipynb)     | Finetune PaliGemma for image description using [JAX](https://github.com/google/jax).                                                                                                    |
+| [Integrate_PaliGemma_with_Mesop.ipynb](PaliGemma/Integrate_PaliGemma_with_Mesop.ipynb)                         | Integrate PaliGemma with [Google Mesop](https://google.github.io/mesop/).                                                                                                               |
 
 ## Get help
 Ask a Gemma cookbook-related question on the new [Build with Google AI Forum](https://discuss.ai.google.dev/), or open an [issue](https://github.com/google-gemini/gemma-cookbook/issues) on GitHub.
