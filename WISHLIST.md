@@ -7,6 +7,7 @@ A wish list of cookbooks showcasing:
   * HF local-gemma demo
   * PaliGemma integration with [Google Mesop](https://github.com/google/mesop)
   * ElasticSearch integration
+  * Gemma+Gemini with [routerLLM](https://github.com/lm-sys/RouteLLM)
 
 * Fintuning
   * Finetuning CodeGemma (e.g., SQL generation)
