@@ -45,6 +45,10 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | [Image_captioning_using_finetuned_PaliGemma.ipynb](PaliGemma/Image_captioning_using_finetuned_PaliGemma.ipynb) | Compare the image captioning results using different PaliGemma versions with [Hugging Face](https://huggingface.co/).                                                                   |
 | [Finetune_PaliGemma_for_image_description.ipynb](PaliGemma/Finetune_PaliGemma_for_image_description.ipynb)     | Finetune PaliGemma for image description using [JAX](https://github.com/google/jax).                                                                                                    |
 | [Integrate_PaliGemma_with_Mesop.ipynb](PaliGemma/Integrate_PaliGemma_with_Mesop.ipynb)                         | Integrate PaliGemma with [Google Mesop](https://google.github.io/mesop/).                                                                                                               |
+| [Zero_shot_object_detection_in_images_using_PaliGemma.ipynb](PaliGemma/Zero_shot_object_detection_in_images_using_PaliGemma.ipynb)     | Zero-shot Object Detection in images using PaliGemma.  |
+| [Zero_shot_object_detection_in_videos_using_PaliGemma.ipynb](PaliGemma/Zero_shot_object_detection_in_videos_using_PaliGemma.ipynb)     | Zero-shot Object Detection in videos using PaliGemma.  |
+| [Referring_expression_segmentation_in_images_using_PaliGemma.ipynb](PaliGemma/Referring_expression_segmentation_in_images_using_PaliGemma.ipynb)     | Referring Expression Segmentation in images using PaliGemma.  |
+| [Referring_expression_segmentation_in_videos_using_PaliGemma.ipynb](PaliGemma/Referring_expression_segmentation_in_videos_using_PaliGemma.ipynb)     | Referring Expression Segmentation in videos using PaliGemma.  |
 
 ## Get help
 Ask a Gemma cookbook-related question on the new [Build with Google AI Forum](https://discuss.ai.google.dev/), or open an [issue](https://github.com/google-gemini/gemma-cookbook/issues) on GitHub.
