@@ -5,7 +5,6 @@ A wish list of cookbooks showcasing:
   * Llamafile demo
   * llama.cpp demo
   * HF local-gemma demo
-  * PaliGemma integration with [Google Mesop](https://github.com/google/mesop)
   * ElasticSearch integration
   * Gemma+Gemini with [routerLLM](https://github.com/lm-sys/RouteLLM)
 
