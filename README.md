@@ -3,10 +3,13 @@ This is a collection of guides and examples for [Google Gemma](https://ai.google
 
 ## Get started with the Gemma models
 Gemma is a family of lightweight, state-of-the art open models built from the same research and technology used to create the Gemini models. The Gemma model family includes:
-* [base Gemma](https://ai.google.dev/gemma/docs/model_card)
-* [CodeGemma](https://ai.google.dev/gemma/docs/codegemma)
-* [PaliGemma](https://ai.google.dev/gemma/docs/paligemma)
-* [RecurrentGemma](https://ai.google.dev/gemma/docs/recurrentgemma)
+* base Gemma
+  * [Gemma](https://ai.google.dev/gemma/docs/model_card)
+  * [Gemma 2](https://ai.google.dev/gemma/docs/model_card_2)
+* Gemma variants
+  * [CodeGemma](https://ai.google.dev/gemma/docs/codegemma)
+  * [PaliGemma](https://ai.google.dev/gemma/docs/paligemma)
+  * [RecurrentGemma](https://ai.google.dev/gemma/docs/recurrentgemma)
 
 You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Cloud Vertex AI Model Garden, and [ai.nvidia.com](ai.nvidia.com).
 
