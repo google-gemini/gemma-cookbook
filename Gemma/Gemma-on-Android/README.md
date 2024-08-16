@@ -2,10 +2,13 @@
 This project is an implementation of fine-tuning the Gemma 2b-it model on a custom dataset and deploy the fine-tuned model on Android
 
 ## Pipeline:
-<img src="https://github.com/google-gemini/gemma-cookbook/blob/main/Gemma/Gemma-on-Android/assets/SciGemma_Pipeline.gif"/>
+
+![Logo](assets/SciGemma_Pipeline.gif)
+
 
 ## Demo Output:
-<img src="https://github.com/google-gemini/gemma-cookbook/blob/main/Gemma/Gemma-on-Android/assets/SciGemma.gif" width="300" height="600"/>
+
+![Logo](assets/SciGemma.gif)
 
 
 ## Steps to run:
