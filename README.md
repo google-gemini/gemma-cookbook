@@ -56,7 +56,7 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | [Zero_shot_object_detection_in_videos_using_PaliGemma.ipynb](PaliGemma/Zero_shot_object_detection_in_videos_using_PaliGemma.ipynb)               | Zero-shot Object Detection in videos using PaliGemma.                                                                                                                                   |
 | [Referring_expression_segmentation_in_images_using_PaliGemma.ipynb](PaliGemma/Referring_expression_segmentation_in_images_using_PaliGemma.ipynb) | Referring Expression Segmentation in images using PaliGemma.                                                                                                                            |
 | [Referring_expression_segmentation_in_videos_using_PaliGemma.ipynb](PaliGemma/Referring_expression_segmentation_in_videos_using_PaliGemma.ipynb) | Referring Expression Segmentation in videos using PaliGemma.                                                                                                                            |
-
+| [PaliGemma on Android](PaliGemma/PaliGemma-on-Android) | Inference PaliGemma on Android using Hugging Face and Gradio Client API for tasks like zero-shot object detection, image captioning, and visual question-answering.                                                                                                                          |
 ## Get help
 Ask a Gemma cookbook-related question on the new [Build with Google AI Forum](https://discuss.ai.google.dev/), or open an [issue](https://github.com/google-gemini/gemma-cookbook/issues) on GitHub.
 

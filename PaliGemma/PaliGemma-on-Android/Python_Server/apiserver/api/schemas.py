@@ -1,0 +1,2 @@
+from ninja import Schema
+
