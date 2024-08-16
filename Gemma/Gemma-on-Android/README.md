@@ -1,5 +1,8 @@
+#### Developed by [Aashi Dutt](https://linkedin.com/in/aashi-dutt) and [Nitin Tiwari](https://linkedin.com/in/tiwari-nitin).
+
 # Gemma on Android
-This project is an implementation of fine-tuning the Gemma 2b-it model on a custom dataset and deploy the fine-tuned model on Android
+This project is an implementation of fine-tuning the Gemma 2b-it model on a custom dataset and deploy the fine-tuned model on Android.
+
 
 ## Pipeline:
 
