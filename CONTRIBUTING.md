@@ -26,7 +26,7 @@ Also check out the relevant [style guide](https://google.github.io/styleguide/) 
         * how to select GPU
         * how to set up Kaggle/HF tokens
    * Include a byline at the top of the notebook with your name, social handle and/or GitHub username
-   * Run ‘pyink’ for formatting
+   * Run ‘nbfmt’ and 'nblint' for formatting and linting ([reference](.github/workflows/notebooks.yaml))
    * Name your notebook with words separated by underscores. For example, ‘Integrate_with_Mesop.ipynb’
 2. Add the notebook name and a short description in the table of contents in README.md
 3. (If applicable) remove the entry you have implemented in WISHLIST.md

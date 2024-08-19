@@ -10,6 +10,7 @@ Gemma is a family of lightweight, state-of-the art open models built from the sa
   * [CodeGemma](https://ai.google.dev/gemma/docs/codegemma)
   * [PaliGemma](https://ai.google.dev/gemma/docs/paligemma)
   * [RecurrentGemma](https://ai.google.dev/gemma/docs/recurrentgemma)
+  * [ShieldGemma](https://ai.google.dev/gemma/docs/shieldgemma)
 
 You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Cloud Vertex AI Model Garden, and [ai.nvidia.com](ai.nvidia.com).
 
