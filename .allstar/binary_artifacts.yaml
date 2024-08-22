@@ -1,0 +1,3 @@
+# Ignore reason: gradele jar file is used to build example Android app
+ignorePaths:
+- Gemma/Gemma-on-Android/Android_App/gradle/wrapper/gradle-wrapper.jar
