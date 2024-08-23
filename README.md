@@ -10,6 +10,7 @@ Gemma is a family of lightweight, state-of-the art open models built from the sa
   * [CodeGemma](https://ai.google.dev/gemma/docs/codegemma)
   * [PaliGemma](https://ai.google.dev/gemma/docs/paligemma)
   * [RecurrentGemma](https://ai.google.dev/gemma/docs/recurrentgemma)
+  * [ShieldGemma](https://ai.google.dev/gemma/docs/shieldgemma)
 
 You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Cloud Vertex AI Model Garden, and [ai.nvidia.com](ai.nvidia.com).
 
@@ -47,6 +48,7 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | [Finetune_with_Axolotl.ipynb](Gemma/Finetune_with_Axolotl.ipynb)                                                                                 | Finetune Gemma using [Axolotl](https://github.com/OpenAccess-AI-Collective/axolotl).                                                                                                    |
 | [Finetune_with_XTuner.ipynb](Gemma/Finetune_with_XTuner.ipynb)                                                                                   | Finetune Gemma using [XTuner](https://github.com/InternLM/xtuner).                                                                                                                      |
 | [Finetune_with_LLaMA_Factory.ipynb](Gemma/Finetune_with_LLaMA_Factory.ipynb)                                                                     | Finetune Gemma using [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory).                                                                                                         |
+| [Gemma on Android](Gemma/Gemma-on-Android)                                                                     | Android app to deploy fine-tuned Gemma-2B-it model using MediaPipe LLM Inference API.                                                                                                         |
 | **PaliGemma**                                                                                                                                    |
 | [Image_captioning_using_PaliGemma.ipynb](PaliGemma/Image_captioning_using_PaliGemma.ipynb)                                                       | Use PaliGemma to generate image captions using Keras.                                                                                                                                   |
 | [Image_captioning_using_finetuned_PaliGemma.ipynb](PaliGemma/Image_captioning_using_finetuned_PaliGemma.ipynb)                                   | Compare the image captioning results using different PaliGemma versions with [Hugging Face](https://huggingface.co/).                                                                   |
