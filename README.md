@@ -73,4 +73,5 @@ Contributions are always welcome. Please read [contributing](https://github.com/
 Thank you for developing with Gemma! We’re excited to see what you create.
 
 ## Translation of this repository
-* [Traditional Chinese](https://github.com/doggy8088/gemma-cookbook?tab=readme-ov-file)
+* [Traditional Chinese](https://github.com/doggy8088/gemma-cookbook)
+* [Simplified Chinese](https://github.com/xiaoxiong1006/gemma-cookbook)
