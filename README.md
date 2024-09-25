@@ -25,7 +25,7 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | MongoDB            | This [article](https://www.mongodb.com/developer/products/atlas/gemma-mongodb-huggingface-rag/) presents how to leverage Gemma as the foundation model in a retrieval-augmented generation pipeline or system.                                                     |
 | Weights and Biases | [Dive deep into W&B's Model Registry and Launch tools through a step-by-step example using Google's Gemma models.](https://wandb.ai/vincenttu/enterprise_model_management_wandb/reports/Exploring-Enterprise-Model-Management-with-Gemma-Models--Vmlldzo2OTA5MDMz) |
 
-## Table of contents
+## Cookbook table of contents
 
 | Name                                                                                                                                             | Description                                                                                                                                                                             |
 | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
