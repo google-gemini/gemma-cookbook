@@ -16,14 +16,13 @@ Gemma is a family of lightweight, state-of-the art open models built from the sa
 You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Cloud Vertex AI Model Garden, and [ai.nvidia.com](https://ai.nvidia.com).
 
 ## Partner quickstart guides
-| Company            | Description                                                                                                                                                                                                                                                        |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Hugging Face       | [Utilize Hugging Face Transformers and TRL for fine-tuning and inference tasks with Gemma models.](http://huggingface.co/blog/gemma)                                                                                                                               |
-| NVIDIA             | [Fine-tune Gemma models with NVIDIA NeMo Framework and export to TensorRT-LLM for production.](https://github.com/NVIDIA/GenerativeAIExamples/tree/main/finetuning/Gemma)                                                                                          |
-| LangChain          | This [tutorial](https://colab.research.google.com/github/google/generative-ai-docs/blob/main/site/en/gemma/docs/integrations/langchain.ipynb) shows you how to get started with Gemma and LangChain, running in Google Cloud or in your Colab environment.         |
-| Anyscale           | These [docs](https://docs.anyscale.com/endpoints/text-generation/supported-models/google-gemma-7b-it/#get-started) show how to use Gemma via Anyscale Endpoint as fully managed API endpoints.                                                                     |
-| MongoDB            | This [article](https://www.mongodb.com/developer/products/atlas/gemma-mongodb-huggingface-rag/) presents how to leverage Gemma as the foundation model in a retrieval-augmented generation pipeline or system.                                                     |
-| Weights and Biases | [Dive deep into W&B's Model Registry and Launch tools through a step-by-step example using Google's Gemma models.](https://wandb.ai/vincenttu/enterprise_model_management_wandb/reports/Exploring-Enterprise-Model-Management-with-Gemma-Models--Vmlldzo2OTA5MDMz) |
+| Company      | Description                                                                                                                                                                                  |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hugging Face | [Utilize Hugging Face Transformers and TRL for fine-tuning and inference tasks with Gemma models.](partner-quickstarts/gemma-huggingface.md)                                                 |
+| NVIDIA       | [Fine-tune Gemma models with NVIDIA NeMo Framework and export to TensorRT-LLM for production.](partner-quickstarts/Gemma-NVidia/)                                                            |
+| LangChain    | This [tutorial](partner-quickstarts/gemma-langchain.ipynb) shows you how to get started with Gemma and LangChain, running in Google Cloud or in your Colab environment.                      |  |
+| MongoDB      | This [article](partner-quickstarts/rag_with_hugging_face_gemma_mongodb.ipynb) presents how to leverage Gemma as the foundation model in a retrieval-augmented generation pipeline or system. |
+
 
 ## Table of contents
 
