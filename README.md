@@ -24,7 +24,7 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | MongoDB      | This [article](partner-quickstarts/rag_with_hugging_face_gemma_mongodb.ipynb) presents how to leverage Gemma as the foundation model in a retrieval-augmented generation pipeline or system. |
 
 
-## Table of contents
+## Cookbook table of contents
 
 | Name                                                                                                                                             | Description                                                                                                                                                                             |
 | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
