@@ -24,9 +24,6 @@ os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "1.00"
 
 import keras_nlp
 
-os.environ["KERAS_BACKEND"] = "jax"  # Or "tensorflow" or "torch".
-os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "0.9"
-
 def initialize_model():
     """Loads environment variables and configures the Gemma model."""
     load_dotenv()
