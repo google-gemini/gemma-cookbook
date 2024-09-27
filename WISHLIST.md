@@ -2,7 +2,6 @@ A wish list of cookbooks showcasing:
 
 * Inference
   * Integration with [Google GenKit](https://firebase.google.com/products/genkit)
-  * llama.cpp demo
   * HF local-gemma demo
   * ElasticSearch integration
   * Gemma+Gemini with [routerLLM](https://github.com/lm-sys/RouteLLM)
@@ -10,7 +9,6 @@ A wish list of cookbooks showcasing:
   * [Langfun](https://github.com/google/langfun) integration
 
 * Fine-tuning
-  * Fine-tuning CodeGemma (e.g., SQL generation)
   * Fine-tuning Gemma for function calling
   * Fine-tuning Gemma and/or CodeGemma for multi-turn, agentic workloads.
 
