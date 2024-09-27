@@ -2,7 +2,6 @@ A wish list of cookbooks showcasing:
 
 * Inference
   * Integration with [Google GenKit](https://firebase.google.com/products/genkit)
-  * Llamafile demo
   * llama.cpp demo
   * HF local-gemma demo
   * ElasticSearch integration
