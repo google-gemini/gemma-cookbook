@@ -10,7 +10,6 @@ A wish list of cookbooks showcasing:
   * [Langfun](https://github.com/google/langfun) integration
 
 * Fine-tuning
-  * Fine-tuning CodeGemma (e.g., SQL generation)
   * Fine-tuning Gemma for function calling
   * Fine-tuning Gemma and/or CodeGemma for multi-turn, agentic workloads.
 
