@@ -97,3 +97,10 @@ venv.bak/
 
 # Docker-related files
 docker-compose.override.yml
+
+*.pyc
+k-gemma-it/.env
+k-gemma-it/weights/*.h5
+k-mail-replier/k_mail_replier/.env
+k-mail-replier/k_mail_replier/weights/*.backup
+venv/
