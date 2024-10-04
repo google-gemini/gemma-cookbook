@@ -6,7 +6,6 @@ A wish list of cookbooks showcasing:
   * ElasticSearch integration
   * Gemma+Gemini with [routerLLM](https://github.com/lm-sys/RouteLLM)
   * [SGLang](https://github.com/sgl-project/sglang) integration
-  * [Langfun](https://github.com/google/langfun) integration
 
 * Fine-tuning
   * Fine-tuning Gemma for function calling
