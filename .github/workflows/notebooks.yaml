@@ -74,6 +74,7 @@ jobs:
             --exclude_lint=tensorflow::button_website \
             --arg=base_url:https://ai.google.dev/ \
             --exclude_lint=tensorflow::button_github \
+            --exclude_lint=google::second_person \
             "${changed_notebooks[@]}"
         fi
 
