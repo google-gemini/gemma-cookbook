@@ -13,6 +13,11 @@ A wish list of cookbooks showcasing:
 
 * Continued Pretraining
   * Continue to pretrain Gemma on TPU
+ 
+* Tool Use (Function Calling)
+  * tool use overview
+  * tool choice
      
 * Responsible AI
   * Use [LLM Comparator](https://github.com/pair-code/llm-comparator) to compare Gemma with another LLM (i.e., Llama)
+ 
