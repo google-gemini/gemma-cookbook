@@ -1,0 +1,16 @@
+{
+  "prompt" : "I saw your business on google maps. Do you sell jellabi and gulab jamun?",
+  "response" : {
+    "type": "inquiry",
+    "items": [
+      {
+        "name": "jellabi",
+        "quantity": null
+      },
+      {
+        "name": "gulab jamun",
+        "quantity": null
+      }
+    ]
+  }
+}

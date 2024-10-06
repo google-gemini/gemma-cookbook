@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>bite - bakery inquiry processing with Google AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+    <div class="container">
+        <div class="left-column">
+            <div class="logo">
+                <h1>bite</h1>
+                <div class="logo-subtitle">bakery inquiries</div>
+            </div>
+        </div>
+        <div class="right-column">
+          <div class="topbar">
+            <span class="settings material-symbols-outlined" title="Settings">settings</span>
+            <span class="user material-symbols-outlined" title="My account">account_circle</span>
+          </div>
+            <div class="form-container">
+                <form method="POST" action="/">
+                    <textarea
+                      class="form-input"
+                      id="request"
+                      name="request"
+                      placeholder="Enter inquiry text"
+                      required>{{ request }}</textarea>
+                    <button type="submit" class="form-button">Get data</button>
+                </form>
+                <div class="import-button-group button-group">
+                  <button
+                      class="import material-symbols-outlined"
+                      id="import"
+                      aria-label="Upload a text file">upload</button>
+                  <span class="tooltip" id="import-tooltip" aria-hidden="true">Upload a text file</spa>
+                </div>
+            </div>
+            {% if result %}
+            <div class="output">
+              <h2>Inquiry data</h2>
+              <div class="export">
+                <textarea class="json-output" id="json-output" readonly>{{ result }}</textarea>
+                <div class="copy-button-group button-group">
+                  <button
+                      class="copy-to-clipboard material-symbols-outlined"
+                      id="copy-to-clipboard"
+                      aria-label="Copy to clipboard">content_copy</button>
+                  <span class="tooltip" id="copy-tooltip" aria-hidden="true">Copy to clipboard</span>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+      const copyButton = document.getElementById('copy-to-clipboard');
+      const copyTooltip = document.getElementById('copy-tooltip');
+      const copyTextArea = document.getElementById('json-output');
+
+      const uploadButton = document.getElementById('import');
+      const inputTextArea = document.getElementById('request');
+
+      uploadButton.addEventListener('click', function() {
+        openFileSelectDialog(inputTextArea);
+      });
+
+      copyButton.addEventListener('click', function() {
+        copyToClipboard(copyTextArea, copyTooltip);
+      });
+
+      copyButton.addEventListener('mouseleave', function() {
+        copyTooltipReset(copyTooltip);
+      });
+    </script>
+</body>
+</html>
