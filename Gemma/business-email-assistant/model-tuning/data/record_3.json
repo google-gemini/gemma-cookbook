@@ -1,0 +1,15 @@
+{
+  "prompt" : "I'd like to place an order for a 8 inch red velvet cake with lemon frosting and chocolate chips topping.",
+  "response" : {
+    "type": "order",
+    "items": [
+      {
+        "name": "cake",
+        "filling": "8inch",
+        "frosting": "lemon",
+        "flavor": "chocolate",
+        "size": "8 in"
+      }
+    ]
+  }
+}
