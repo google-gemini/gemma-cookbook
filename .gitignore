@@ -104,3 +104,4 @@ k-gemma-it/weights/*.h5
 k-mail-replier/k_mail_replier/.env
 k-mail-replier/k_mail_replier/weights/*.backup
 venv/
+Gemma/personal-code-assistant/gemma-web-service/.env
