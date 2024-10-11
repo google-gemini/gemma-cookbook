@@ -2,7 +2,7 @@ from gradio_client import Client, file, handle_file
 
 
 def detect():
-    client = Client("big-vision/paligemma", hf_token="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")
+    client = Client("big-vision/paligemma")
     result = client.predict(
     handle_file('../media/images/person_and_car.jpg'), # filepath in 'Image' Image component
     "Detect person and car",
