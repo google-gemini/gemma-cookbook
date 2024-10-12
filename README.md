@@ -21,9 +21,20 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Hugging Face | [Utilize Hugging Face Transformers and TRL for fine-tuning and inference tasks with Gemma models.](partner-quickstarts/gemma-huggingface.md)                                                 |
 | NVIDIA       | [Fine-tune Gemma models with NVIDIA NeMo Framework and export to TensorRT-LLM for production.](partner-quickstarts/Gemma-NVidia/)                                                            |
-| LangChain    | This [tutorial](partner-quickstarts/gemma-langchain.ipynb) shows you how to get started with Gemma and LangChain, running in Google Cloud or in your Colab environment.                      |  |
+| LangChain    | This [tutorial](partner-quickstarts/gemma-langchain.ipynb) shows you how to get started with Gemma and LangChain, running in Google Cloud or in your Colab environment.                      |
 | MongoDB      | This [article](partner-quickstarts/rag_with_hugging_face_gemma_mongodb.ipynb) presents how to leverage Gemma as the foundation model in a retrieval-augmented generation pipeline or system. |
 
+## Workshops
+| Notebook                                                                                                                    | Description                                         |
+| --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| [Workshop_How_to_Fine_tuning_Gemma.ipynb](Workshops/Workshop_How_to_Fine_tuning_Gemma.ipynb/Keras_Gemma_2_Quickstart.ipynb) | Recommended finetuning notebook for getting started |
+
+## Accompanying notebooks for the Build with AI video series
+| Folder                                                      |
+| ----------------------------------------------------------- |
+| [Business email assistant](Gemma/business-email-assistant/) |
+| [Personal code assistant](Gemma/personal-code-assistant/)   |
+| [Spoken language tasks](Gemma/spoken-language-tasks/)       |
 
 ## Cookbook table of contents
 
