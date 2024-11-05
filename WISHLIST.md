@@ -1,7 +1,6 @@
 A wish list of cookbooks showcasing:
 
 * Inference
-  * [SGLang](https://github.com/sgl-project/sglang) integration
 
 * Fine-tuning
   * Fine-tuning Gemma for function calling
