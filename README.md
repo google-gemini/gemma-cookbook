@@ -118,7 +118,7 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | [CodeGemma_finetuned_on_SQL_with_HF.ipynb](CodeGemma/CodeGemma_finetuned_on_SQL_with_HF.ipynb) | Fine-Tuning CodeGemma on the SQL Spider Dataset. |
 
 ## Get help
-Ask a Gemma cookbook-related question on the new [Build with Google AI Forum](https://discuss.ai.google.dev/), or open an [issue](https://github.com/google-gemini/gemma-cookbook/issues) on GitHub.
+Ask a Gemma cookbook-related question on the [developer forum](https://discuss.ai.google.dev/c/gemma/10), or open an [issue](https://github.com/google-gemini/gemma-cookbook/issues) on GitHub.
 
 ## Wish list
 If you want to see additional cookbooks implemented for specific features/integrations, please send us a pull request by adding your feature request(s) in the [wish list](https://github.com/google-gemini/gemma-cookbook/blob/main/WISHLIST.md).
