@@ -120,6 +120,12 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | **Mobile**                                                                                                                                       |                                                                                                                                                                     |
 | [PaliGemma on Android](PaliGemma/PaliGemma-on-Android)                                                                                           | Inference PaliGemma on Android using Hugging Face and Gradio Client API for tasks like zero-shot object detection, image captioning, and visual question-answering. |
 
+#### PaliGemma 2
+| **Finetuning**                                                                                                                                   |                                                                                                                                                                     |
+| :----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Finetune_PaliGemma_2_with_Keras.ipynb](PaliGemma_2/Finetune_PaliGemma_2_with_Keras.ipynb)                                                     | Finetune PaliGemma 2 with Keras.                                                                                                                                    |
+| [Finetune_PaliGemma_2_with_JAX.ipynb](PaliGemma_2/Finetune_PaliGemma_2_with_JAX.ipynb)                                                         | Finetune PaliGemma 2 with JAX.                                                                                                                                      |
+
 #### CodeGemma
 | **Finetuning**                                                                                 |                                                  |
 | :--------------------------------------------------------------------------------------------- | ------------------------------------------------ |
