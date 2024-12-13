@@ -128,6 +128,7 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | **Finetuning**                                                                                                                                   |                                                                                                                                                                     |
 | [Finetune_PaliGemma_2_with_Keras.ipynb](PaliGemma_2/Finetune_PaliGemma_2_with_Keras.ipynb)                                                     | Finetune PaliGemma 2 with Keras.                                                                                                                                    |
 | [Finetune_PaliGemma_2_with_JAX.ipynb](PaliGemma_2/Finetune_PaliGemma_2_with_JAX.ipynb)                                                         | Finetune PaliGemma 2 with JAX.                                                                                                                                      |
+| [Run_with_Transformersjs.ipynb](PaliGemma_2/Run_with_Transformersjs.ipynb)                                                         | Run PaliGemma 2 with Transformers.js.                                                                                                                                      |
 
 #### CodeGemma
 | **Finetuning**                                                                                 |                                                  |
