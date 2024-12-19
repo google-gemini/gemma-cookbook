@@ -38,6 +38,11 @@ You can find the Gemma models on GitHub, Hugging Face models, Kaggle, Google Clo
 | [Personal code assistant](Gemma/personal-code-assistant/)   |
 | [Spoken language tasks](Gemma/spoken-language-tasks/)       |
 
+## Gemma on Google Cloud
+| Link                                                        |
+| ----------------------------------------------------------- |
+| [GCP open models has additional notebooks for using Gemma](https://github.com/GoogleCloudPlatform/generative-ai/tree/main/open-models)    |
+
 ## Cookbook table of contents
 
 | **Gemma model overview**                         |                                                                      |
