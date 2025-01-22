@@ -17,12 +17,12 @@ Gemma is a family of lightweight, state-of-the art open models built from the sa
 You can find the Gemma models on the Hugging Face Hub, Kaggle, Google Cloud Vertex AI Model Garden, and [ai.nvidia.com](https://ai.nvidia.com).
 
 ## Table of Notebooks
-* [Gemma](Gemma)
-* [CodeGemma](CodeGemma)
-* [PaliGemma](PaliGemma)
-* [Partner quickstart guides](partner-quickstarts)
-* [Workshops and technical talks](Workshops)
-* [Accompanying notebooks for the Build with AI video series](Demos)
+* [Gemma](Gemma/README.md)
+* [CodeGemma](CodeGemma/README.md)
+* [PaliGemma](PaliGemma/README.md)
+* [Partner quickstart guides](partner-quickstarts/README.md)
+* [Workshops and technical talks](Workshops/README.md)
+* [Accompanying notebooks for the Build with AI video series](Demos/README.md)
 * [Gemma on Google Cloud](https://github.com/GoogleCloudPlatform/generative-ai/tree/main/open-models) : GCP open models has additional notebooks for using Gemma
 
 ## Get help

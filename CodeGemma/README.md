@@ -1,4 +1,4 @@
 # CodeGemma
 | **Finetuning**                                                                                 |                                                  |
 | :--------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [CodeGemma_finetuned_on_SQL_with_HF.ipynb](CodeGemma_finetuned_on_SQL_with_HF.ipynb) | Fine-Tuning CodeGemma on the SQL Spider Dataset. |
+| [[CodeGemma_1]Finetune_with_SQL.ipynb]([CodeGemma_1]Finetune_with_SQL.ipynb) | Fine-Tuning CodeGemma on the SQL Spider Dataset. |
