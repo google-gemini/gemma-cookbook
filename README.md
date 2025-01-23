@@ -1,18 +1,27 @@
 
 # Welcome to the Gemma Cookbook
-This is a collection of guides and examples for [Google Gemma](https://ai.google.dev/gemma/). Gemma is a family of lightweight, state-of-the art open models built from the same research and technology used to create the Gemini models.
+This is a collection of guides and examples for [Google Gemma](https://ai.google.dev/gemma/).
 
 ## Get started with the Gemma models
 Gemma is a family of lightweight, state-of-the art open models built from the same research and technology used to create the Gemini models. The Gemma model family includes:
 * Core Gemma
-  * [Gemma](https://ai.google.dev/gemma/docs/model_card)
-  * [Gemma 2](https://ai.google.dev/gemma/docs/model_card_2)
+  * [Gemma](https://ai.google.dev/gemma/docs/model_card)\
+    For a variety of text generation tasks and can be further tuned for specific use cases
+  * [Gemma 2](https://ai.google.dev/gemma/docs/model_card_2)\
+    Higher-performing and more efficient, available in 2B, 9B, 27B parameter sizes
 * Gemma variants
-  * [CodeGemma](https://ai.google.dev/gemma/docs/codegemma)
-  * [PaliGemma](https://ai.google.dev/gemma/docs/paligemma)
-  * [RecurrentGemma](https://ai.google.dev/gemma/docs/recurrentgemma)
-  * [ShieldGemma](https://ai.google.dev/gemma/docs/shieldgemma)
-  * [DataGemma](https://ai.google.dev/gemma/docs/datagemma)
+  * [CodeGemma](https://ai.google.dev/gemma/docs/codegemma)\
+    For a variety of coding tasks
+  * [PaliGemma](https://ai.google.dev/gemma/docs/paligemma)\
+    Vision Language Model\
+    For a deeper analysis of images and provide useful insights
+  * [RecurrentGemma](https://ai.google.dev/gemma/docs/recurrentgemma)\
+    Based on [Griffin](https://arxiv.org/abs/2402.19427) architecture\
+    For a variety of text generation tasks
+  * [ShieldGemma](https://ai.google.dev/gemma/docs/shieldgemma)\
+    For evaluating the safety of text prompt input and text output responses against a set of defined safety policies
+  * [DataGemma](https://ai.google.dev/gemma/docs/datagemma)\
+    Using Data Commons to address AI hallucinations
 
 You can find the Gemma models on the Hugging Face Hub, Kaggle, Google Cloud Vertex AI Model Garden, and [ai.nvidia.com](https://ai.nvidia.com).
 
