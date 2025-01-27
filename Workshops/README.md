@@ -1,5 +1,8 @@
 # Workshops and technical talks
-| Notebook                                                                                                                    | Description                                                                                                                                        |
+
+This folder provides resources from workshops and technical talks centered around Gemma models. Here, you'll find in-depth notebooks that go beyond basic usage and explore advanced techniques like context window manipulation.
+
+| Notebook Name | Description |
 | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [Workshop_How_to_Fine_tuning_Gemma.ipynb](Workshop_How_to_Fine_tuning_Gemma.ipynb) | Recommended finetuning notebook for getting started                                                                                                |
 | [Workshop_How_to_Fine_tuning_Gemma_Transformers_Edition.ipynb](Workshop_How_to_Fine_tuning_Gemma_Transformers_Edition.ipynb) | Transformers version of the finetuning notebook                                                                                               |
