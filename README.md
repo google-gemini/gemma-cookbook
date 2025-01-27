@@ -3,8 +3,9 @@
 This is a collection of guides and examples for [Google Gemma](https://ai.google.dev/gemma/).
 
 ## Get started with the Gemma models
-Gemma is a family of lightweight, state-of-the art open models built from the same research and technology used to create the Gemini models. The Gemma model family includes:
-* Gemma
+Gemma is a family of lightweight, generative artificial intelligence (AI) open models, built from the same research and technology used to create the Gemini models. The Gemma model family includes:
+* Gemma\
+  The core models of the Gemma family.
   * [Gemma](https://ai.google.dev/gemma/docs/model_card)\
     For a variety of text generation tasks and can be further tuned for specific use cases
   * [Gemma 2](https://ai.google.dev/gemma/docs/model_card_2)\
