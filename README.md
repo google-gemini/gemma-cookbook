@@ -12,7 +12,7 @@ Gemma is a family of lightweight, generative artificial intelligence (AI) open m
     Higher-performing and more efficient, available in 2B, 9B, 27B parameter sizes
 * Gemma variants
   * [CodeGemma](https://ai.google.dev/gemma/docs/codegemma)\
-    For a variety of coding tasks
+    Fine-tuned for a variety of coding tasks
   * [PaliGemma](https://ai.google.dev/gemma/docs/paligemma)\
     Vision Language Model\
     For a deeper analysis of images and provide useful insights
@@ -20,9 +20,9 @@ Gemma is a family of lightweight, generative artificial intelligence (AI) open m
     Based on [Griffin](https://arxiv.org/abs/2402.19427) architecture\
     For a variety of text generation tasks
   * [ShieldGemma](https://ai.google.dev/gemma/docs/shieldgemma)\
-    For evaluating the safety of text prompt input and text output responses against a set of defined safety policies
+    Fine-tuned for evaluating the safety of text prompt input and text output responses against a set of defined safety policies
   * [DataGemma](https://ai.google.dev/gemma/docs/datagemma)\
-    Using Data Commons to address AI hallucinations
+    Fine-tuned for using Data Commons to address AI hallucinations
 
 You can find the Gemma models on the Hugging Face Hub, Kaggle, Google Cloud Vertex AI Model Garden, and [ai.nvidia.com](https://ai.nvidia.com).
 
