@@ -1,7 +1,19 @@
 # Gemma
 
-| **Inference and serving**                                                                                            |                                                                                                                                                                                         |
-| :------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+This folder is organized into several categories, each focusing on a speicific aspect of working with Gemma models:
+
+* [Inference and serving](#inference-and-serving) : How to load, run and deploy Gemma models for inference
+* [Prompting](#prompting) : Explore various prompting techniques
+* [RAG (Retrieval Augmented Generation)](#rag) : How to build RAG systems with Gemma
+* [Finetuning](#finetuning) : Dive into finetuning Gemma models for specific tasks and domains
+* [Alignment](#alignment) : Techniques for aligning Gemma models
+* [Evaluation](#evaluation) : How to evaluate Gemma models
+* [Agentic AI](#agentic-ai) : How to build an intelligent agents using Gemma models
+
+## Inference and serving
+
+| Notebook Name | Description |
+:------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [[Gemma_1]Basics_with_HF.ipynb]([Gemma_1]Basics_with_HF.ipynb)                                                       | Load, run, finetune and deploy Gemma using [Hugging Face](https://huggingface.co/).                                                                                                     |
 | [[Gemma_1]Common_use_cases.ipynb]([Gemma_1]Common_use_cases.ipynb)                                                       | Illustrate some common use cases for Gemma.                                                                                                    |
 | [[Gemma_1]Inference with Flax/NNX](https://flax.readthedocs.io/en/latest/guides/gemma.html)                             | Gemma 1 inference with Flax/NNX framework (linking to Flax documentation)                                                                                                               |
@@ -33,13 +45,15 @@
 | [[Gemma_2]for_Japan_using_Transformers_and_PyTorch.ipynb]([Gemma_2]for_Japan_using_Transformers_and_PyTorch.ipynb) | [Gemma 2 for Japan](https://blog.google/intl/ja-jp/company-news/technology/gemma-2-2b/) |
 | [[Gemma_2]on_Groq.ipynb]([Gemma_2]on_Groq.ipynb)                                                                   | Leverage the free Gemma 2 9B IT model hosted on [Groq](https://groq.com/) (super fast speed).                                                                                           |
 
-| **Prompting**                                                                                                        |                                                                                                                                                                                         |
+## Prompting
+| Notebook Name | Description |
 | :------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [[Gemma_1]Advanced_Prompting_Techniques.ipynb]([Gemma_1]Advanced_Prompting_Techniques.ipynb)                                     | Illustrate advanced prompting techniques with Gemma.                                                                                                                                    |
 | [[Gemma_2]LangChain_chaining.ipynb]([Gemma_2]LangChain_chaining.ipynb)                                                           | Illustrate LangChain chaining  with Gemma.                                                                                                                                              |
 | [[Gemma_2]Prompt_chaining.ipynb]([Gemma_2]Prompt_chaining.ipynb)                                                                 | Illustrate prompt chaining and iterative generation with Gemma.                                                                                                                         |
 
-| **RAG**                                                                                                              |                                                                                                                                                                                         |
+## RAG
+| Notebook Name | Description |
 | :------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [[Gemma_1]Minimal_RAG.ipynb]([Gemma_1]Minimal_RAG.ipynb)                                                                         | Minimal example of building a RAG system with Gemma using [Google UniSim](https://github.com/google/unisim) and [Hugging Face](https://huggingface.co/).                                |
 | [[Gemma_1]RAG_with_ChromaDB.ipynb]([Gemma_1]RAG_with_ChromaDB.ipynb)                                                             | Build a Retrieval Augmented Generation (RAG) system with Gemma using [ChromaDB](https://www.trychroma.com/) and [Hugging Face](https://huggingface.co/).                                |
@@ -49,7 +63,8 @@
 | [[Gemma_2]Using_with_Firebase_Genkit_and_Ollama.ipynb]([Gemma_2]Using_with_Firebase_Genkit_and_Ollama.ipynb)                     | Example to demonstrate using Gemma with [Firebase Genkit](https://firebase.google.com/docs/genkit/) and [Ollama](https://www.ollama.com/)                                               |
 | [[Gemma_2]Using_with_LangChain.ipynb]([Gemma_2]Using_with_LangChain.ipynb)                                           | Examples to demonstrate using Gemma with [LangChain](https://www.langchain.com/).                                                                                                       |
 
-| **Finetuning**                                                                                                       |                                                                                                                                                                                         |
+## Finetuning
+| Notebook Name | Description |
 | :------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [[Gemma_1]Finetune_distributed.ipynb]([Gemma_1]Finetune_distributed.ipynb)                           | Chat with Gemma 7B and finetune it so that it generates responses in pirates' tone.                                                                                                     |
 | [[Gemma_1]Finetune_with_LLaMA_Factory.ipynb]([Gemma_1]Finetune_with_LLaMA_Factory.ipynb)                                         | Finetune Gemma using [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory).                                                                                                         |
@@ -64,14 +79,17 @@
 | [[Gemma_2]Finetune_with_Unsloth.ipynb]([Gemma_2]Finetune_with_Unsloth.ipynb)                                                     | Finetune Gemma using [Unsloth](https://unsloth.ai/blog/gemma).                                                                                                                          |
 | [[Gemma_2]Translator_of_Old_Korean_Literature.ipynb]([Gemma_2]Translator_of_Old_Korean_Literature.ipynb)                         | Use Gemma to translate old Korean literature using Keras.                                                                                                                               |
 
-| **Alignment**                                                                                                        |                                                                                                                                                                                         |
+## Alignment
+| Notebook Name | Description |
 | :------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [[Gemma_2]Aligning_DPO.ipynb]([Gemma_2]Aligning_DPO.ipynb)                                               | Demonstrate how to align a Gemma model using DPO (Direct Preference Optimization) with [Hugging Face TRL](https://huggingface.co/docs/trl/en/index).                                    |
 
-| **Evaluation**                                                                                                       |                                                                                                                                                                                         |
+## Evaluation
+| Notebook Name | Description |
 | :------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [[Gemma_2]evaluation.ipynb]([Gemma_2]evaluation.ipynb)                                                               | Demonstrate how to use Eleuther AI's LM evaluation harness to perform model evaluation on Gemma.                                                                                        |
 
-| **Agentic AI**                                                                                                       |                                                                                                                                                                                         |
+## Agentic AI
+| Notebook Name | Description |
 | :------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [[Gemma_2]Agentic_AI.ipynb]([Gemma_2]Agentic_AI.ipynb)                                                               | Demonstrate how to build an Agentic AI using Gemma 2.                                                                                        |
