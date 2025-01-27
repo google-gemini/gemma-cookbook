@@ -1,0 +1,15 @@
+{
+  "prompt" : "Do you sell strawberry cakes with vanilla frosting and custard inside?",
+  "response" : {
+    "type": "inquiry",
+    "items": [
+      {
+        "name": "cake",
+        "filling": "custard",
+        "frosting": "vanilla",
+        "flavor": "strawberry",
+        "size": "null"
+      }
+    ]
+  }
+}
