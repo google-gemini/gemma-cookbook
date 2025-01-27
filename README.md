@@ -41,7 +41,7 @@ Ask a Gemma cookbook-related question on the [developer forum](https://discuss.a
 ## Wish list
 If you want to see additional cookbooks implemented for specific features/integrations, please open a new issue with [“Feature Request” template](https://github.com/google-gemini/gemma-cookbook/issues/new?template=feature_request.yml).
 
-If you want to make contributions to the Gemma Cookbook project, you are welcome to pick any idea in the [“Feature Request”](https://github.com/google-gemini/gemma-cookbook/labels/enhancement) and implement it.
+If you want to make contributions to the Gemma Cookbook project, you are welcome to pick any idea in the [“Wish List”](https://github.com/google-gemini/gemma-cookbook/labels/wishlist) and implement it.
 
 ## Contributing
 Contributions are always welcome. Please read [contributing](https://github.com/google-gemini/gemma-cookbook/blob/main/CONTRIBUTING.md) before implementation.
