@@ -1,0 +1,16 @@
+# Showcase complex end-to-end use cases
+
+This folder houses the companion notebooks for the "Build with AI" video series, along with code examples from mobile app demos. Here you'll find practical examples and ready-to-run code to help you bring AI-powered features to life.
+
+## Accompanying notebooks for the Build with AI video series
+| Folder                                                      | Description |
+| ----------------------------------------------------------- | ----------- |
+| [Business email assistant](business-email-assistant/) | [Business Email AI Assistant with Gemma](https://www.youtube.com/watch?v=YxhzozLH1Dk)<br>This project tackles the specific problem of extracting order information from emails to a bakery into structured data, so it can be quickly added to an order handling system. |
+| [Personal code assistant](personal-code-assistant/)   | [Personal AI Code Assistant with Gemma](https://www.youtube.com/watch?v=YxhzozLH1Dk)<br>This project shows you how to set up your own web service for hosting Gemma and connecting it to a Microsoft Visual Studio Code extension, to make using the model more convenient while coding. |
+| [Spoken language tasks](spoken-language-tasks/)       | [Spoken Language AI Assistant with Gemma](https://www.youtube.com/watch?v=M4HGJehH4r0)<br>Learn how to tune a model to perform specific tasks in a specific language, without requiring extensive data or training time. |
+
+## Mobile App Demo
+| Folder                                                      | Description |
+| ----------------------------------------------------------- | ----------- |
+| [Gemma on Android](Gemma-on-Android/)         | Android app to deploy fine-tuned Gemma-2B-it model using MediaPipe LLM Inference API. |
+| [PaliGemma on Android](PaliGemma-on-Android/) | Inference PaliGemma on Android using Hugging Face and Gradio Client API for tasks like zero-shot object detection, image captioning, and visual question-answering. |

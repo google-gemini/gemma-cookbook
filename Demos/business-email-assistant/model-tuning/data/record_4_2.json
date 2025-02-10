@@ -1,0 +1,12 @@
+{
+  "prompt" : "Please pack me a box with 10 halva.",
+  "response" : {
+    "type": "order",
+    "items": [
+      {
+        "name": "halva",
+        "quantity": 10
+      }
+    ]
+  }
+}

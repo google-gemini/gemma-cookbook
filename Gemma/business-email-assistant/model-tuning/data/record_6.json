@@ -1,8 +1,0 @@
-{
-  "prompt" : "I found your website. What kind of items do you sell?",
-  "response" : {
-    "type": "inquiry",
-    "items": [
-    ]
-  }
-}
