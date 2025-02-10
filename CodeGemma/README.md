@@ -2,8 +2,8 @@
 
 This folder is organized into several categories, each focusing on a specific aspect of working with CodeGemma models:
 
-* [Inference](#inference) : How to load and run CodeGemma for inference
-* [Finetuning](#finetuning) : Dive into finetuning CodeGemma models for specific tasks and domains
+* [Inference](#inference): How to load and run CodeGemma for inference
+* [Finetuning](#finetuning): Dive into finetuning CodeGemma models for specific tasks and domains
 
 ## Inference
 | Notebook Name | Description |
