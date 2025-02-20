@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inference PaliGemma 2 with 🤗 Transformers.js</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Inference PaliGemma 2 with 🤗 Transformers.js</h1>
+        </header>
+
+        <section class="image-section">
+            <div class="image-container">
+                <img id="originalImage" src="" alt="Original Image" style="display: none;">
+                <canvas id="processedCanvas" width="0" height="0"></canvas>
+            </div>
+        </section>
+
+        <section class="input-section">
+            <div class="file-upload">
+                <label for="imageUpload">Choose File</label>
+                <input type="file" id="imageUpload" accept="image/*" style="display:none;" />
+            </div>
+            <input type="text" id="promptInput" placeholder="Enter your prompt (eg: detect car)" />
+            <button id="processButton" disabled>Analyze Image</button>
+        </section>
+
+        <section class="status-section">
+            <p id="responseText" style="display: none;"></p>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
