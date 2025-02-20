@@ -1,6 +1,6 @@
 ### Developed by [Nitin Tiwari](https://linkedin.com/in/tiwari-nitin).
 
-# PaliGemma 2 ONNX Transformers.js
+# Inference PaliGemma 2 on the browser with ONNX & Transformers.js
 This project is an implementation of inferencing the paligemma2-3b-mix-224 model on the browser using its converted ONNX weights and Hugging Face Transformers.js.
 
 ## PaliGemma 2 to ONNX Conversion:
