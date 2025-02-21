@@ -1,0 +1,165 @@
+/* General Reset and Body Styling */
+body,
+h1,
+h2,
+h3,
+p,
+ul,
+li,
+button,
+input {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Container Styling */
+.container {
+    width: 100%;
+    max-width: 800px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Header Styling */
+header {
+    background-color: #1A237E;  /* Updated to the new background color */
+    color: #fff;
+    text-align: center;
+    font-size: 24px;
+    padding: 15px;
+    border-bottom: 2px solid #120C55;  /* Slightly darker border for contrast */
+}
+
+/* Image Section Styling */
+.image-section {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    position: relative; /* Ensure it can hold both the image and canvas */
+}
+
+.image-container {
+    width: 100%;
+    max-width: 600px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.image-container img {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+#processedCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;  /* Prevent the canvas from interfering with image interactions */
+    width: 100%;  /* Ensure canvas scales with the image */
+    height: 100%; /* Match the image size */
+    object-fit: contain;
+}
+
+/* Input Section Styling */
+.input-section {
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: -20px;
+}
+
+.file-upload {
+    display: inline-block;
+    border: 1px solid #ccc;
+    background-color: #f2f2f2;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    width: 100%;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+.file-upload input[type=file] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;  /* Take up the full width */
+    height: 100%; /* Take up the full height */
+    opacity: 0;     /* Make it invisible */
+    cursor: pointer;
+}
+
+/* Text Input Styling */
+.input-section input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 19px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Detect Button Styling */
+.input-section button {
+    background-color: #2979FF; /* Default button color */
+    border: none;
+    color: white;
+    font-size: 20px;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the buttons */
+.input-section button:hover {
+    background-color: #2196F3;  /* Darker blue on hover */
+}
+
+/* Status Section Styling */
+.status-section {
+    text-align: center;
+    padding: 12px;
+}
+
+
+#responseText {
+    font-size: 18px; 
+    color: #263238;
+    font-weight: bold;
+    margin-top: 5px;
+}
