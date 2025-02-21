@@ -14,3 +14,8 @@ This folder houses the companion notebooks for the "Build with AI" video series,
 | ----------------------------------------------------------- | ----------- |
 | [Gemma on Android](Gemma-on-Android/)         | Android app to deploy fine-tuned Gemma-2B-it model using MediaPipe LLM Inference API. |
 | [PaliGemma on Android](PaliGemma-on-Android/) | Inference PaliGemma on Android using Hugging Face and Gradio Client API for tasks like zero-shot object detection, image captioning, and visual question-answering. |
+
+## Web App Demo
+| Folder                                                      | Description |
+| ----------------------------------------------------------- | ----------- |
+| [PaliGemma 2 on Web](PaliGemma2-on-Web/)         | Inference PaliGemma 2 on the web using its ONNX weights and Transformers.js for tasks like object detection, image captioning, OCR, and visual Q&A. |
