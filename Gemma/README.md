@@ -44,6 +44,7 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_2]Using_with_mistral_rs.ipynb]([Gemma_2]Using_with_mistral_rs.ipynb)                                         | Run Gemma models using [mistral.rs](https://github.com/EricLBuehler/mistral.rs/).                                                                                                       |
 | [[Gemma_2]for_Japan_using_Transformers_and_PyTorch.ipynb]([Gemma_2]for_Japan_using_Transformers_and_PyTorch.ipynb) | [Gemma 2 for Japan](https://blog.google/intl/ja-jp/company-news/technology/gemma-2-2b/) |
 | [[Gemma_2]on_Groq.ipynb]([Gemma_2]on_Groq.ipynb)                                                                   | Leverage the free Gemma 2 9B IT model hosted on [Groq](https://groq.com/) (super fast speed).                                                                                           |
+| [[Gmmea_3]Meme_Generator.ipynb]([Gemma_3]Meme_Generator.ipynb)                                                                                    | Meme Generator using Gemma 3 4B IT model                                                                                                                                                 |
 
 ## Prompting
 | Notebook Name | Description |
