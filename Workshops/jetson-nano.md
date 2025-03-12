@@ -75,10 +75,10 @@ First, install Ollama:
 
 This will install Ollama and make it accessible in your system path as `ollama`.
 
-Next, try Ollama out with some text inference using Gemma 2 (Ollama will fetch
+Next, try Ollama out with some text inference using Gemma 3 (Ollama will fetch
 and cache the model on first use).
 
-    $ ollama run gemma2 “Write me a poem about the Kraken.”
+    $ ollama run gemma3:1b “Write me a poem about the Kraken.”
 
 # More information
 
