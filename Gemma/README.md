@@ -46,6 +46,7 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_2]on_Groq.ipynb]([Gemma_2]on_Groq.ipynb)                                                                   | Leverage the free Gemma 2 9B IT model hosted on [Groq](https://groq.com/) (super fast speed).                                                                                           |
 | [[Gemma_3]Inference_images_and_videos.ipynb]([Gemma_3]Inference_images_and_videos.ipynb)                                                                                    | Inference on images and videos using Gemma 3 4B IT model.                                                                                                                                                 |
 | [[Gemma_3]Meme_Generator.ipynb]([Gemma_3]Meme_Generator.ipynb)                                                                                    | Meme Generator using Gemma 3 4B IT model                                                                                                                                                 |
+| [[Gemma_3]Using_with_Ollama_Python_Inference_with_Images.ipynb]([Gemma_3]Using_with_Ollama_Python_Inference_with_Images.ipynb)                                                                 | Run inference with images on Gemma 3 using [Ollama Python library](https://github.com/ollama/ollama-python).  |
 
 ## Prompting
 | Notebook Name | Description |
@@ -95,3 +96,4 @@ This folder is organized into several categories, each focusing on a speicific a
 | Notebook Name | Description |
 | :------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [[Gemma_2]Agentic_AI.ipynb]([Gemma_2]Agentic_AI.ipynb)                                                               | Demonstrate how to build an Agentic AI using Gemma 2.                                                                                        |
+| [[Gemma_3]Function_Calling_with_HF.ipynb]([Gemma_3]Function_Calling_with_HF.ipynb)                                                               | Demonstrate how to use function calling with Gemma 3 using [Hugging Face](https://huggingface.co/).                                                                                        |
