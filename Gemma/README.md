@@ -47,6 +47,7 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_3]Inference_images_and_videos.ipynb]([Gemma_3]Inference_images_and_videos.ipynb)                                                                                    | Inference on images and videos using Gemma 3 4B IT model.                                                                                                                                                 |
 | [[Gemma_3]Meme_Generator.ipynb]([Gemma_3]Meme_Generator.ipynb)                                                                                    | Meme Generator using Gemma 3 4B IT model                                                                                                                                                 |
 | [[Gemma_3]Using_with_Ollama_Python_Inference_with_Images.ipynb]([Gemma_3]Using_with_Ollama_Python_Inference_with_Images.ipynb)                                                                 | Run inference with images on Gemma 3 using [Ollama Python library](https://github.com/ollama/ollama-python).  |
+| [[Gemma_3]Using_with_Transformersjs.ipynb]([Gemma_3]Using_with_Transformersjs.ipynb)                                                         | Run Gemma 3 with [Transformers.js](https://github.com/huggingface/transformers.js).                                                                                                                                      |
 
 ## Prompting
 | Notebook Name | Description |
