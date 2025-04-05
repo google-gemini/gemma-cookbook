@@ -94,7 +94,10 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_2]evaluation.ipynb]([Gemma_2]evaluation.ipynb)                                                               | Demonstrate how to use Eleuther AI's LM evaluation harness to perform model evaluation on Gemma.                                                                                        |
 
 ## Agentic AI
-| Notebook Name | Description |
-| :------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [[Gemma_2]Agentic_AI.ipynb]([Gemma_2]Agentic_AI.ipynb)                                                               | Demonstrate how to build an Agentic AI using Gemma 2.                                                                                        |
-| [[Gemma_3]Function_Calling_with_HF.ipynb]([Gemma_3]Function_Calling_with_HF.ipynb)                                                               | Demonstrate how to use function calling with Gemma 3 using [Hugging Face](https://huggingface.co/).                                                                                        |
+| Notebook Name                                                                                     | Description                                                                                                                          |
+| :------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
+| [[Gemma_2]Agentic_AI.ipynb]( [Gemma_2]Agentic_AI.ipynb )                                          | Demonstrate how to build an Agentic AI using Gemma 2.                                                                                |
+| [[Gemma_3]Function_Calling_with_HF.ipynb]( [Gemma_3]Function_Calling_with_HF.ipynb )              | Demonstrate how to use function calling with Gemma 3 using [Hugging Face](https://huggingface.co/).                                |
+| [[Gemma_3]Function_calling_HF_document_summarizer.ipynb]( [Gemma_3]Function_calling_HF_document_summarizer.ipynb ) | Demonstrate how to build a document summarizer using function calling with Gemma 3 and Hugging Face. |
+| [[Gemma_2]Groq_Langchain_function_calling.ipynb]( [Gemma_2]Groq_Langchain_function_calling.ipynb ) | Demonstrate how to create a simple agent using Langchain and grow using Gemma2. |
+
