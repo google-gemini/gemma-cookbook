@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	genai "cloud.google.com/go/ai/generativelanguage/apiv1beta/generativelanguagepb"
 	openai "github.com/openai/openai-go"
 	param "github.com/openai/openai-go/packages/param"
@@ -39,9 +37,7 @@ func convertContentsToMessages(contents []*genai.Content) []openai.ChatCompletio
 }
 
 func convertContentToMessages(content *genai.Content) []openai.ChatCompletionMessageParamUnion {
-	log.Printf("Receive Parts length: %d", len(content.GetParts()))
 	openAiChatMessageList := make([]openai.ChatCompletionMessageParamUnion, len(content.GetParts()))
-	log.Printf("Receive Part: %v", content.GetParts()[0])
 	if content.Role == "model" {
 		for i, part := range content.GetParts() {
 			openAiChatMessageList[i] = openai.ChatCompletionMessageParamUnion{
@@ -70,9 +66,6 @@ func convertContentToMessages(content *genai.Content) []openai.ChatCompletionMes
 }
 
 func ConvertGenerateContentRequestToChatCompletionRequest(request *genai.GenerateContentRequest, model string) *openai.ChatCompletionNewParams {
-	log.Printf("Receive content length: %v", request)
-	log.Printf("Receive content length: %d", len(request.GetContents()))
-	log.Printf("Receive content length: %v", request.GetContents())
 	chatCompletionParams := &openai.ChatCompletionNewParams{
 		Model:    geminiToOpenAiModelMapping[model],
 		Messages: convertContentsToMessages(request.GetContents()),

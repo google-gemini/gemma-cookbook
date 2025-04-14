@@ -64,7 +64,6 @@ func convertRequestBody(originalBodyBytes []byte, action string, model string) (
 }
 
 func convertResponseBody(originalBodyBytes []byte, action string) ([]byte, error) {
-	log.Printf("Receive original response body: %s, action: %s", string(originalBodyBytes), action)
 	switch action {
 	case "generateContent":
 		chatCompletion:=&openai.ChatCompletion{}
