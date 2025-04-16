@@ -51,7 +51,7 @@ func convertRequestBody(originalBodyBytes []byte, action string, model string) (
 			return nil, err
 		}
 		chatCompletionParams := ConvertGenerateContentRequestToChatCompletionRequest(generateContentRequest, model)
-		bodyBytes, err := json.Marshal(chatCompletionParams)
+		bodyBytes, err := chatCompletionParams.MarshalJSON()
 		if err != nil {
 			return nil, err
 		}
@@ -72,7 +72,7 @@ func convertResponseBody(originalBodyBytes []byte, action string) ([]byte, error
 			return nil, err
 		}
 		generateContentResponse := ConvertChatCompletionResponseToGenerateContentResponse(chatCompletion)
-		bodyBytes, err := json.Marshal(generateContentResponse)
+		bodyBytes, err := protojson.Marshal(generateContentResponse)
 		if err != nil {
 			return nil, err
 		}
@@ -169,7 +169,7 @@ func main() {
 				targetBodyBytes, err := io.ReadAll(resp.Body)
 				if err != nil {
 					log.Printf("Error encountered during reading response body: %v", err)
-					return fmt.Errorf("Failed to read response for action %s.", action)
+					return fmt.Errorf("failed to read response for action %s", action)
 				}
 				// Must close the original body
 				resp.Body.Close()
@@ -177,7 +177,7 @@ func main() {
 				finalBodyBytes, err := convertResponseBody(targetBodyBytes, action)
 				if err != nil {
 					log.Printf("Error encountered during response body conversion: %v", err)
-					return fmt.Errorf("Failed to convert response for action %s.", action)
+					return fmt.Errorf("failed to convert response for action %s", action)
 				}
 				log.Printf("Updated response body: %s", string(finalBodyBytes))
 
