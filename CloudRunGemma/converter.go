@@ -1,10 +1,18 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"log"
+
 	genai "cloud.google.com/go/ai/generativelanguage/apiv1beta/generativelanguagepb"
 	openai "github.com/openai/openai-go"
 	param "github.com/openai/openai-go/packages/param"
 	shared "github.com/openai/openai-go/shared"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var geminiToOpenAiModelMapping = map[string]string{
@@ -19,6 +27,109 @@ var openAiToGeminiModelMapping = map[string]string{
 	"gemma3:4b":  "gemma-3-4b-it",
 	"gemma3:12b": "gemma-3-12b-it",
 	"gemma3:27b": "gemma-3-27b-it",
+}
+
+type ChatCompletionRequest struct {
+	Stream           bool
+	Model            string
+	Messages         []openai.ChatCompletionMessageParamUnion
+	MaxTokens        param.Opt[int64]
+	Temperature      param.Opt[float64]
+	TopP             param.Opt[float64]
+	PresencePenalty  param.Opt[float64]
+	FrequencyPenalty param.Opt[float64]
+	ResponseFormat   openai.ChatCompletionNewParamsResponseFormatUnion
+	Stop             openai.ChatCompletionNewParamsStopUnion
+	// These are supported by openai but not supported by Ollama.
+	// Fields supported by Ollama can be found in: https://github.com/ollama/ollama/blob/main/openai/openai.go#L84
+	// Logprobs    param.Opt[bool]
+	// TopLogprobs param.Opt[int64]
+}
+
+func ConvertRequestBody(originalBodyBytes []byte, action string, model string) ([]byte, error) {
+	log.Printf("Receive req body: %s, action: %s", string(originalBodyBytes), action)
+	switch action {
+	case "generateContent":
+		return convertGenerateContentRequestToChatCompletionRequest(originalBodyBytes, model, false)
+	case "streamGenerateContent":
+		return convertGenerateContentRequestToChatCompletionRequest(originalBodyBytes, model, true)
+	case "generateAnswer":
+		return originalBodyBytes, nil
+	default:
+		return originalBodyBytes, nil
+	}
+}
+
+func ConvertNonStreamResponseBody(originalBodyBytes []byte, action string) ([]byte, error) {
+	switch action {
+	case "generateContent":
+		log.Printf("original answer: %s", originalBodyBytes)
+		chatCompletion := &openai.ChatCompletion{}
+		err := json.Unmarshal(originalBodyBytes, chatCompletion)
+		if err != nil {
+			return nil, err
+		}
+		generateContentResponse := convertChatCompletionResponseToGenerateContentResponse(chatCompletion)
+		bodyBytes, err := protojson.Marshal(generateContentResponse)
+		if err != nil {
+			return nil, err
+		}
+		return bodyBytes, nil
+	case "generateAnswer":
+		return originalBodyBytes, nil
+	default:
+		return originalBodyBytes, nil
+	}
+}
+
+func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter) {
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("panic in modifyStreamResponse goroutine: %v", r)
+			}
+			originalBody.Close()
+			pw.Close()
+		}()
+		reader := bufio.NewReader(originalBody)
+
+		for {
+			line, err := reader.ReadBytes('\n')
+			if err != nil {
+				if err == io.EOF {
+					break
+				}
+				fmt.Fprintf(pw, "stream read error: %v", err)
+				break
+			}
+			log.Printf("original line: %s", line)
+
+			trimmed := bytes.TrimSpace(line)
+			if len(trimmed) == 0 || !bytes.HasPrefix(trimmed, []byte("data: ")) {
+				continue
+			}
+
+			raw := bytes.TrimSpace(bytes.TrimPrefix(trimmed, []byte("data: ")))
+
+			if bytes.Equal(raw, []byte("[DONE]")) {
+				break
+			}
+
+			var chunk openai.ChatCompletionChunk
+			if err := json.Unmarshal(raw, &chunk); err != nil {
+				log.Printf("unmarshal error: %v, raw: '%s'", err, raw)
+				fmt.Fprintf(pw, "invalid chunk format, error: %v, raw: %s", err, string(raw))
+				continue
+			}
+			generateContentResponse := convertChatCompletionChunkToGenerateContentResponse(chunk)
+			bodyBytes, err := protojson.Marshal(generateContentResponse)
+			if err != nil {
+				fmt.Fprintf(pw, "failed to convert chunk, error: %v, raw: %s", err, string(raw))
+				continue
+			}
+			pw.Write(append(bodyBytes, '\n'))
+		}
+	}()
 }
 
 func flatten[T any](nested [][]T) []T {
@@ -101,9 +212,14 @@ func getOptFloat64(number float64) param.Opt[float64] {
 	return param.NewOpt(number)
 }
 
-func ConvertGenerateContentRequestToChatCompletionRequest(request *genai.GenerateContentRequest, model string) *openai.ChatCompletionNewParams {
+func convertGenerateContentRequestToChatCompletionRequest(originalBodyBytes []byte, model string, isStreamRequest bool) ([]byte, error) {
+	request := &genai.GenerateContentRequest{}
+	err := protojson.Unmarshal(originalBodyBytes, request)
+	if err != nil {
+		return nil, err
+	}
 	generationConfig := request.GetGenerationConfig()
-	chatCompletionParams := &openai.ChatCompletionNewParams{
+	chatCompletionRequest := &ChatCompletionRequest{
 		Model:            geminiToOpenAiModelMapping[model],
 		Messages:         convertContentsToMessages(request.GetContents()),
 		MaxTokens:        getOptInt64(int64(generationConfig.GetMaxOutputTokens())),
@@ -120,7 +236,14 @@ func ConvertGenerateContentRequestToChatCompletionRequest(request *genai.Generat
 		// Logprobs:			 param.NewOpt(generationConfig.GetResponseLogprobs()),
 		// TopLogprobs:          param.Newopt(int64(generationConfig.GetLogProbs())),
 	}
-	return chatCompletionParams
+	if isStreamRequest {
+		chatCompletionRequest.Stream = true
+	}
+	bodyBytes, err := json.Marshal(chatCompletionRequest)
+	if err != nil {
+		return nil, err
+	}
+	return bodyBytes, nil
 }
 
 func convertMessageToContent(message openai.ChatCompletionMessage) *genai.Content {
@@ -130,6 +253,19 @@ func convertMessageToContent(message openai.ChatCompletionMessage) *genai.Conten
 			{
 				Data: &genai.Part_Text{
 					Text: message.Content,
+				},
+			},
+		},
+	}
+}
+
+func convertChunkChoiceDeltaToContent(delta openai.ChatCompletionChunkChoiceDelta) *genai.Content {
+	return &genai.Content{
+		Role: "model",
+		Parts: []*genai.Part{
+			{
+				Data: &genai.Part_Text{
+					Text: delta.Content,
 				},
 			},
 		},
@@ -162,6 +298,19 @@ func convertChoicesToCandidates(choices []openai.ChatCompletionChoice) []*genai.
 	return candidates
 }
 
+func convertChunkChoicesToCandidates(choices []openai.ChatCompletionChunkChoice) []*genai.Candidate {
+	candidates := make([]*genai.Candidate, len(choices))
+	for i, choice := range choices {
+		index := int32(choice.Index)
+		candidates[i] = &genai.Candidate{
+			Content:      convertChunkChoiceDeltaToContent(choice.Delta),
+			Index:        &index,
+			FinishReason: convertOpenaiFinishReasontoGeminiFinishReason(choice.FinishReason),
+		}
+	}
+	return candidates
+}
+
 func convertCompletionUsageToUsageMetadata(usage openai.CompletionUsage) *genai.GenerateContentResponse_UsageMetadata {
 	return &genai.GenerateContentResponse_UsageMetadata{
 		PromptTokenCount:     int32(usage.PromptTokens),
@@ -170,11 +319,20 @@ func convertCompletionUsageToUsageMetadata(usage openai.CompletionUsage) *genai.
 	}
 }
 
-func ConvertChatCompletionResponseToGenerateContentResponse(response *openai.ChatCompletion) *genai.GenerateContentResponse {
+func convertChatCompletionResponseToGenerateContentResponse(response *openai.ChatCompletion) *genai.GenerateContentResponse {
 	generateContentResponse := &genai.GenerateContentResponse{
 		ModelVersion:  openAiToGeminiModelMapping[response.Model],
 		Candidates:    convertChoicesToCandidates(response.Choices),
 		UsageMetadata: convertCompletionUsageToUsageMetadata(response.Usage),
+	}
+	return generateContentResponse
+}
+
+func convertChatCompletionChunkToGenerateContentResponse(chunk openai.ChatCompletionChunk) *genai.GenerateContentResponse {
+	generateContentResponse := &genai.GenerateContentResponse{
+		ModelVersion:  openAiToGeminiModelMapping[chunk.Model],
+		Candidates:    convertChunkChoicesToCandidates(chunk.Choices),
+		UsageMetadata: convertCompletionUsageToUsageMetadata(chunk.Usage),
 	}
 	return generateContentResponse
 }

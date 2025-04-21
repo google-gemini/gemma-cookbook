@@ -3,11 +3,7 @@ package main
 
 import (
 	"bytes"
-	genai "cloud.google.com/go/ai/generativelanguage/apiv1beta/generativelanguagepb"
-	"encoding/json"
 	"fmt"
-	openai "github.com/openai/openai-go"
-	"google.golang.org/protobuf/encoding/protojson"
 	"io"
 	"log"
 	"net/http"
@@ -40,49 +36,43 @@ var geminiToOpenAiAPIVersionhMapping = map[string]string{
 
 const geminiAPIPathRegexPattern = `/([^/]+)/models/([^/]+):([^/]+)$`
 
-func convertRequestBody(originalBodyBytes []byte, action string, model string) ([]byte, error) {
-	log.Printf("Receive req body: %s, action: %s", string(originalBodyBytes), action)
-	switch action {
-	case "generateContent":
-
-		generateContentRequest := &genai.GenerateContentRequest{} 
-		err := protojson.Unmarshal(originalBodyBytes, generateContentRequest)
-		if err != nil {
-			return nil, err
-		}
-		chatCompletionParams := ConvertGenerateContentRequestToChatCompletionRequest(generateContentRequest, model)
-		bodyBytes, err := chatCompletionParams.MarshalJSON()
-		if err != nil {
-			return nil, err
-		}
-		return bodyBytes, nil
-	case "streamGenerateContent", "generateAnswer":
-		return originalBodyBytes, nil
-	default:
-		return originalBodyBytes, nil
+func modifyNonStreamResponse(resp *http.Response, action string) error {
+	targetBodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error encountered during reading response body: %v", err)
+		return fmt.Errorf("failed to read response for action %s", action)
 	}
+	// Must close the original body
+	resp.Body.Close()
+
+	finalBodyBytes, err := ConvertNonStreamResponseBody(targetBodyBytes, action)
+	if err != nil {
+		log.Printf("Error encountered during response body conversion: %v", err)
+		return fmt.Errorf("failed to convert response for action %s", action)
+	}
+	log.Printf("Updated response body: %s", string(finalBodyBytes))
+
+	resp.Body = io.NopCloser(bytes.NewReader(finalBodyBytes))
+	resp.Header.Set("Content-Length", strconv.Itoa(len(finalBodyBytes)))
+	resp.Header.Set("Content-Type", "application/json") // Ensure correct content type
+	// as we are sending plain JSON now.
+	resp.Header.Del("Content-Encoding")
+
+	// Setting content length is crucial
+	resp.ContentLength = int64(len(finalBodyBytes))
+	return nil
 }
 
-func convertResponseBody(originalBodyBytes []byte, action string) ([]byte, error) {
-	switch action {
-	case "generateContent":
-		chatCompletion:=&openai.ChatCompletion{}
-		err := json.Unmarshal(originalBodyBytes, chatCompletion)
-		if err != nil {
-			return nil, err
-		}
-		generateContentResponse := ConvertChatCompletionResponseToGenerateContentResponse(chatCompletion)
-		bodyBytes, err := protojson.Marshal(generateContentResponse)
-		if err != nil {
-			return nil, err
-		}
-		return bodyBytes, nil
-	case "streamGenerateContent", "generateAnswer":
-		return originalBodyBytes, nil
-	default:
-		return originalBodyBytes, nil
-	}
+func modifyStreamResponse(resp *http.Response) error {
+	pr, pw := io.Pipe()
+	originalBody := resp.Body
+	resp.Body = pr
+	resp.Header.Del("Content-Length")
+	resp.Header.Set("Transfer-Encoding", "chunked")
+	ConvertStreamResponseBody(originalBody, pw)
+	return nil
 }
+
 func main() {
 	// --- Configuration ---
 	port := os.Getenv("PORT")
@@ -93,7 +83,7 @@ func main() {
 	targetURLStr := fmt.Sprintf("%s://%s:%s", targetScheme, targetHost, defaultTargetPort)
 	targetURL, err := url.Parse(targetURLStr)
 	if err != nil {
-		log.Fatalf("Error parsing target URL %s: %v", targetURLStr, err)
+		log.Printf("Error parsing target URL %s: %v", targetURLStr, err)
 	}
 
 	// --- Setup Proxy ---
@@ -118,7 +108,7 @@ func main() {
 			convertedAction, convertedActionOk := geminiToOpenAiActionMapping[action]
 
 			if !(convertedAPIVersionOk && convertedActionOk) {
-				log.Fatalf("Error occurred during conversion: convertedAPIVersionOk: %v, convertedActionOk: %v. URL path will not be converted. ", convertedAPIVersionOk, convertedActionOk)
+				log.Printf("Error occurred during conversion: convertedAPIVersionOk: %v, convertedActionOk: %v. URL path will not be converted. ", convertedAPIVersionOk, convertedActionOk)
 				http.Error(w, "Failed to read request path.", http.StatusInternalServerError)
 				return
 			}
@@ -135,7 +125,7 @@ func main() {
 			// Create a new reader with the read bytes for potential later use (like logging)
 			r.Body = io.NopCloser(bytes.NewBuffer(originalBodyBytes))
 
-			bodyBytes, err := convertRequestBody(originalBodyBytes, action, modelVersion)
+			bodyBytes, err := ConvertRequestBody(originalBodyBytes, action, modelVersion)
 			if err != nil {
 				log.Printf("Error encountered during request body conversion: %v", err)
 				http.Error(w, "Failed to convert request for target.", http.StatusInternalServerError)
@@ -166,29 +156,16 @@ func main() {
 					log.Printf("<<< ModifyResponse: Target returned non-200 status (%d). Forwarding original body.", resp.StatusCode)
 					return nil
 				}
-				targetBodyBytes, err := io.ReadAll(resp.Body)
-				if err != nil {
-					log.Printf("Error encountered during reading response body: %v", err)
-					return fmt.Errorf("failed to read response for action %s", action)
+
+				switch action {
+				case "generateContent", "generateAnswer":
+					modifyNonStreamResponse(resp, action)
+				case "streamGenerateContent":
+					modifyStreamResponse(resp)
+				default:
+					return fmt.Errorf("unexpected action %s", action)
 				}
-				// Must close the original body
-				resp.Body.Close()
 
-				finalBodyBytes, err := convertResponseBody(targetBodyBytes, action)
-				if err != nil {
-					log.Printf("Error encountered during response body conversion: %v", err)
-					return fmt.Errorf("failed to convert response for action %s", action)
-				}
-				log.Printf("Updated response body: %s", string(finalBodyBytes))
-
-				resp.Body = io.NopCloser(bytes.NewReader(finalBodyBytes))
-				resp.Header.Set("Content-Length", strconv.Itoa(len(finalBodyBytes)))
-				resp.Header.Set("Content-Type", "application/json") // Ensure correct content type
-				// as we are sending plain JSON now.
-				resp.Header.Del("Content-Encoding")
-
-				// Setting content length is crucial
-				resp.ContentLength = int64(len(finalBodyBytes))
 				return nil
 			}
 
