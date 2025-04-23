@@ -5,15 +5,9 @@ LABEL stage="proxy-builder"
 # Create and change to the app directory.
 WORKDIR /app
 
-# Retrieve application dependencies.
-# This allows the container build to reuse cached dependencies.
-# Expecting to copy go.mod and if present go.sum.
-COPY go.* ./
-RUN go mod download
-
 # Copy local code to the container image.
 COPY . ./
-
+RUN go mod download
 # Build the binary.
 RUN go build -v -o server
 
@@ -41,7 +35,7 @@ ENV OLLAMA_KEEP_ALIVE -1
 
 ENV OLLAMA_ORIGINS *
 # Store the model weights in the container image
-ENV MODEL=gemma3:4b
+ENV MODEL=gemma3:27b
 
 # Store model weight files in /models
 ENV OLLAMA_MODELS /models
