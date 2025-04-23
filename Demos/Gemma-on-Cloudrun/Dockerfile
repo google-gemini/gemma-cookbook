@@ -7,7 +7,9 @@ WORKDIR /app
 
 # Copy local code to the container image.
 COPY . ./
+RUN go mod tidy
 RUN go mod download
+
 # Build the binary.
 RUN go build -v -o server
 
@@ -35,7 +37,7 @@ ENV OLLAMA_KEEP_ALIVE -1
 
 ENV OLLAMA_ORIGINS *
 # Store the model weights in the container image
-ENV MODEL=gemma3:27b
+ENV MODEL=gemma3:1b
 
 # Store model weight files in /models
 ENV OLLAMA_MODELS /models
