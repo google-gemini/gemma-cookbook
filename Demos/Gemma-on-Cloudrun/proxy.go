@@ -17,10 +17,8 @@ import (
 // --- Main Application ---
 
 const (
-	defaultPort       = "8080"
-	defaultTargetPort = "3000" // This needs to be the same as OLLAMA_HOST which specified in the Dockerfile
-	targetHost        = "localhost"
-	targetScheme      = "http"
+	defaultPort      = "8080"
+	defaultTargetURL = "http://localhost:3000"
 )
 
 var geminiToOpenAiActionMapping = map[string]string{
@@ -64,23 +62,27 @@ func modifyNonStreamResponse(resp *http.Response, action string) error {
 }
 
 func modifyStreamResponse(resp *http.Response) error {
+	done := make(chan struct{})
 	pr, pw := io.Pipe()
 	originalBody := resp.Body
 	resp.Body = pr
 	resp.Header.Del("Content-Length")
 	resp.Header.Set("Transfer-Encoding", "chunked")
-	ConvertStreamResponseBody(originalBody, pw)
+	ConvertStreamResponseBody(originalBody, pw, done)
 	return nil
 }
 
 func main() {
 	// --- Configuration ---
 	port := os.Getenv("PORT")
+	targetURLStr := os.Getenv("OLLAMA_HOST")
 	if port == "" {
 		port = defaultPort
 	}
+	if targetURLStr == "" {
+		targetURLStr = defaultTargetURL
+	}
 
-	targetURLStr := fmt.Sprintf("%s://%s:%s", targetScheme, targetHost, defaultTargetPort)
 	targetURL, err := url.Parse(targetURLStr)
 	if err != nil {
 		log.Printf("Error parsing target URL %s: %v", targetURLStr, err)

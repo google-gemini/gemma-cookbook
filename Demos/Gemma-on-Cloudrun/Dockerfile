@@ -30,8 +30,8 @@ RUN apt-get update && apt-get install -y curl
 # Copy the proxy server binary to the ollama image.
 COPY --from=proxy_builder /app/server /app/server
 
-# Listen on all interfaces, port 3000
-ENV OLLAMA_HOST 0.0.0.0:3000
+# Listen to localhost, port 3000
+ENV OLLAMA_HOST http://localhost:3000
 
 # Reduce logging verbosity
 ENV OLLAMA_DEBUG false

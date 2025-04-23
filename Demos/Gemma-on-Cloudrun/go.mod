@@ -1,4 +1,4 @@
-module main
+module cloudrungemma
 
 go 1.24
 

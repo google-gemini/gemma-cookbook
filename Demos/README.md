@@ -19,3 +19,10 @@ This folder houses the companion notebooks for the "Build with AI" video series,
 | Folder                                                      | Description |
 | ----------------------------------------------------------- | ----------- |
 | [PaliGemma 2 on Web](PaliGemma2-on-Web/)         | Inference PaliGemma 2 on the web using its ONNX weights and Transformers.js for tasks like object detection, image captioning, OCR, and visual Q&A. |
+
+
+## Cloud Run Demo
+| Folder                                                      | Description |
+| ----------------------------------------------------------- | ----------- |
+| [Gemma on Cloud run](Gemma-on-Cloudrun/)         | This folder contains a Dockerfile for building and deploying a Gemma-powered application on Cloud Run, featuring Gemini APIs. |
+

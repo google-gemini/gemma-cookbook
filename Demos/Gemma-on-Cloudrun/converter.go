@@ -31,6 +31,7 @@ var openAiToGeminiModelMapping = map[string]string{
 
 type ChatCompletionRequest struct {
 	Stream           bool
+	StreamOptions    openai.ChatCompletionStreamOptionsParam
 	Model            string
 	Messages         []openai.ChatCompletionMessageParamUnion
 	MaxTokens        param.Opt[int64]
@@ -82,7 +83,7 @@ func ConvertNonStreamResponseBody(originalBodyBytes []byte, action string) ([]by
 	}
 }
 
-func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter) {
+func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, done chan struct{}) {
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
@@ -90,6 +91,7 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter) {
 			}
 			originalBody.Close()
 			pw.Close()
+			close(done)
 		}()
 		reader := bufio.NewReader(originalBody)
 
@@ -238,6 +240,9 @@ func convertGenerateContentRequestToChatCompletionRequest(originalBodyBytes []by
 	}
 	if isStreamRequest {
 		chatCompletionRequest.Stream = true
+		chatCompletionRequest.StreamOptions = openai.ChatCompletionStreamOptionsParam{
+			IncludeUsage: param.NewOpt(true),
+		}
 	}
 	bodyBytes, err := json.Marshal(chatCompletionRequest)
 	if err != nil {
