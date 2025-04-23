@@ -89,35 +89,10 @@ func TestProxy_GenerateContent(t *testing.T) {
 	os.Setenv("PORT", "8085")                      // Use a test port
 	os.Setenv("OLLAMA_HOST", mockTargetServer.URL) // Ensure proxy targets the mock
 
-	// Capture the output of main to prevent log pollution during testing
-	// oldStdout := os.Stdout
-	// _, w, _ := os.Pipe()
-	// os.Stdout = w
-
 	// Start the proxy server in a goroutine
 	go main()
 
-	// Restore stdout
-	// w.Close()
-	// os.Stdout = oldStdout
-
-	// Give the proxy a moment to start (crude but sufficient for this test)
-	// In a real application, you might use a more robust synchronization mechanism.
-	// waitForServer := func(url string) bool {
-	// 	for i := 0; i < 10; i++ {
-	// 		_, err := http.Get(url)
-	// 		if err == nil {
-	// 			return true
-	// 		}
-	// 		// log.Printf("Waiting for server: %v", err)
-	// 		// time.Sleep(100 * time.Millisecond)
-	// 	}
-	// 	return false
-	// }
 	proxyURL := fmt.Sprintf("http://localhost:%s", os.Getenv("PORT"))
-	// if !waitForServer(proxyURL) {
-	// 	t.Fatalf("Proxy server did not start in time")
-	// }
 
 	// 3. Make a request to the proxy server
 	reqBody := `{
@@ -193,7 +168,4 @@ func TestProxy_GenerateContent(t *testing.T) {
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("ConvertResponseBody returned incorrect response body. Got: %v, Want: %v", actual, expected)
 	}
-	// if strings.TrimSpace(string(respBodyBytes)) != expectedResponseBody {
-	// 	t.Errorf("Expected response body %q, got %q", expectedResponseBody, strings.TrimSpace(string(respBodyBytes)))
-	// }
 }
