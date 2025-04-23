@@ -18,6 +18,8 @@ For more information on TxGemma, please visit the [HAI-DEF developer site](https
 }
 ```
 
+Find the paper [here](https://arxiv.org/abs/2504.06196).
+
 ## Inference and serving
 
 | Notebook Name | Description |
