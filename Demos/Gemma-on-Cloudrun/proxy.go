@@ -173,6 +173,15 @@ func main() {
 
 		} else {
 			log.Printf("URL path does not match the expected format. No conversion applied.")
+
+			proxy.Director = func(req *http.Request) {
+				req.URL.Scheme = targetURL.Scheme
+				req.URL.Host = targetURL.Host
+				req.Host = targetURL.Host
+
+				log.Printf(">>> Director: Proxying request to: %s %s", req.Method, req.URL.String())
+				log.Printf(">>> Director: Outgoing Host header: %s", req.Host)
+			}
 		}
 
 		// --- Error Handling for the Proxy ---
