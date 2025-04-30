@@ -72,8 +72,21 @@ func modifyStreamResponse(resp *http.Response) error {
 	return nil
 }
 
+func getGeminiApiKey() (string, error) {
+	geminiApiKey := os.Getenv("GEMINI_API_KEY")
+	if geminiApiKey == "" {
+		return "", fmt.Errorf("environment variable 'GEMINI_API_KEY' is required")
+	}
+	return geminiApiKey, nil
+}
+
 func main() {
 	// --- Configuration ---
+	geminiApiKey, err := getGeminiApiKey()
+	if err != nil {
+		log.Printf("Error reading GEMINI_API_KEY env var: %v", err)
+	}
+
 	port := os.Getenv("PORT")
 	targetURLStr := os.Getenv("OLLAMA_HOST")
 	if port == "" {
@@ -111,15 +124,25 @@ func main() {
 
 			if !(convertedAPIVersionOk && convertedActionOk) {
 				log.Printf("Error occurred during conversion: convertedAPIVersionOk: %v, convertedActionOk: %v. URL path will not be converted. ", convertedAPIVersionOk, convertedActionOk)
-				http.Error(w, "Failed to read request path.", http.StatusInternalServerError)
+				http.Error(w, "Failed to read request path.", http.StatusNotFound)
 				return
 			}
 
+			queryParams := r.URL.Query()
+			apiKey := r.Header.Get("x-goog-api-key")
+			if apiKey == "" {
+				apiKey = queryParams.Get("key")
+			}
+			if apiKey != geminiApiKey {
+				log.Printf("Invalid API key provided in the request.")
+				http.Error(w, "Permission denied. Invalid API Key.", http.StatusForbidden)
+				return
+			}
 			// 1. Read original request body
 			originalBodyBytes, err := io.ReadAll(r.Body)
 			if err != nil {
 				log.Printf("Error reading request body: %v", err)
-				http.Error(w, "Failed to read request body", http.StatusInternalServerError)
+				http.Error(w, "Failed to read request body", http.StatusBadRequest)
 				return
 			}
 			// It's important to close the original body
@@ -174,6 +197,13 @@ func main() {
 		} else {
 			log.Printf("URL path does not match the expected format. No conversion applied.")
 
+			apiKey := r.Header.Get("Authorization")
+			if apiKey != "Bearer " + geminiApiKey {
+				log.Printf("Invalid API key provided in the request.")
+				http.Error(w, "Permission denied. Invalid API Key.", http.StatusForbidden)
+				return
+			}
+
 			proxy.Director = func(req *http.Request) {
 				req.URL.Scheme = targetURL.Scheme
 				req.URL.Host = targetURL.Host
@@ -182,6 +212,8 @@ func main() {
 				log.Printf(">>> Director: Proxying request to: %s %s", req.Method, req.URL.String())
 				log.Printf(">>> Director: Outgoing Host header: %s", req.Host)
 			}
+
+		
 		}
 
 		// --- Error Handling for the Proxy ---
