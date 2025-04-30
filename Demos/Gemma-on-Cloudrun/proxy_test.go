@@ -164,7 +164,7 @@ func TestProxy_GenerateContent(t *testing.T) {
 	var expected map[string]interface{}
 
 	if err := json.Unmarshal(respBodyBytes, &actual); err != nil {
-		t.Fatalf("failed to unmarshal actual response body: %v", string(respBodyBytes))
+		t.Fatalf("failed to unmarshal actual response body: %v", err)
 	}
 	if err := json.Unmarshal([]byte(expectedResponseBody), &expected); err != nil {
 		t.Fatalf("failed to unmarshal expected response body: %v", err)
