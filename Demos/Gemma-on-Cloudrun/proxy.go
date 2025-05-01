@@ -84,7 +84,7 @@ func main() {
 	// --- Configuration ---
 	geminiApiKey, err := getGeminiApiKey()
 	if err != nil {
-		log.Printf("Error reading GEMINI_API_KEY env var: %v", err)
+		log.Fatalf("Error reading GEMINI_API_KEY env var: %v", err)
 	}
 
 	port := os.Getenv("PORT")
