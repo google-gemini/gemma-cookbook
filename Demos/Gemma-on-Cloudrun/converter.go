@@ -214,6 +214,14 @@ func getOptFloat64(number float64) param.Opt[float64] {
 	return param.NewOpt(number)
 }
 
+func getConvertedModel(model string, modelMap map[string]string) string {
+	convertedModel, ok := modelMap[model]
+	if ok {
+		return convertedModel
+	}
+	return model
+}
+
 func convertGenerateContentRequestToChatCompletionRequest(originalBodyBytes []byte, model string, isStreamRequest bool) ([]byte, error) {
 	request := &genai.GenerateContentRequest{}
 	err := protojson.Unmarshal(originalBodyBytes, request)
@@ -222,7 +230,7 @@ func convertGenerateContentRequestToChatCompletionRequest(originalBodyBytes []by
 	}
 	generationConfig := request.GetGenerationConfig()
 	chatCompletionRequest := &ChatCompletionRequest{
-		Model:            geminiToOpenAiModelMapping[model],
+		Model:            getConvertedModel(model, geminiToOpenAiModelMapping),
 		Messages:         convertContentsToMessages(request.GetContents()),
 		MaxTokens:        getOptInt64(int64(generationConfig.GetMaxOutputTokens())),
 		Temperature:      getOptFloat64(float64(generationConfig.GetTemperature())),
@@ -326,7 +334,7 @@ func convertCompletionUsageToUsageMetadata(usage openai.CompletionUsage) *genai.
 
 func convertChatCompletionResponseToGenerateContentResponse(response *openai.ChatCompletion) *genai.GenerateContentResponse {
 	generateContentResponse := &genai.GenerateContentResponse{
-		ModelVersion:  openAiToGeminiModelMapping[response.Model],
+		ModelVersion:  getConvertedModel(response.Model, openAiToGeminiModelMapping),
 		Candidates:    convertChoicesToCandidates(response.Choices),
 		UsageMetadata: convertCompletionUsageToUsageMetadata(response.Usage),
 	}
@@ -335,7 +343,7 @@ func convertChatCompletionResponseToGenerateContentResponse(response *openai.Cha
 
 func convertChatCompletionChunkToGenerateContentResponse(chunk openai.ChatCompletionChunk) *genai.GenerateContentResponse {
 	generateContentResponse := &genai.GenerateContentResponse{
-		ModelVersion:  openAiToGeminiModelMapping[chunk.Model],
+		ModelVersion:  getConvertedModel(chunk.Model, openAiToGeminiModelMapping),
 		Candidates:    convertChunkChoicesToCandidates(chunk.Choices),
 		UsageMetadata: convertCompletionUsageToUsageMetadata(chunk.Usage),
 	}
