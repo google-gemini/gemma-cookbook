@@ -51,3 +51,5 @@ options:
   # Automatically make substitutions available as environment variables to scripts.
   # https://cloud.google.com/build/docs/configuring-builds/substitute-variable-values#mapping_substitutions_to_environment_variables
   automapSubstitutions: true
+  machineType: 'E2_HIGHCPU_32'
+  diskSizeGb: '500'
