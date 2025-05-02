@@ -36,8 +36,13 @@ ENV OLLAMA_DEBUG false
 ENV OLLAMA_KEEP_ALIVE -1
 
 ENV OLLAMA_ORIGINS *
+
+# Define the build argument for the model
+ARG MODEL
+
 # Store the model weights in the container image
-ENV MODEL=gemma3:1b
+ENV MODEL=${MODEL}
+
 
 # Store model weight files in /models
 ENV OLLAMA_MODELS /models

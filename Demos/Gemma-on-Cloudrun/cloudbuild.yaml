@@ -1,0 +1,49 @@
+steps:
+  - id: 'Build gemma3 1b Image'
+    name: 'gcr.io/cloud-builders/docker:latest'
+    env:
+      - 'MODEL=gemma3:1b'
+    script: |
+      set -x
+      docker build --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-1b:latest"
+  - id: 'Build gemma3 4b Image'
+    name: 'gcr.io/cloud-builders/docker:latest'
+    env:
+      - 'MODEL=gemma3:4b'
+    script: |
+      set -x
+      docker build --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-4b:latest"
+  - id: 'Build gemma3 12b Image'
+    name: 'gcr.io/cloud-builders/docker:latest'
+    env:
+      - 'MODEL=gemma3:12b'
+    script: |
+      set -x
+      docker build --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-12b:latest"
+  - id: 'Build gemma3 27b Image'
+    name: 'gcr.io/cloud-builders/docker:latest'
+    env:
+      - 'MODEL=gemma3:27b'
+    script: |
+      set -x
+      docker build --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-27b:latest"
+
+
+
+images:
+  # Push image with Cloud Build context.
+  - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-1b:latest
+  - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-4b:latest
+  - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-12b:latest
+  - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-27b:latest
+
+
+substitutions:
+  _LOCATION: us
+  _REPO: container
+  
+
+options:
+  # Automatically make substitutions available as environment variables to scripts.
+  # https://cloud.google.com/build/docs/configuring-builds/substitute-variable-values#mapping_substitutions_to_environment_variables
+  automapSubstitutions: true
