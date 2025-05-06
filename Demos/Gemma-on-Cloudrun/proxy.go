@@ -72,19 +72,19 @@ func modifyStreamResponse(resp *http.Response) error {
 	return nil
 }
 
-func getGeminiApiKey() (string, error) {
-	geminiApiKey := os.Getenv("GEMINI_API_KEY")
-	if geminiApiKey == "" {
-		return "", fmt.Errorf("environment variable 'GEMINI_API_KEY' is required")
+func getApiKey() (string, error) {
+	apiKey := os.Getenv("API_KEY")
+	if apiKey == "" {
+		return "", fmt.Errorf("environment variable 'API_KEY' is required")
 	}
-	return geminiApiKey, nil
+	return apiKey, nil
 }
 
 func main() {
 	// --- Configuration ---
-	geminiApiKey, err := getGeminiApiKey()
+	envApiKey, err := getApiKey()
 	if err != nil {
-		log.Fatalf("Error reading GEMINI_API_KEY env var: %v", err)
+		log.Fatalf("Error reading API_KEY env var: %v", err)
 	}
 
 	port := os.Getenv("PORT")
@@ -133,7 +133,7 @@ func main() {
 			if apiKey == "" {
 				apiKey = queryParams.Get("key")
 			}
-			if apiKey != geminiApiKey {
+			if apiKey != envApiKey {
 				log.Printf("Invalid API key provided in the request.")
 				http.Error(w, "Permission denied. Invalid API Key.", http.StatusForbidden)
 				return
@@ -198,7 +198,7 @@ func main() {
 			log.Printf("URL path does not match the expected format. No conversion applied.")
 
 			apiKey := r.Header.Get("Authorization")
-			if apiKey != "Bearer " + geminiApiKey {
+			if apiKey != "Bearer " + envApiKey {
 				log.Printf("Invalid API key provided in the request.")
 				http.Error(w, "Permission denied. Invalid API Key.", http.StatusForbidden)
 				return
@@ -213,7 +213,6 @@ func main() {
 				log.Printf(">>> Director: Outgoing Host header: %s", req.Host)
 			}
 
-		
 		}
 
 		// --- Error Handling for the Proxy ---
