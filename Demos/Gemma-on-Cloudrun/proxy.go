@@ -129,11 +129,11 @@ func main() {
 			}
 
 			queryParams := r.URL.Query()
-			apiKey := r.Header.Get("x-goog-api-key")
-			if apiKey == "" {
-				apiKey = queryParams.Get("key")
+			requestApiKey := r.Header.Get("x-goog-api-key")
+			if requestApiKey == "" {
+				requestApiKey = queryParams.Get("key")
 			}
-			if apiKey != envApiKey {
+			if requestApiKey != envApiKey {
 				log.Printf("Invalid API key provided in the request.")
 				http.Error(w, "Permission denied. Invalid API Key.", http.StatusForbidden)
 				return
