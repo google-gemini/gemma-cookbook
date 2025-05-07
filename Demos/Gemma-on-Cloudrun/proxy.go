@@ -198,7 +198,12 @@ func main() {
 			log.Printf("URL path does not match the expected format. No conversion applied.")
 
 			apiKey := r.Header.Get("Authorization")
-			if apiKey != "Bearer " + envApiKey {
+			expectedPrefix := "Bearer "
+			if apiKey == "" {
+				apiKey = r.URL.Query().Get("key")
+				expectedPrefix = ""
+			}
+			if apiKey != expectedPrefix + envApiKey {
 				log.Printf("Invalid API key provided in the request.")
 				http.Error(w, "Permission denied. Invalid API Key.", http.StatusForbidden)
 				return
