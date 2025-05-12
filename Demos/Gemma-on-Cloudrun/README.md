@@ -1,15 +1,15 @@
-# Deploying Gemma Models on Google Cloud Run with Ollama
+# Deploying Gemma Models to Google Cloud Run
 
-This guide shows you how to deploy Google Gemma LLM on Cloud Run, leveraging Ollama for serving. Access pre-built or your own fine-tuned models with GPU acceleration, using same GenAI and OpenAI API endpoints.
+This guide shows you how to deploy Google Gemma LLM to Google Cloud Run.  These pre-built containers leverage Ollama for serving, with additional added support for the Google GenAI SDK . Use off the shelf, or fine-tune for your own use-cases.  These containers have both Google GenAI SDK and OpenAI SDK compatible.
 
-## Supported Models and API Endpoints
+## Supported Models and Pre-Built Docker Images
 Our service supports the following Gemma models:
 * gemma-3-1b-it
 * gemma-3-4b-it
 * gemma-3-12b-it
 * gemma-3-27b-it
 
-You can provide your own customized models following [section below](#deploying-and-using-fine-tuned-gemma3-models)
+You can provide your own fine-tuned models following [section below](#deploying-and-using-fine-tuned-gemma3-models)
 
 These models are exposed through two Gemma3 API endpoints:
 * [`/v1beta/{model=models/*}:generateContent`](https://ai.google.dev/api/generate-content#method:-models.generatecontent) - Generates a model response given an input GenerateContentRequest.
@@ -54,7 +54,7 @@ Explanation of Variables:
 After successful deployment, the gcloud command will output the Cloud Run service URL. Save this URL as `<cloud_run_url>` for interacting with your service.
 
 ## Authentication
-We recommend deploying the Cloud Run service with public (unauthenticated) access using `--allow-unauthenticated`, and then enforcing authentication using the `API_KEY` environment variable you set during deployment.
+To get started quickly, you can deploy the Cloud Run service with public (unauthenticated) access using `--allow-unauthenticated`.  The service will validate the `API_KEY` environment variable you set during deployment.  Longer term, we recommend enabling IAM authentication and using the google-auth SDK.
 
 #### Setting the API Key
 * Environment Variable: As shown in the deployment command: `--set-env-vars=API_KEY={YOUR_API_KEY}`.
