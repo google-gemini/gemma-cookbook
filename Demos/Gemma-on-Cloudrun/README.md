@@ -1,6 +1,6 @@
 # Deploying Gemma Models to Google Cloud Run
 
-This guide shows you how to deploy Google Gemma LLM to Google Cloud Run.  These pre-built containers leverage Ollama for serving, with additional added support for the Google GenAI SDK . Use off the shelf, or fine-tune for your own use-cases.  These containers have both Google GenAI SDK and OpenAI SDK compatible.
+This guide shows you how to deploy Google Gemma LLM to Google Cloud Run. These pre-built containers leverage Ollama for serving, with additional added support for the Google GenAI SDK . Use off the shelf, or fine-tune for your own use-cases.  These containers have both Google GenAI SDK and OpenAI SDK compatible.
 
 ## Supported Models and Pre-Built Docker Images
 Our service supports the following Gemma models:
@@ -10,11 +10,6 @@ Our service supports the following Gemma models:
 * gemma-3-27b-it
 
 You can provide your own fine-tuned models following [section below](#deploying-and-using-fine-tuned-gemma3-models)
-
-These models are exposed through two Gemma3 API endpoints:
-* [`/v1beta/{model=models/*}:generateContent`](https://ai.google.dev/api/generate-content#method:-models.generatecontent) - Generates a model response given an input GenerateContentRequest.
-* [`/v1beta/{model=models/*}:streamGenerateContent`](https://ai.google.dev/api/generate-content#method:-models.streamgeneratecontent) - Generates a streamed response from the model given an input GenerateContentRequest.
-* Additionally, an OpenAI-compatible endpoint is available at `/v1/chat/completions`.
 
 ### Pre-built Docker Images
 We provide pre-built Docker images for convenience. These images have the respective Gemma models bundled:
@@ -66,6 +61,13 @@ You will need to include this `YOUR_API_KEY` in every request to your Cloud Run 
 
 ## Interacting with the Cloud Run Service
 Once your Cloud Run service is deployed, you can interact with it using curl, Google's GenAI SDK, or OpenAI's SDK.
+
+GenAI API endpoints:
+* [`/v1beta/{model=models/*}:generateContent`](https://ai.google.dev/api/generate-content#method:-models.generatecontent) - Generates a model response given an input GenerateContentRequest.
+* [`/v1beta/{model=models/*}:streamGenerateContent`](https://ai.google.dev/api/generate-content#method:-models.streamgeneratecontent) - Generates a streamed response from the model given an input GenerateContentRequest.
+
+OpenAI API endpoint:
+* Additionally, an OpenAI-compatible endpoint is available at `/v1/chat/completions`.
 
 Placeholders:
 * `<cloud_run_url>`: The URL of your deployed Cloud Run service.
