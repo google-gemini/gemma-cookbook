@@ -66,6 +66,8 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_2]Using_with_Elasticsearch_and_LangChain.ipynb]([Gemma_2]Using_with_Elasticsearch_and_LangChain.ipynb)       | Example to demonstrate using Gemma with [Elasticsearch](https://www.elastic.co/elasticsearch/), [Ollama](https://www.ollama.com/) and [LangChain](https://www.langchain.com/).          |
 | [[Gemma_2]Using_with_Firebase_Genkit_and_Ollama.ipynb]([Gemma_2]Using_with_Firebase_Genkit_and_Ollama.ipynb)                     | Example to demonstrate using Gemma with [Firebase Genkit](https://firebase.google.com/docs/genkit/) and [Ollama](https://www.ollama.com/)                                               |
 | [[Gemma_2]Using_with_LangChain.ipynb]([Gemma_2]Using_with_LangChain.ipynb)                                           | Examples to demonstrate using Gemma with [LangChain](https://www.langchain.com/).                                                                                                       |
+| [[Gemma_3]Local_Agentic_RAG.ipynb]([Gemma_3]Local_Agentic_RAG.ipynb)                                           | Build local Agentic RAG without any external APIs using [FastEmbed](https://github.com/qdrant/fastembed), [Ollama- Gemma3](https://ollama.com/models), and [Qdrant Vector database](https://cloud.qdrant.io)                                                                                                      |
+
 
 ## Finetuning
 | Notebook Name | Description |
@@ -101,3 +103,4 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_3]Meme_Generator.ipynb]([Gemma_3]Meme_Generator.ipynb)                                    | Meme Generator using Gemma 3 4B IT model                                                                                             |
 | [[Gemma_3]Function_Calling_with_HF.ipynb]([Gemma_3]Function_Calling_with_HF.ipynb)                | Demonstrate how to use function calling with Gemma 3 using [Hugging Face](https://huggingface.co/).                                  |
 | [[Gemma_3]Function_Calling_with_HF_document_summarizer.ipynb]([Gemma_3]Function_Calling_with_HF_document_summarizer.ipynb ) | Demonstrate how to build a document summarizer using function calling with Gemma 3 and Hugging Face.       |
+| [[Gemma_3]Local_Agentic_RAG.ipynb]([Gemma_3]Local_Agentic_RAG.ipynb)                                           | Build local Agentic RAG without any external APIs using [FastEmbed](https://github.com/qdrant/fastembed), [Ollama- Gemma3](https://ollama.com/models), and [Qdrant Vector database](https://cloud.qdrant.io)                                                                                                      |
