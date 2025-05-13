@@ -140,16 +140,16 @@ for chunk in response:
    print(chunk.text, end="")
 ```
 
-### 3. Using OpenAI SDK (Python)
+### 3. Using OpenAI API and SDK
+
+#### 3.1 Python Code Example
 
 Refer to the [official OpenAI SDK documentation](https://platform.openai.com/docs/libraries#install-an-official-sdk) for more details.
 
-#### 3.1 Install OpenAI SDK
 ```bash
 pip install openai
 ```
 
-#### 3.2 Python Code Example
 ```python
 from openai import OpenAI
 
@@ -176,7 +176,7 @@ completion = openAIclient.chat.completions.create(
 print(completion.choices[0].message.content)
 ```
 
-#### 3.3 `curl` Example (OpenAI Compatible)
+#### 3.2 `curl` Example (OpenAI Compatible)
 ```bash
 curl <cloud_run_url>/v1/chat/completions \
  -H "Content-Type: application/json" \
@@ -194,6 +194,64 @@ curl <cloud_run_url>/v1/chat/completions \
      }
    ]
  }'
+```
+
+### 4. Using Ollama API and SDK
+
+#### 4.1 Python Code Example
+
+Refer to the [Ollama libraries documentation](https://github.com/ollama/ollama?tab=readme-ov-file#libraries) for more details.
+
+```bash
+pip install ollama
+```
+
+```python
+from ollama import Client
+from ollama import chat
+
+client = Client(
+  host='<cloud_run_url>',
+  headers={'Authorization': 'Bearer <YOUR_API_KEY>'}
+)
+
+# Example: non-streaming
+response = client.chat(model='<model>', messages=[
+  {
+    'role': 'user',
+    'content': 'Why is the sky blue?',
+  },
+])
+
+print(response.message.content)
+
+# Example: streaming
+stream = client.chat(
+    model='<model>',
+    messages=[{'role': 'user', 'content': 'Why is the sky blue?'}],
+    stream=True,
+)
+
+for chunk in stream:
+  print(chunk['message']['content'], end='', flush=True)
+```
+
+#### 4.2 `curl` Example (Ollama Compatible)
+
+See [Ollama API documentation](https://github.com/ollama/ollama/blob/main/docs/api.md) for more details.
+
+```bash
+curl "<cloud_run_url>/api/generate?key=<YOUR_API_KEY>" -d '{
+  "model": "<model>",
+  "prompt": "Why is the sky blue?"
+}'
+
+curl "<cloud_run_url>/api/chat?key=<YOUR_API_KEY>" -d '{
+  "model": "<model>",
+  "messages": [
+    { "role": "user", "content": "why is the sky blue?" }
+  ]
+}'
 ```
 
 ## Deploying and Using Fine-Tuned Gemma3 Models
