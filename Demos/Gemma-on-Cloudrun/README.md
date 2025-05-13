@@ -196,7 +196,7 @@ curl <cloud_run_url>/v1/chat/completions \
  }'
 ```
 
-### 4. Using Ollama API and SDK
+### 4. Using Ollama SDK
 
 #### 4.1 Python Code Example
 
