@@ -22,7 +22,7 @@ We provide pre-built Docker images for convenience. These images have the respec
 This section guides you through deploying a Cloud Run service using our provided Docker images or your own custom-built image.
 
 Use the following `gcloud run deploy` command to deploy your Cloud Run service:
-```
+```bash
 gcloud run deploy {SERVICE_NAME} \
  --image {IMAGE} \
  --concurrency 4 \
@@ -77,7 +77,7 @@ Placeholders:
 ### 1. Using curl:
 
 Generate Content
-```
+```bash
 curl "<cloud_run_url>/v1beta/models/<model>:generateContent?key={YOUR_API_KEY}" \
    -H 'Content-Type: application/json' \
    -X POST \
@@ -89,7 +89,7 @@ curl "<cloud_run_url>/v1beta/models/<model>:generateContent?key={YOUR_API_KEY}" 
 ```
 
 Stream Generate Content
-```
+```bash
 curl "<cloud_run_url>/v1beta/models/<model>:streamGenerateContent?key={YOUR_API_KEY}" \
    -H 'Content-Type: application/json' \
    -X POST \
@@ -110,7 +110,7 @@ pip install --upgrade google-genai
 ```
 
 #### 2.2 Python example:
-```
+```python
 from google import genai
 from google.genai.types import HttpOptions
 
@@ -140,12 +140,12 @@ for chunk in response:
 Refer to the [official OpenAI SDK documentation](https://platform.openai.com/docs/libraries#install-an-official-sdk) for more details.
 
 #### 3.1 Install OpenAI SDK
-```
+```bash
 pip install openai
 ```
 
 #### 3.2 Python Code Example
-```
+```python
 from openai import OpenAI
 
 # Configure the OpenAI client to point to your Cloud Run endpoint
@@ -172,7 +172,7 @@ print(completion.choices[0].message.content)
 ```
 
 #### 3.3 `curl` Example (OpenAI Compatible)
-```
+```bash
 curl <cloud_run_url>/v1/chat/completions \
  -H "Content-Type: application/json" \
  -H "Authorization: Bearer <YOUR_API_KEY>" \
@@ -200,7 +200,7 @@ Steps:
 #### 1. Customize the Model using Ollama Locally:
 
 Follow https://github.com/ollama/ollama?tab=readme-ov-file#customize-a-model to import GGUF model in the Modelfile, and create the model in Ollama
-```
+```bash
 ollama create <your-custom-model-name> -f Modelfile
 ```
 This command will process your GGUF file and create the necessary blobs and manifests for Ollama in your [local Ollama models directory](https://github.com/ollama/ollama/blob/main/docs/faq.md#where-are-models-stored).
@@ -212,14 +212,14 @@ Navigate to your [local Ollama models directory](https://github.com/ollama/ollam
 Upload the contents generated for your custom model to your GCS bucket in corresponding `blobs/` and `manifests/` subdirectories. This will ensure the correct structure for Ollama to find your model.
 
 For example,
-```
+```bash
 cd <your-local-ollama-model-dir>
 gsutil -m cp -r . gs://YOUR_MODEL_BUCKET_NAME
 ```
 
 #### 3. Deploy Cloud Run Service with GCS Volume Mount
 
-```
+```bash
 gcloud run deploy {SERVICE_NAME} \
  --image {IMAGE} \
  --concurrency 4 \
@@ -266,7 +266,7 @@ Then [build your custom image](https://cloud.google.com/run/docs/building/contai
 #### 4. Interact with Your Custom Model:
 Now you can use your custom fine-tuned models by specifying the `<your-custom-model-name>` (the name you used in `ollama create`) in your API requests, just like with the pre-built models.
 
-```
+```python
 from google import genai
 from google.genai.types import HttpOptions
 
