@@ -238,24 +238,6 @@ for chunk in stream:
   print(chunk['message']['content'], end='', flush=True)
 ```
 
-#### 4.2 `curl` Example (Ollama Compatible)
-
-See [Ollama API documentation](https://github.com/ollama/ollama/blob/main/docs/api.md) for more details.
-
-```bash
-curl "<cloud_run_url>/api/generate?key=<YOUR_API_KEY>" -d '{
-  "model": "<model>",
-  "prompt": "Why is the sky blue?"
-}'
-
-curl "<cloud_run_url>/api/chat?key=<YOUR_API_KEY>" -d '{
-  "model": "<model>",
-  "messages": [
-    { "role": "user", "content": "why is the sky blue?" }
-  ]
-}'
-```
-
 ## Deploying and Using Fine-Tuned Gemma3 Models
 
 This section details how to deploy and use your own custom fine-tuned Gemma models with the Cloud Run service. This involves creating a custom Ollama model, uploading its components to GCS, and mounting that GCS bucket to your Cloud Run service.
