@@ -135,7 +135,7 @@ func main() {
 			}
 			if requestApiKey != envApiKey {
 				log.Printf("Invalid API key provided in the request.")
-				http.Error(w, "Permission denied. Invalid API Key.", http.StatusForbidden)
+				http.Error(w, "Permission denied. Invalid API Key.  Configure your SDK to use this URL, and use the API key provided at deployment (https://github.com/google-gemini/gemma-cookbook/blob/main/Demos/Gemma-on-Cloudrun/README.md)", http.StatusForbidden)
 				return
 			}
 			// 1. Read original request body
@@ -205,7 +205,7 @@ func main() {
 			}
 			if apiKey != expectedPrefix + envApiKey {
 				log.Printf("Invalid API key provided in the request.")
-				http.Error(w, "Permission denied. Invalid API Key.", http.StatusForbidden)
+				http.Error(w, "Permission denied. Invalid API Key.  Configure your SDK to use this URL, and use the API key provided at deployment (https://github.com/google-gemini/gemma-cookbook/blob/main/Demos/Gemma-on-Cloudrun/README.md)", http.StatusForbidden)
 				return
 			}
 
