@@ -223,7 +223,7 @@ response = client.chat(model='<model>', messages=[
   },
 ])
 
-print(response.message.content)
+print(response['message']['content'])
 
 # Example: streaming
 stream = client.chat(
