@@ -216,18 +216,20 @@ client = Client(
 )
 
 # Example: non-streaming
-response = client.chat(model='<model>', messages=[
-  {
-    'role': 'user',
-    'content': 'Why is the sky blue?',
-  },
+response = client.chat(
+    model='<model>', # Example: "gemma3:4b" or your custom model name
+    messages=[
+    {
+        'role': 'user',
+        'content': 'Why is the sky blue?',
+    },
 ])
 
 print(response['message']['content'])
 
 # Example: streaming
 stream = client.chat(
-    model='<model>',
+    model='<model>', # Example: "gemma3:4b" or your custom model name
     messages=[{'role': 'user', 'content': 'Why is the sky blue?'}],
     stream=True,
 )
