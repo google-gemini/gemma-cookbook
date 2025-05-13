@@ -18,8 +18,8 @@ We provide pre-built Docker images for convenience. These images have the respec
 * `us-docker.pkg.dev/cloudrun/container/gemma/gemma3-12b`
 * `us-docker.pkg.dev/cloudrun/container/gemma/gemma3-27b`
 
-## Deploying to Cloud Run
-This section guides you through deploying a Cloud Run service using our provided Docker images or your own custom-built image.
+## Quickstart - Deploying to Cloud Run
+This section guides you through deploying a Cloud Run service using our provided Docker images.  If you've deployed Gemma to Cloud Run from AI Studio, it mirrors this process.    
 
 Use the following `gcloud run deploy` command to deploy your Cloud Run service:
 ```
@@ -41,16 +41,17 @@ gcloud run deploy {SERVICE_NAME} \
 
 Explanation of Variables:
 * `SERVICE_NAME`: The unique name for your Cloud Run service.
-* `IMAGE`: The Docker image to deploy. This can be one of our [pre-built images](#pre-built-docker-images) or an image you built yourself.
-* `YOUR_API_KEY`: **Crucial for authentication**. Set this to a strong, unique API key string of your choice. This key will be required to access your service. See the [Authentication](#authentication) section below for more details.
-* `REGION`: The Google Cloud region where your Cloud Run service will be deployed (e.g., us-central1). Ensure this region supports the specified GPU type. See [GPU support for Cloud Run services](https://cloud.google.com/run/docs/configuring/services/gpu) for more details.
+* `IMAGE`: The Docker image to deploy. This can be one of our [pre-built images](#pre-built-docker-images) or an image you built yourself from this repository
+* `YOUR_API_KEY`: **Crucial for authentication**. Set this to a strong, unique API key string of your choice. This key will be required to access your service. See the [Authentication](#authentication) section below for more details. If you're deploying from AI Studio, this is generated on your behalf. Note that this should *not* be an API key re-used from another service.   
+* `REGION`: The Google Cloud region where your Cloud Run service will be deployed (e.g., us-central1). Ensure this region supports the specified GPU type. See [GPU support for Cloud Run services](https://cloud.google.com/run/docs/configuring/services/gpu) for more details.  If you're deploying from AI Studio, this defaults to europe-west4.
 * For other flags and optimizing setting, see [Run LLM inference on Cloud Run GPUs with Gemma 3 and Ollama](https://cloud.google.com/run/docs/tutorials/gpu-gemma-with-ollama#build-and-deploy) for more details.
 
 After successful deployment, the gcloud command will output the Cloud Run service URL. Save this URL as `<cloud_run_url>` for interacting with your service.
 
 ## Authentication
-To get started quickly, you can deploy the Cloud Run service with public (unauthenticated) access using `--allow-unauthenticated`.  The service will validate the `API_KEY` environment variable you set during deployment.  Longer term, we recommend enabling IAM authentication and using the google-auth SDK.
+To get started quickly, you can deploy the Cloud Run service with public (unauthenticated) access using `--allow-unauthenticated`.  The service will validate the `API_KEY` environment variable you set during deployment against incoming requests. Longer term, we recommend enabling IAM authentication in Cloud Run and updating your app using the google-auth SDK.
 
+### Using the API Key
 #### Setting the API Key
 * Environment Variable: As shown in the deployment command: `--set-env-vars=API_KEY={YOUR_API_KEY}`.
 * **Secret Manager (recommended for production)**:
@@ -58,6 +59,10 @@ For enhanced security, store your API key in Google Cloud Secret Manager and exp
 
 #### Using the API Key in Requests
 You will need to include this `YOUR_API_KEY` in every request to your Cloud Run service, as shown in the [Interacting with the Service](#interacting-with-the-cloud-run-service) section.
+
+### Using IAM Authentication (recommended)
+For production, you should configure your Cloud Run service to use IAM Authentication.  You can enable this by re-deploying your Cloud Run service with the `--no-allow-unauthenticated` flag.  Note that this will require changes to your application code, to ensure incoming requests pass the appropriate identity token.  
+To learn more about IAM authentication and Cloud Run, refer to [Authenticating service-to-service](https://cloud.google.com/run/docs/authenticating/service-to-service#use_the_authentication_libraries).
 
 ## Interacting with the Cloud Run Service
 Once your Cloud Run service is deployed, you can interact with it using curl, Google's GenAI SDK, or OpenAI's SDK.
