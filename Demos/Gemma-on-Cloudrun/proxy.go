@@ -110,6 +110,11 @@ func main() {
 		re := regexp.MustCompile(geminiAPIPathRegexPattern)
 		matches := re.FindStringSubmatch(r.URL.Path)
 
+		var (
+			isCurrentRequestGeminiStyle bool = false
+			actionForResponse           string // Stores action for response modification
+		)
+
 		if len(matches) == 4 {
 			apiVersion := matches[1]
 			modelVersion := matches[2]
@@ -118,6 +123,9 @@ func main() {
 			log.Printf("API Version: %s\n", apiVersion)
 			log.Printf("Model Version: %s\n", modelVersion)
 			log.Printf("Real Path: %s\n", action)
+
+			isCurrentRequestGeminiStyle = true
+			actionForResponse = action
 
 			convertedAPIVersion, convertedAPIVersionOk := geminiToOpenAiAPIVersionhMapping[apiVersion]
 			convertedAction, convertedActionOk := geminiToOpenAiActionMapping[action]
@@ -173,29 +181,9 @@ func main() {
 				log.Printf(">>> Director: Outgoing Content-Type: %s", req.Header.Get("Content-Type"))
 			}
 
-			// --- Modify Response ---
-			proxy.ModifyResponse = func(resp *http.Response) error {
-
-				// Handle non-200 responses - pass them through without modification
-				if resp.StatusCode != http.StatusOK {
-					log.Printf("<<< ModifyResponse: Target returned non-200 status (%d). Forwarding original body.", resp.StatusCode)
-					return nil
-				}
-
-				switch action {
-				case "generateContent", "generateAnswer":
-					modifyNonStreamResponse(resp, action)
-				case "streamGenerateContent":
-					modifyStreamResponse(resp)
-				default:
-					return fmt.Errorf("unexpected action %s", action)
-				}
-
-				return nil
-			}
-
 		} else {
 			log.Printf("URL path does not match the expected format. No conversion applied.")
+			isCurrentRequestGeminiStyle = false
 
 			apiKey := r.Header.Get("Authorization")
 			expectedPrefix := "Bearer "
@@ -217,7 +205,31 @@ func main() {
 				log.Printf(">>> Director: Proxying request to: %s %s", req.Method, req.URL.String())
 				log.Printf(">>> Director: Outgoing Host header: %s", req.Host)
 			}
+		}
 
+		// --- Modify Response ---
+		proxy.ModifyResponse = func(resp *http.Response) error {
+			// Handle non-GenAI style requests - pass them through without modification
+			if !isCurrentRequestGeminiStyle {
+				return nil
+			}
+
+			// Handle non-200 responses - pass them through without modification
+			if resp.StatusCode != http.StatusOK {
+				log.Printf("<<< ModifyResponse: Target returned non-200 status (%d). Forwarding original body.", resp.StatusCode)
+				return nil
+			}
+
+			switch actionForResponse {
+			case "generateContent", "generateAnswer":
+				modifyNonStreamResponse(resp, actionForResponse)
+			case "streamGenerateContent":
+				modifyStreamResponse(resp)
+			default:
+				return fmt.Errorf("unexpected action %s", actionForResponse)
+			}
+
+			return nil
 		}
 
 		// --- Error Handling for the Proxy ---
