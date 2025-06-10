@@ -48,7 +48,7 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_3]Using_with_Ollama_Python_Inference_with_Images.ipynb]([Gemma_3]Using_with_Ollama_Python_Inference_with_Images.ipynb)                                                                 | Run inference with images on Gemma 3 using [Ollama Python library](https://github.com/ollama/ollama-python).  |
 | [[Gemma_3]Using_with_Transformersjs.ipynb]([Gemma_3]Using_with_Transformersjs.ipynb)                                                         | Run Gemma 3 with [Transformers.js](https://github.com/huggingface/transformers.js).                                                                                                                                      |
 | [[Gemma_3]Activation_Hacking.ipynb]([Gemma_3]Activation_Hacking.ipynb)                                                         | Examine and modify internal states, including the residual stream, MLP activations, and attention mechanisms. |
-
+| [[Gemma_3]Gradio_LlamaCpp_Chatbot.ipynb]([Gemma_3]Gradio_LlamaCpp_Chatbot.ipynb)                                                         | Building a Chatbot with Gemma 3 QAT text model using Llama.cpp and Gradio. |
 ## Prompting
 | Notebook Name | Description |
 | :------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
