@@ -49,6 +49,10 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_3]Using_with_Transformersjs.ipynb]([Gemma_3]Using_with_Transformersjs.ipynb)                                                         | Run Gemma 3 with [Transformers.js](https://github.com/huggingface/transformers.js).                                                                                                                                      |
 | [[Gemma_3]Activation_Hacking.ipynb]([Gemma_3]Activation_Hacking.ipynb)                                                         | Examine and modify internal states, including the residual stream, MLP activations, and attention mechanisms. |
 | [[Gemma_3]Gradio_LlamaCpp_Chatbot.ipynb]([Gemma_3]Gradio_LlamaCpp_Chatbot.ipynb)                                                         | Building a Chatbot with Gemma 3 QAT text model using Llama.cpp and Gradio. |
+| [Gemma_3n]Audio_understanding_with_HF.ipynb]([Gemma_3n]Audio_understanding_with_HF.ipynb)                           | Run Gemma 3n with audio input |
+| [Gemma_3n]Multimodal_understanding_with_HF.ipynb]([Gemma_3n]Multimodal_understanding_with_HF.ipynb)                 | Run Gemma 3n with image + audio input |
+| [Gemma_3n]MatFormer_Lab.ipynb]([Gemma_3n]MatFormer_Lab.ipynb)                                                       | Run Gemma 3n with MatFormers and Mix-n-Match |
+
 ## Prompting
 | Notebook Name | Description |
 | :------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
