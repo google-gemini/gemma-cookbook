@@ -8,6 +8,8 @@ Our service supports the following Gemma models:
 * gemma-3-4b-it
 * gemma-3-12b-it
 * gemma-3-27b-it
+* gemma-3n-e2b-it
+* gemma-3n-e4b-it
 
 You can provide your own fine-tuned models following [section below](#deploying-and-using-fine-tuned-gemma3-models)
 
@@ -17,12 +19,14 @@ We provide pre-built Docker images for convenience. These images have the respec
 * `us-docker.pkg.dev/cloudrun/container/gemma/gemma3-4b`
 * `us-docker.pkg.dev/cloudrun/container/gemma/gemma3-12b`
 * `us-docker.pkg.dev/cloudrun/container/gemma/gemma3-27b`
+* `us-docker.pkg.dev/cloudrun/container/gemma/gemma3n-e2b`
+* `us-docker.pkg.dev/cloudrun/container/gemma/gemma3n-e4b`
 
-## Deploying to Cloud Run
-This section guides you through deploying a Cloud Run service using our provided Docker images or your own custom-built image.
+## Quickstart - Deploying to Cloud Run
+This section guides you through deploying a Cloud Run service using our provided Docker images.  If you've deployed Gemma to Cloud Run from AI Studio, it mirrors this process.    
 
 Use the following `gcloud run deploy` command to deploy your Cloud Run service:
-```
+```bash
 gcloud run deploy {SERVICE_NAME} \
  --image {IMAGE} \
  --concurrency 4 \
@@ -41,16 +45,17 @@ gcloud run deploy {SERVICE_NAME} \
 
 Explanation of Variables:
 * `SERVICE_NAME`: The unique name for your Cloud Run service.
-* `IMAGE`: The Docker image to deploy. This can be one of our [pre-built images](#pre-built-docker-images) or an image you built yourself.
-* `YOUR_API_KEY`: **Crucial for authentication**. Set this to a strong, unique API key string of your choice. This key will be required to access your service. See the [Authentication](#authentication) section below for more details.
-* `REGION`: The Google Cloud region where your Cloud Run service will be deployed (e.g., us-central1). Ensure this region supports the specified GPU type. See [GPU support for Cloud Run services](https://cloud.google.com/run/docs/configuring/services/gpu) for more details.
+* `IMAGE`: The Docker image to deploy. This can be one of our [pre-built images](#pre-built-docker-images) or an image you built yourself from this repository
+* `YOUR_API_KEY`: **Crucial for authentication**. Set this to a strong, unique API key string of your choice. This key will be required to access your service. See the [Authentication](#authentication) section below for more details. If you're deploying from AI Studio, this is generated on your behalf. Note that this should *not* be an API key re-used from another service.   
+* `REGION`: The Google Cloud region where your Cloud Run service will be deployed (e.g., us-central1). Ensure this region supports the specified GPU type. See [GPU support for Cloud Run services](https://cloud.google.com/run/docs/configuring/services/gpu) for more details.  If you're deploying from AI Studio, this defaults to europe-west1.
 * For other flags and optimizing setting, see [Run LLM inference on Cloud Run GPUs with Gemma 3 and Ollama](https://cloud.google.com/run/docs/tutorials/gpu-gemma-with-ollama#build-and-deploy) for more details.
 
 After successful deployment, the gcloud command will output the Cloud Run service URL. Save this URL as `<cloud_run_url>` for interacting with your service.
 
 ## Authentication
-To get started quickly, you can deploy the Cloud Run service with public (unauthenticated) access using `--allow-unauthenticated`.  The service will validate the `API_KEY` environment variable you set during deployment.  Longer term, we recommend enabling IAM authentication and using the google-auth SDK.
+To get started quickly, you can deploy the Cloud Run service with public (unauthenticated) access using `--allow-unauthenticated`.  The service will validate the `API_KEY` environment variable you set during deployment against incoming requests. Longer term, we recommend enabling IAM authentication in Cloud Run and updating your app using the google-auth SDK.
 
+### Using the API Key
 #### Setting the API Key
 * Environment Variable: As shown in the deployment command: `--set-env-vars=API_KEY={YOUR_API_KEY}`.
 * **Secret Manager (recommended for production)**:
@@ -58,6 +63,10 @@ For enhanced security, store your API key in Google Cloud Secret Manager and exp
 
 #### Using the API Key in Requests
 You will need to include this `YOUR_API_KEY` in every request to your Cloud Run service, as shown in the [Interacting with the Service](#interacting-with-the-cloud-run-service) section.
+
+### Using IAM Authentication (recommended)
+For production, you should configure your Cloud Run service to use IAM Authentication.  You can enable this by re-deploying your Cloud Run service with the `--no-allow-unauthenticated` flag.  Note that this will require changes to your application code, to ensure incoming requests pass the appropriate identity token.  
+To learn more about IAM authentication and Cloud Run, refer to [Authenticating service-to-service](https://cloud.google.com/run/docs/authenticating/service-to-service#use_the_authentication_libraries).
 
 ## Interacting with the Cloud Run Service
 Once your Cloud Run service is deployed, you can interact with it using curl, Google's GenAI SDK, or OpenAI's SDK.
@@ -77,7 +86,7 @@ Placeholders:
 ### 1. Using curl:
 
 Generate Content
-```
+```bash
 curl "<cloud_run_url>/v1beta/models/<model>:generateContent?key={YOUR_API_KEY}" \
    -H 'Content-Type: application/json' \
    -X POST \
@@ -89,7 +98,7 @@ curl "<cloud_run_url>/v1beta/models/<model>:generateContent?key={YOUR_API_KEY}" 
 ```
 
 Stream Generate Content
-```
+```bash
 curl "<cloud_run_url>/v1beta/models/<model>:streamGenerateContent?key={YOUR_API_KEY}" \
    -H 'Content-Type: application/json' \
    -X POST \
@@ -110,7 +119,7 @@ pip install --upgrade google-genai
 ```
 
 #### 2.2 Python example:
-```
+```python
 from google import genai
 from google.genai.types import HttpOptions
 
@@ -135,17 +144,17 @@ for chunk in response:
    print(chunk.text, end="")
 ```
 
-### 3. Using OpenAI SDK (Python)
+### 3. Using OpenAI API and SDK
+
+#### 3.1 Python Code Example
 
 Refer to the [official OpenAI SDK documentation](https://platform.openai.com/docs/libraries#install-an-official-sdk) for more details.
 
-#### 3.1 Install OpenAI SDK
-```
+```bash
 pip install openai
 ```
 
-#### 3.2 Python Code Example
-```
+```python
 from openai import OpenAI
 
 # Configure the OpenAI client to point to your Cloud Run endpoint
@@ -171,8 +180,8 @@ completion = openAIclient.chat.completions.create(
 print(completion.choices[0].message.content)
 ```
 
-#### 3.3 `curl` Example (OpenAI Compatible)
-```
+#### 3.2 `curl` Example (OpenAI Compatible)
+```bash
 curl <cloud_run_url>/v1/chat/completions \
  -H "Content-Type: application/json" \
  -H "Authorization: Bearer <YOUR_API_KEY>" \
@@ -191,6 +200,48 @@ curl <cloud_run_url>/v1/chat/completions \
  }'
 ```
 
+### 4. Using Ollama SDK
+
+#### 4.1 Python Code Example
+
+Refer to the [Ollama libraries documentation](https://github.com/ollama/ollama?tab=readme-ov-file#libraries) for more details.
+
+```bash
+pip install ollama
+```
+
+```python
+from ollama import Client
+from ollama import chat
+
+client = Client(
+  host='<cloud_run_url>',
+  headers={'Authorization': 'Bearer <YOUR_API_KEY>'}
+)
+
+# Example: non-streaming
+response = client.chat(
+    model='<model>', # Example: "gemma3:4b" or your custom model name
+    messages=[
+    {
+        'role': 'user',
+        'content': 'Why is the sky blue?',
+    },
+])
+
+print(response['message']['content'])
+
+# Example: streaming
+stream = client.chat(
+    model='<model>', # Example: "gemma3:4b" or your custom model name
+    messages=[{'role': 'user', 'content': 'Why is the sky blue?'}],
+    stream=True,
+)
+
+for chunk in stream:
+  print(chunk['message']['content'], end='', flush=True)
+```
+
 ## Deploying and Using Fine-Tuned Gemma3 Models
 
 This section details how to deploy and use your own custom fine-tuned Gemma models with the Cloud Run service. This involves creating a custom Ollama model, uploading its components to GCS, and mounting that GCS bucket to your Cloud Run service.
@@ -200,7 +251,7 @@ Steps:
 #### 1. Customize the Model using Ollama Locally:
 
 Follow https://github.com/ollama/ollama?tab=readme-ov-file#customize-a-model to import GGUF model in the Modelfile, and create the model in Ollama
-```
+```bash
 ollama create <your-custom-model-name> -f Modelfile
 ```
 This command will process your GGUF file and create the necessary blobs and manifests for Ollama in your [local Ollama models directory](https://github.com/ollama/ollama/blob/main/docs/faq.md#where-are-models-stored).
@@ -212,14 +263,14 @@ Navigate to your [local Ollama models directory](https://github.com/ollama/ollam
 Upload the contents generated for your custom model to your GCS bucket in corresponding `blobs/` and `manifests/` subdirectories. This will ensure the correct structure for Ollama to find your model.
 
 For example,
-```
+```bash
 cd <your-local-ollama-model-dir>
 gsutil -m cp -r . gs://YOUR_MODEL_BUCKET_NAME
 ```
 
 #### 3. Deploy Cloud Run Service with GCS Volume Mount
 
-```
+```bash
 gcloud run deploy {SERVICE_NAME} \
  --image {IMAGE} \
  --concurrency 4 \
@@ -266,7 +317,7 @@ Then [build your custom image](https://cloud.google.com/run/docs/building/contai
 #### 4. Interact with Your Custom Model:
 Now you can use your custom fine-tuned models by specifying the `<your-custom-model-name>` (the name you used in `ollama create`) in your API requests, just like with the pre-built models.
 
-```
+```python
 from google import genai
 from google.genai.types import HttpOptions
 
