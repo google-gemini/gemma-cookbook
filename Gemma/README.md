@@ -60,6 +60,7 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_1]Advanced_Prompting_Techniques.ipynb]([Gemma_1]Advanced_Prompting_Techniques.ipynb)                                     | Illustrate advanced prompting techniques with Gemma.                                                                                                                                    |
 | [[Gemma_2]LangChain_chaining.ipynb]([Gemma_2]LangChain_chaining.ipynb)                                                           | Illustrate LangChain chaining  with Gemma.                                                                                                                                              |
 | [[Gemma_2]Prompt_chaining.ipynb]([Gemma_2]Prompt_chaining.ipynb)                                                                 | Illustrate prompt chaining and iterative generation with Gemma.                                                                                                                         |
+| [[Gemma_3]In-context_Learning.ipynb]([Gemma_3]In-context_Learning.ipynb)                                                         | Demonstrate in-context learning with Gemma 3 long context window |
 
 ## RAG
 | Notebook Name | Description |
