@@ -6,7 +6,7 @@ steps:
       - 'MODEL=gemma3:1b'
     script: |
       set -x
-      docker build --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-1b:latest"
+      docker build --pull --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-1b:latest"
   - id: 'Build gemma3 4b Image'
     name: 'gcr.io/cloud-builders/docker:latest'
     dir: 'Demos/Gemma-on-Cloudrun/' # in CI cloudbuild.yaml's context is the root of the repo. 
@@ -14,7 +14,7 @@ steps:
       - 'MODEL=gemma3:4b'
     script: |
       set -x
-      docker build --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-4b:latest"
+      docker build --pull --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-4b:latest"
   - id: 'Build gemma3 12b Image'
     name: 'gcr.io/cloud-builders/docker:latest'
     dir: 'Demos/Gemma-on-Cloudrun/' # in CI cloudbuild.yaml's context is the root of the repo. 
@@ -22,7 +22,7 @@ steps:
       - 'MODEL=gemma3:12b'
     script: |
       set -x
-      docker build --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-12b:latest"
+      docker build --pull --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-12b:latest"
   - id: 'Build gemma3 27b Image'
     name: 'gcr.io/cloud-builders/docker:latest'
     dir: 'Demos/Gemma-on-Cloudrun/' # in CI cloudbuild.yaml's context is the root of the repo. 
@@ -30,7 +30,23 @@ steps:
       - 'MODEL=gemma3:27b'
     script: |
       set -x
-      docker build --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-27b:latest"
+      docker build --pull --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-27b:latest"
+  - id: 'Build gemma3n e2b Image'
+    name: 'gcr.io/cloud-builders/docker:latest'
+    dir: 'Demos/Gemma-on-Cloudrun/' # in CI cloudbuild.yaml's context is the root of the repo. 
+    env:
+      - 'MODEL=gemma3n:E2b'
+    script: |
+      set -x
+      docker build --pull --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3n-e2b:latest"
+  - id: 'Build gemma3n e4b Image'
+    name: 'gcr.io/cloud-builders/docker:latest'
+    dir: 'Demos/Gemma-on-Cloudrun/' # in CI cloudbuild.yaml's context is the root of the repo. 
+    env:
+      - 'MODEL=gemma3n:E4b'
+    script: |
+      set -x
+      docker build --pull --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3n-e4b:latest"
 
 
 
@@ -40,6 +56,8 @@ images:
   - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-4b:latest
   - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-12b:latest
   - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-27b:latest
+  - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3n-e2b:latest
+  - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3n-e4b:latest
 
 
 substitutions:

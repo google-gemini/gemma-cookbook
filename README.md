@@ -12,6 +12,8 @@ Gemma is a family of lightweight, generative artificial intelligence (AI) open m
     Higher-performing and more efficient, available in 2B, 9B, 27B parameter sizes
   * [Gemma 3](https://ai.google.dev/gemma/docs/core/model_card_3)\
     Longer context window and handling text and image input, available in 1B, 4B, 12B and 27B parameter sizes
+  * [Gemma 3n](https://ai.google.dev/gemma/docs/gemma-3n/model_card) \
+    Designed for efficient execution on low-resource devices. Handling text, image, video, and audio input, available in E2B and E4B parameter sizes
 * Gemma variants
   * [CodeGemma](https://ai.google.dev/gemma/docs/codegemma)\
     Fine-tuned for a variety of coding tasks

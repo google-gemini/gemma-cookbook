@@ -8,6 +8,8 @@ Our service supports the following Gemma models:
 * gemma-3-4b-it
 * gemma-3-12b-it
 * gemma-3-27b-it
+* gemma-3n-e2b-it
+* gemma-3n-e4b-it
 
 You can provide your own fine-tuned models following [section below](#deploying-and-using-fine-tuned-gemma3-models)
 
@@ -17,6 +19,8 @@ We provide pre-built Docker images for convenience. These images have the respec
 * `us-docker.pkg.dev/cloudrun/container/gemma/gemma3-4b`
 * `us-docker.pkg.dev/cloudrun/container/gemma/gemma3-12b`
 * `us-docker.pkg.dev/cloudrun/container/gemma/gemma3-27b`
+* `us-docker.pkg.dev/cloudrun/container/gemma/gemma3n-e2b`
+* `us-docker.pkg.dev/cloudrun/container/gemma/gemma3n-e4b`
 
 ## Quickstart - Deploying to Cloud Run
 This section guides you through deploying a Cloud Run service using our provided Docker images.  If you've deployed Gemma to Cloud Run from AI Studio, it mirrors this process.    

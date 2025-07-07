@@ -20,6 +20,8 @@ var geminiToOpenAiModelMapping = map[string]string{
 	"gemma-3-4b-it":  "gemma3:4b",
 	"gemma-3-12b-it": "gemma3:12b",
 	"gemma-3-27b-it": "gemma3:27b",
+	"gemma-3n-e2b-it": "gemma3n:E2b",
+	"gemma-3n-e4b-it": "gemma3n:E4b",
 }
 
 var openAiToGeminiModelMapping = map[string]string{
@@ -27,6 +29,8 @@ var openAiToGeminiModelMapping = map[string]string{
 	"gemma3:4b":  "gemma-3-4b-it",
 	"gemma3:12b": "gemma-3-12b-it",
 	"gemma3:27b": "gemma-3-27b-it",
+	"gemma3n:E2b": "gemma-3n-e2b-it",
+	"gemma3n:E4b": "gemma-3n-e4b-it",
 }
 
 type ChatCompletionRequest struct {
