@@ -39,6 +39,7 @@ You can find the Gemma models on the Hugging Face Hub, Kaggle, Google Cloud Vert
 * [CodeGemma](CodeGemma/README.md)
 * [PaliGemma](PaliGemma/README.md)
 * [Workshops and technical talks](Workshops/README.md)
+* [Research](Research/): Notebooks for research focused models
 * [Showcase complex end-to-end use cases](Demos/README.md)
 * [Gemma on Google Cloud](https://github.com/GoogleCloudPlatform/generative-ai/tree/main/open-models) : GCP open models has additional notebooks for using Gemma
 
