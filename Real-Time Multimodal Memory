@@ -1,0 +1,87 @@
+import os
+import json
+from datetime import datetime
+from typing import List, Dict, Optional
+
+# Directory to store session memory
+MEMORY_DIR = "memory_storage"
+os.makedirs(MEMORY_DIR, exist_ok=True)
+
+# 🛡️ Privacy Controls
+class PrivacyManager:
+    def __init__(self):
+        self.privacy_flags = {}
+
+    def set_privacy(self, session_id: str, allow_storage: bool):
+        self.privacy_flags[session_id] = allow_storage
+
+    def can_store(self, session_id: str) -> bool:
+        return self.privacy_flags.get(session_id, True)
+
+# 🧠 Session Recall
+class SessionMemory:
+    def __init__(self, session_id: str):
+        self.session_id = session_id
+        self.memory_file = os.path.join(MEMORY_DIR, f"{session_id}.json")
+        self.entries = self._load_memory()
+
+    def _load_memory(self) -> List[Dict]:
+        if os.path.exists(self.memory_file):
+            with open(self.memory_file, "r") as f:
+                return json.load(f)
+        return []
+
+    def add_entry(self, modality: str, content: str, timestamp: Optional[str] = None):
+        timestamp = timestamp or datetime.utcnow().isoformat()
+        self.entries.append({
+            "modality": modality,
+            "content": content,
+            "timestamp": timestamp
+        })
+        self._save_memory()
+
+    def _save_memory(self):
+        with open(self.memory_file, "w") as f:
+            json.dump(self.entries, f, indent=2)
+
+    def recall(self) -> List[Dict]:
+        return self.entries
+
+# 🔗 Contextual Linking
+class ContextLinker:
+    def link_contexts(self, entries: List[Dict]) -> List[Dict]:
+        linked = []
+        for i in range(len(entries) - 1):
+            current = entries[i]
+            next_entry = entries[i + 1]
+            linked.append({
+                "from": current["content"],
+                "to": next_entry["content"],
+                "relation": f"{current['modality']} -> {next_entry['modality']}"
+            })
+        return linked
+
+# 🧪 Example Usage
+privacy = PrivacyManager()
+session_id = "session_001"
+privacy.set_privacy(session_id, allow_storage=True)
+
+if privacy.can_store(session_id):
+    memory = SessionMemory(session_id)
+    memory.add_entry("text", "User asked about weather in Dubai")
+    memory.add_entry("image", "Screenshot of weather forecast")
+    memory.add_entry("text", "User asked for restaurant recommendations")
+
+    recalled_entries = memory.recall()
+    linker = ContextLinker()
+    linked_contexts = linker.link_contexts(recalled_entries)
+
+    print("Recalled Entries:")
+    for entry in recalled_entries:
+        print(entry)
+
+    print("\nLinked Contexts:")
+    for link in linked_contexts:
+        print(link)
+else:
+    print("Storage not allowed for this session due to privacy settings.")
