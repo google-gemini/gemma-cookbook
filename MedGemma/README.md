@@ -5,6 +5,10 @@ The MedGemma collection contains Google's most capable open models for medical t
 
 This folder is organized into several categories, each focusing on a speicific aspect of working with MedGemma models:
 
-* [Inference](#inference) : How to load and run PaliGemma models for inference
+* [Inference](#inference) : How to load and run MedGemma models for inference
 
 ## Inference
+
+| Notebook Name | Description |
+:-------------- | ----------- |
+| [[MedGemma]Inference_using_HuggingFace.ipynb]([MedGemma]Inference_using_HuggingFace.ipynb) | A simple AI tool that checks chest X-ray images to predict if the person is likely a smoker or non-smoker, based on visible lung patterns and signs using MedGemma |
