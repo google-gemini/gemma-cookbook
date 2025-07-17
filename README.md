@@ -41,6 +41,7 @@ You can find the Gemma models on the Hugging Face Hub, Kaggle, Google Cloud Vert
 * [CodeGemma](CodeGemma/README.md)
 * [PaliGemma](PaliGemma/README.md)
 * [MedGemma](MedGemma/README.md)
+* [MedGemma on Google-Health](https://github.com/Google-Health/medgemma/tree/main/notebooks) : Google-Health has additional notebooks for using MedGemma
 * [Workshops and technical talks](Workshops/README.md)
 * [Research](Research/): Notebooks for research focused models
 * [Showcase complex end-to-end use cases](Demos/README.md)
