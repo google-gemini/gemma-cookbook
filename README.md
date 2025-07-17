@@ -31,6 +31,8 @@ Gemma is a family of lightweight, generative artificial intelligence (AI) open m
     Fine-tuned on Gemma 3's 4B IT checkpoint for image safety classification
   * [DataGemma](https://ai.google.dev/gemma/docs/datagemma)\
     Fine-tuned for using Data Commons to address AI hallucinations
+  * [MedGemma](https://developers.google.com/health-ai-developer-foundations/medgemma)
+    The MedGemma collection contains Google's most capable open models for medical text and image comprehension, built on Gemma 3. Developers can use MedGemma to accelerate building healthcare-based AI applications. MedGemma comes in two variants: a 4B multimodal version and a 27B text-only version.
 
 You can find the Gemma models on the Hugging Face Hub, Kaggle, Google Cloud Vertex AI Model Garden, and [ai.nvidia.com](https://ai.nvidia.com).
 
@@ -38,6 +40,8 @@ You can find the Gemma models on the Hugging Face Hub, Kaggle, Google Cloud Vert
 * [Gemma](Gemma/README.md)
 * [CodeGemma](CodeGemma/README.md)
 * [PaliGemma](PaliGemma/README.md)
+* [MedGemma](MedGemma/README.md)
+* [MedGemma on Google-Health](https://github.com/Google-Health/medgemma/tree/main/notebooks) : Google-Health has additional notebooks for using MedGemma
 * [Workshops and technical talks](Workshops/README.md)
 * [Research](Research/): Notebooks for research focused models
 * [Showcase complex end-to-end use cases](Demos/README.md)
