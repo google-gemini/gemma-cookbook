@@ -72,20 +72,9 @@ func modifyStreamResponse(resp *http.Response) error {
 	return nil
 }
 
-func getApiKey() (string, error) {
-	apiKey := os.Getenv("API_KEY")
-	if apiKey == "" {
-		return "", fmt.Errorf("environment variable 'API_KEY' is required")
-	}
-	return apiKey, nil
-}
-
 func main() {
 	// --- Configuration ---
-	envApiKey, err := getApiKey()
-	if err != nil {
-		log.Fatalf("Error reading API_KEY env var: %v", err)
-	}
+	envApiKey := os.Getenv("API_KEY")
 
 	port := os.Getenv("PORT")
 	targetURLStr := os.Getenv("OLLAMA_HOST")
@@ -111,7 +100,7 @@ func main() {
 		matches := re.FindStringSubmatch(r.URL.Path)
 
 		var (
-			isCurrentRequestGeminiStyle bool = false
+			isCurrentRequestGeminiStyle bool   = false
 			actionForResponse           string // Stores action for response modification
 		)
 
@@ -141,7 +130,7 @@ func main() {
 			if requestApiKey == "" {
 				requestApiKey = queryParams.Get("key")
 			}
-			if requestApiKey != envApiKey {
+			if envApiKey != "" && requestApiKey != envApiKey {
 				log.Printf("Invalid API key provided in the request.")
 				http.Error(w, "Permission denied. Invalid API Key.  Configure your SDK to use this URL, and use the API key provided at deployment (https://github.com/google-gemini/gemma-cookbook/blob/main/Demos/Gemma-on-Cloudrun/README.md)", http.StatusForbidden)
 				return
@@ -191,7 +180,7 @@ func main() {
 				apiKey = r.URL.Query().Get("key")
 				expectedPrefix = ""
 			}
-			if apiKey != expectedPrefix + envApiKey {
+			if envApiKey != "" && apiKey != expectedPrefix+envApiKey {
 				log.Printf("Invalid API key provided in the request.")
 				http.Error(w, "Permission denied. Invalid API Key.  Configure your SDK to use this URL, and use the API key provided at deployment (https://github.com/google-gemini/gemma-cookbook/blob/main/Demos/Gemma-on-Cloudrun/README.md)", http.StatusForbidden)
 				return
