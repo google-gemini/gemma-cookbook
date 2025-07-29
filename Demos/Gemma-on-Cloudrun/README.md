@@ -22,8 +22,10 @@ We provide pre-built Docker images for convenience. These images have the respec
 * `us-docker.pkg.dev/cloudrun/container/gemma/gemma3n-e2b`
 * `us-docker.pkg.dev/cloudrun/container/gemma/gemma3n-e4b`
 
+These images are automatically built and published using [Cloud Build](./cloudbuild.yaml) when there's a code change in this directory.
+
 ## Quickstart - Deploying to Cloud Run
-This section guides you through deploying a Cloud Run service using our provided Docker images.  If you've deployed Gemma to Cloud Run from AI Studio, it mirrors this process.    
+This section guides you through deploying a Cloud Run service using our provided Docker images.  If you've deployed Gemma to Cloud Run from AI Studio, it mirrors this process.
 
 Use the following `gcloud run deploy` command to deploy your Cloud Run service:
 ```bash
@@ -46,7 +48,7 @@ gcloud run deploy {SERVICE_NAME} \
 Explanation of Variables:
 * `SERVICE_NAME`: The unique name for your Cloud Run service.
 * `IMAGE`: The Docker image to deploy. This can be one of our [pre-built images](#pre-built-docker-images) or an image you built yourself from this repository
-* `YOUR_API_KEY`: **Crucial for authentication**. Set this to a strong, unique API key string of your choice. This key will be required to access your service. See the [Authentication](#authentication) section below for more details. If you're deploying from AI Studio, this is generated on your behalf. Note that this should *not* be an API key re-used from another service.   
+* `YOUR_API_KEY`: **Crucial for authentication**. Set this to a strong, unique API key string of your choice. This key will be required to access your service. See the [Authentication](#authentication) section below for more details. If you're deploying from AI Studio, this is generated on your behalf. Note that this should *not* be an API key re-used from another service.
 * `REGION`: The Google Cloud region where your Cloud Run service will be deployed (e.g., us-central1). Ensure this region supports the specified GPU type. See [GPU support for Cloud Run services](https://cloud.google.com/run/docs/configuring/services/gpu) for more details.  If you're deploying from AI Studio, this defaults to europe-west1.
 * For other flags and optimizing setting, see [Run LLM inference on Cloud Run GPUs with Gemma 3 and Ollama](https://cloud.google.com/run/docs/tutorials/gpu-gemma-with-ollama#build-and-deploy) for more details.
 
@@ -65,7 +67,7 @@ For enhanced security, store your API key in Google Cloud Secret Manager and exp
 You will need to include this `YOUR_API_KEY` in every request to your Cloud Run service, as shown in the [Interacting with the Service](#interacting-with-the-cloud-run-service) section.
 
 ### Using IAM Authentication (recommended)
-For production, you should configure your Cloud Run service to use IAM Authentication.  You can enable this by re-deploying your Cloud Run service with the `--no-allow-unauthenticated` flag.  Note that this will require changes to your application code, to ensure incoming requests pass the appropriate identity token.  
+For production, you should configure your Cloud Run service to use IAM Authentication.  You can enable this by re-deploying your Cloud Run service with the `--no-allow-unauthenticated` flag.  Note that this will require changes to your application code, to ensure incoming requests pass the appropriate identity token.
 To learn more about IAM authentication and Cloud Run, refer to [Authenticating service-to-service](https://cloud.google.com/run/docs/authenticating/service-to-service#use_the_authentication_libraries).
 
 ## Interacting with the Cloud Run Service
@@ -166,8 +168,8 @@ openAIclient = OpenAI(
 completion = openAIclient.chat.completions.create(
    model="<model>", # Example: "gemma3:4b" or your custom model name
    messages=[
-     {            
-       "role": "developer",                                                                                                  
+     {
+       "role": "developer",
        "content": "You are a helpful assistant."
      },
      {
