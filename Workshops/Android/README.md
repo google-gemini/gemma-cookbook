@@ -73,10 +73,12 @@ mediapipe-tasks-genai = { group = "com.google.mediapipe", name = "tasks-genai", 
 
 ```toml
 # In the [versions] block
+lifecycleViewmodelCompose = "2.9.2"
 mediapipeTasksText = "0.20230731"
 mediapipeTasksGenai = "0.10.25"
 
 # In the [libraries] block
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 mediapipe-tasks-text = { group = "com.google.mediapipe", name = "tasks-text", version.ref = "mediapipeTasksText" }
 mediapipe-tasks-genai = { group = "com.google.mediapipe", name = "tasks-genai", version.ref = "mediapipeTasksGenai" }
 ```
