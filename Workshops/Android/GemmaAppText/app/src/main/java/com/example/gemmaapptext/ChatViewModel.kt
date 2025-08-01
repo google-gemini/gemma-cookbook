@@ -26,35 +26,29 @@ class ChatViewModel(
         llmModel.resetSession()
     }
 
-    /*fun init(context: Context, updateResult: (m: String) -> Unit) {
-        llmModel.init(context, updateResult)
-    }*/
-
     fun sendPrompt(
         prompt: String,
-        updateResult: (m: String) -> Unit
     ) {
         _uiState.value = UiState.Loading
 
         viewModelScope.launch(Dispatchers.Default) {
             try {
                 var response = ""
-                llmModel.generateResponseAsync(prompt, { partialResult, done ->
+                llmModel.generateResponseAsync(prompt) { partialResult, done ->
                     response += partialResult
-                    updateResult(response)
                     if (done) {
                         _uiState.value = UiState.Success(response)
                     } else {
-                        _uiState.value = UiState.Generating
+                        _uiState.value = UiState.Generating(response)
                     }
-                })
+                }
             } catch (e: Exception) {
                 _uiState.value = UiState.Error(e.localizedMessage ?: "")
             }
         }
     }
 
-    fun stopRespones() {
+    fun stopResponse() {
         Log.d(TAG, "Stopping response for model...")
         viewModelScope.launch(Dispatchers.Default) {
             llmModel.cancelGenerateResponseAsync()
@@ -66,6 +60,7 @@ class ChatViewModel(
         fun getFactory(context: Context) = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
                 val inferenceModel = GemmaModel.getInstance(context)
+                @Suppress("UNCHECKED_CAST")
                 return ChatViewModel(inferenceModel) as T
             }
         }

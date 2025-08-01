@@ -38,11 +38,6 @@ fun ChatScreen() {
     val chatViewModel: ChatViewModel = viewModel(factory = ChatViewModel.getFactory(LocalContext.current.applicationContext))
     val uiState by chatViewModel.uiState.collectAsState()
 
-    fun updateResult(newValue: String) {
-        result = newValue
-        //android.util.Log.d("update", result)
-    }
-
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding)
@@ -69,7 +64,7 @@ fun ChatScreen() {
                 if (uiState is UiState.Generating) {
                     Button(
                         onClick = {
-                            chatViewModel.stopRespones()
+                            chatViewModel.stopResponse()
                         },
                         enabled = prompt.isNotEmpty(),
                         modifier = Modifier
@@ -81,7 +76,7 @@ fun ChatScreen() {
                     Button(
                         onClick = {
                             chatViewModel.resetSession()
-                            chatViewModel.sendPrompt(prompt, ::updateResult)
+                            chatViewModel.sendPrompt(prompt)
                         },
                         enabled = prompt.isNotEmpty(),
                         modifier = Modifier
@@ -99,6 +94,9 @@ fun ChatScreen() {
                 if (uiState is UiState.Error) {
                     textColor = MaterialTheme.colorScheme.error
                     result = (uiState as UiState.Error).errorMessage
+                } else if (uiState is UiState.Generating) {
+                    textColor = MaterialTheme.colorScheme.onSurface
+                    result = (uiState as UiState.Generating).partialResult
                 } else if (uiState is UiState.Success) {
                     textColor = MaterialTheme.colorScheme.onSurface
                     result = (uiState as UiState.Success).outputText

@@ -18,7 +18,7 @@ sealed interface UiState {
     /**
      * Generating
      */
-    object Generating : UiState
+    data class Generating(val partialResult: String) : UiState
 
     /**
      * Text has been generated

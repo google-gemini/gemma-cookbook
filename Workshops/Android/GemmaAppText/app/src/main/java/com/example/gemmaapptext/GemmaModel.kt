@@ -44,6 +44,11 @@ class GemmaModel private constructor(context: Context) {
     }
 
     fun close() {
+        if (!modelExists()) {
+            Log.d(TAG, "Model not found at path: ${LLMConstants.MODEL_PATH}")
+            return
+        }
+
         llmInferenceSession.close()
         llmInference.close()
     }
@@ -83,6 +88,10 @@ class GemmaModel private constructor(context: Context) {
     }
 
     fun cancelGenerateResponseAsync() {
+        if (!modelExists()) {
+            throw Exception("Model not found at path: ${LLMConstants.MODEL_PATH}")
+        }
+
         llmInferenceSession.cancelGenerateResponseAsync()
     }
 
