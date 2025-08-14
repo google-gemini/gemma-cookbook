@@ -90,6 +90,7 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_2]Finetune_with_Torch_XLA.ipynb]([Gemma_2]Finetune_with_Torch_XLA.ipynb)                                                 | Finetune Gemma using [PyTorch/XLA](https://github.com/pytorch/xla).                                                                                                                     |
 | [[Gemma_2]Finetune_with_Unsloth.ipynb]([Gemma_2]Finetune_with_Unsloth.ipynb)                                                     | Finetune Gemma using [Unsloth](https://unsloth.ai/blog/gemma).                                                                                                                          |
 | [[Gemma_2]Translator_of_Old_Korean_Literature.ipynb]([Gemma_2]Translator_of_Old_Korean_Literature.ipynb)                         | Use Gemma to translate old Korean literature using Keras.                                                                                                                               |
+| [[Gemma_3]Full_Model_Finetune_using_HF.ipynb]([Gemma_3]Full_Model_Finetune_using_HF.ipynb)                         | Full model fine-tune on a mobile game NPC dataset using Hugging Face Transformers and TRL |
 
 ## Alignment
 | Notebook Name | Description |
