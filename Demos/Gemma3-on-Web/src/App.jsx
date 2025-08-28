@@ -215,7 +215,7 @@ function App() {
               width="80%"
               height="auto"
               className="block drop-shadow-lg bg-transparent"
-            ></img>
+            />
             <h1 className="text-4xl font-bold mb-1">Gemma 3 Web 🌐</h1>
             <h2 className="font-semibold">
               A LLM that runs directly in your browser. 🚀
