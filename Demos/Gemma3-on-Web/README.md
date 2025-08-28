@@ -31,7 +31,7 @@ The project is structured as follows:
     - `index.css`: Global CSS styles for the application.
     - `Chat.css`: CSS styles for the chat interface.
 
-  - `worker.js`: Transformers.js worker for running the Qwen model.
+  - `worker.js`: Transformers.js worker for running the Gemma 3 model.
   - `App.jsx`: Main React component for the application.
   - `main.jsx`: Entry point for the application.
 
