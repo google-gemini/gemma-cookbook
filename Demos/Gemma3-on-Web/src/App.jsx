@@ -254,7 +254,7 @@ function App() {
               <br />
               Want to learn more? Check out the source code on{" "}
               <a
-                href="https://github.com/sitamgithub-MSIT/gemma3-web"
+                href="https://github.com/google-gemini/gemma-cookbook/tree/main/Demos/Gemma3-on-Web"
                 target="_blank"
                 rel="noreferrer"
                 className="underline"
