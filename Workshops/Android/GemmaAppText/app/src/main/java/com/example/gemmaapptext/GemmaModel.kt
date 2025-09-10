@@ -11,9 +11,9 @@ private const val TAG = "GemmaModel"
 // Default values for LLM models
 private object LLMConstants {
     const val MODEL_PATH = "/data/local/tmp/llm/gemma-3n-E2B-it-int4.task"
-    const val DEFAULT_MAX_TOKEN = 512
-    const val DEFAULT_TOPK = 40
-    const val DEFAULT_TOPP = 0.9f
+    const val DEFAULT_MAX_TOKEN = 4096
+    const val DEFAULT_TOPK = 64
+    const val DEFAULT_TOPP = 0.95f
     const val DEFAULT_TEMPERATURE = 1.0f
     val DEFAULT_BACKEND = LlmInference.Backend.GPU
 }
