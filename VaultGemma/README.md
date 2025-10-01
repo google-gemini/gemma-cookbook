@@ -20,7 +20,7 @@ This repository contains code for both training and inference:
 
 | Notebook Name | Description |
 :-------------- | ----------- |
-| [VaultGemma_FineTuning_Inference_Huggingface.ipynb](VaultGemma_FineTuning_Inference_Huggingface.ipynb) | Complete pipeline for fine-tuning VaultGemma 1B on medical data using LoRA adapters and differential privacy, with inference examples |
+| [VaultGemma_FineTuning_Inference_Huggingface.ipynb](VaultGemma_FineTuning_Inference_Huggingface.ipynb) | Complete pipeline for fine-tuning VaultGemma 1B on medical data using LoRA adapters and differential privacy, with inference example |
 
 ### Training Features
 - Medical Meadow Medical Flashcards dataset
