@@ -20,6 +20,7 @@ This folder houses the companion notebooks for the "Build with AI" video series,
 | ----------------------------------------------------------- | ----------- |
 | [PaliGemma 2 on Web](PaliGemma2-on-Web/)         | Inference PaliGemma 2 on the web using its ONNX weights and Transformers.js for tasks like object detection, image captioning, OCR, and visual Q&A. |
 | [Gemma 3 on Web](Gemma3-on-Web/)         | Run the Gemma 3 270M model on the web using its ONNX weights and Transformers.js, focusing on chat capabilities along with customization of the system prompt. |
+| [Emoji Gemma on Web](Emoji-Gemma-on-Web/)  | Learn how to fine-tune a Gemma 3 270M model for emoji translation and run it client-side in the browser using MediaPipe LLM Inference API or Transformers.js. |
 
 ## Cloud Run Demo
 | Folder                                                      | Description |
