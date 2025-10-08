@@ -1,0 +1,399 @@
+body {
+  font-family: "Google Sans", sans-serif, "Noto Color Emoji", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol";
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  background-color: #ffffff;
+  color: #286aac;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  margin: 0;
+  padding: 10px;
+  box-sizing: border-box;
+}
+body,
+html {
+  width: 100%;
+  height: 100%;
+}
+
+.noto-color-emoji-regular {
+  font-family: "Noto Color Emoji", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.google-sans-medium {
+  font-family: "Google Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.google-sans-regular {
+  font-family: "Google Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.text-cta {
+  width: 395px;
+  font-size: 16px;
+  line-height: 140%;
+  text-align: center;
+  margin: 0;
+  margin-bottom: 20px;
+  max-width: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1000px;
+  box-sizing: border-box;
+  padding-top: 40px;
+  margin: auto 0;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 51px;
+  line-height: 100%;
+  text-align: center;
+  letter-spacing: -1.30014px;
+  color: #1064d3;
+  margin-bottom: 24px;
+}
+
+h2 {
+  color: #3c4043;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  position: relative;
+}
+
+#prompt-input {
+  width: 100%;
+  height: 64px;
+  background: #ffffff;
+  box-shadow: 4px 18px 24px rgba(13, 11, 48, 0.0425185),
+    1px 4px 6px rgba(14, 16, 60, 0.0274815);
+  border-radius: 32px;
+  border: none;
+  font-family: "Google Sans", "Noto Color Emoji", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 0 74px 0 1.1rem;
+  color: #323232;
+}
+
+#prompt-input::placeholder {
+  color: #c0c0c0;
+}
+
+.output-container {
+  min-height: 120px;
+  flex-shrink: 0;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 20px;
+  max-width: 100%;
+}
+
+.response-box {
+  display: flex;
+  flex-flow: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.response-box button {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  min-width: 98px;
+  box-sizing: content-box;
+  height: 24px;
+  background: #ffffff;
+  box-shadow: -2px 4px 3.5px rgba(0, 0, 0, 0.04);
+  border-radius: 37px;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: "Noto Color Emoji", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 18px;
+  transition: background-color 0.2s, border-color 0.1s;
+  animation: fadeInScaleUp 0.3s ease-out forwards;
+  border: 1px solid #ffffff;
+}
+
+.response-box button:hover {
+  border-color: #1064d3;
+}
+
+@keyframes fadeInScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+#status-message {
+  text-align: center;
+}
+/* Button styles for the generate button */
+
+#generate-btn {
+  align-self: flex-end;
+  position: absolute;
+  width: 62px;
+  height: 52px;
+  right: 6px;
+  top: calc(64px / 2 - 52px / 2);
+  background: #2776e0;
+  border-radius: 99px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: grid;
+  place-items: center;
+}
+
+#generate-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+#generate-btn svg.arrow {
+  transition: opacity 0.2s, scale 0.35s ease-out, transform 0.2s;
+}
+
+#generate-btn:hover:not(:disabled),
+#generate-btn:focus:not(:disabled) {
+  background-color: #185abc;
+}
+#generate-btn:hover:not(:disabled) svg,
+#generate-btn:focus:not(:disabled) svg {
+  transform: translateX(3px);
+}
+
+#generate-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Hide arrow only when generating */
+#generate-btn.generating svg.arrow {
+  opacity: 0;
+  scale: 0.2;
+}
+
+#generate-btn svg.loader {
+  position: absolute;
+  top: calc(50% - 9px);
+  left: calc(50% - 9px);
+  opacity: 0;
+  scale: 0.2;
+  transition: opacity 0.15s, scale 0.25s ease-out;
+  animation: rotator 1.4s linear infinite;
+}
+
+/* Show loader only when generating */
+#generate-btn.generating svg.loader {
+  opacity: 1;
+  scale: 1;
+}
+
+#generate-btn svg.loader circle {
+  stroke-dasharray: 50; /* 2 * PI * 8 */
+  transform-origin: center;
+  transition: opacity 0.25s, scale 0.35s ease-out;
+  animation: dash 1.4s ease-in-out infinite;
+}
+@keyframes rotator {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 75;
+  }
+  50% {
+    stroke-dashoffset: 50; /* 1/4 of circumference */
+  }
+
+  75% {
+    stroke-dashoffset: 25; /* 1/4 of circumference */
+  }
+  100% {
+    stroke-dashoffset: -25;
+  }
+}
+
+/* Background styles for the blobs and pattern, purely visuals, disable if performance is impacted */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-color: #fafeff;
+  pointer-events: none;
+}
+
+.background-blob-1 {
+  position: absolute;
+  top: 5vh;
+  right: -10vw;
+  width: 40vw;
+  height: 30vh;
+  border-radius: 50%;
+  background-color: #b1c5ff;
+  filter: blur(150px);
+  opacity: 0.5;
+}
+
+.background-blob-2 {
+  position: absolute;
+  bottom: -10vh;
+  right: -25vw;
+  width: 50vw;
+  height: 50vh;
+  border-radius: 50%;
+  background-color: #b1c5ff;
+  filter: blur(100px);
+  opacity: 0.3;
+}
+
+.background-blob-3 {
+  position: absolute;
+  top: 60vh;
+  left: 0;
+  width: 100vw;
+  height: 40vh;
+  border-radius: 50%;
+  background-color: #0b8bf7;
+  filter: blur(111px);
+  opacity: 0.15;
+}
+
+/* Footer styles */
+.footer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 14px;
+  font-family: "Google Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 140%;
+}
+
+.footer a,
+p {
+  margin: 0;
+  display: inline;
+  color: #286aac;
+}
+
+.footer a {
+  text-decoration: none;
+  transition: color 0.1s;
+}
+
+.footer a svg {
+  width: 7px;
+  height: 12px;
+  position: relative;
+  top: 1px;
+  margin-left: 6px;
+  transition: transform 0.3s;
+}
+
+.footer a:hover {
+  color: #075099;
+}
+
+.footer a:hover svg {
+  transform: translateX(3px);
+}
+
+.footer a svg path {
+  transition: fill 0.1s;
+}
+
+.footer a:hover svg path {
+  fill: #075099;
+}
+@media screen and (min-width: 768px) {
+  body {
+    padding: 20px;
+  }
+  .footer {
+    font-size: 16px;
+  }
+  .text-cta {
+    margin-bottom: 44px;
+  }
+  .input-container {
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  #prompt-input {
+    height: 74px;
+    border-radius: 37px;
+    font-size: 20px;
+    line-height: 25px;
+    padding: 0 92px 0 37px;
+  }
+
+  #generate-btn {
+    width: 74px;
+    height: 59px;
+    right: 9px;
+    top: calc(74px / 2 - 59px / 2);
+  }
+  .output-container {
+    gap: 20px;
+  }
+  .response-box button {
+    padding: 22px;
+    min-width: 128px;
+    height: 30px;
+    font-size: 24px;
+  }
+}
+
