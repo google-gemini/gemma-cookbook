@@ -51,7 +51,7 @@ def get_prompt():
 
 def get_test_email():
     try:
-        with open('data/email-001-ko.txt', 'r') as file:
+        with open('data/email-001-ko.txt', 'r', encoding='utf-8') as file:
             email_content = file.read()
     except FileNotFoundError:
         email_content = "Error: File not found!"
