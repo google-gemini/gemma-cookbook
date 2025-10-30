@@ -2,6 +2,8 @@
 # Welcome to the Gemma Cookbook
 This is a collection of guides and examples for [Google Gemma](https://ai.google.dev/gemma/).
 
+> **Disclaimer:** Gemma is a family of developer-focused models built by Google Deepmind. This cookbook is a collection of guides and examples for Google Gemma. Please keep in mind that Gemma is an open model and can hallucinate as you build on examples in this cookbook.
+
 ## Get started with the Gemma models
 Gemma is a family of lightweight, generative artificial intelligence (AI) open models, built from the same research and technology used to create the Gemini models. The Gemma model family includes:
 * Gemma\
