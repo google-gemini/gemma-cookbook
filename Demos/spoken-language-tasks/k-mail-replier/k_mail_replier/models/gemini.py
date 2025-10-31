@@ -23,8 +23,11 @@ def initialize_model():
     api_key = os.getenv('API_KEY')
     if not api_key:
         raise ValueError("API_KEY environment variable not found. Did you set it in your .env file?")
+    
     genai.configure(api_key=api_key)
-    return genai.GenerativeModel('gemini-1.5-flash')  # Return the initialized model
+    
+    model = genai.GenerativeModel('gemini-2.5-flash')
+    return model
 
 def create_message_processor():
     """Creates a message processor function with a persistent model."""
