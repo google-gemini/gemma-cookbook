@@ -97,10 +97,10 @@ class SubBillionConfigs:
         "estimated_params_b": 1.51,
         "estimated_mmlu_accuracy": "49-51%",
         "layers_to_skip": [20, 21, 22, 23, 24],
-        "ffn_hidden_dims": (
-            [2048 * 3] * 10 +      # Layers 0-9: Lower capacity (6,144)
-            [int(2048 * 3.5)] * 10 +    # Layers 10-19: Medium capacity (7,168)
-            [2048 * 4] * 10        # Layers 20-29: Higher capacity (8,192)
+        "ffn_hidden_dims": (  
+            [2048 * 3] * 10 +      # Layers 0-9: Lower capacity (6,144)  
+            [int(2048 * 3.5)] * 10 +    # Layers 10-19: Medium capacity (7,168)  
+            [2048 * 4] * 10        # Layers 20-29: Higher capacity (8,192)  
         ),
         "deployment_target": "High-end mobile (6-8GB RAM) or edge servers",
         "notes": "Smaller than official E2B (1.91B) but with the same number of layers."
@@ -153,9 +153,18 @@ class AudioEncoderConfigs:
     }
 
 
-# =============================================================================
-# Helper Functions
-# =============================================================================
+# =============================================================================  
+# Constants  
+# =============================================================================  
+
+BASE_MODEL_NUM_LAYERS = 35  
+BASE_HIDDEN_SIZE = 2048  
+MAX_FFN_DIM = 16384  # 2048 * 8  
+
+# =============================================================================  
+# Helper Functions  
+# =============================================================================  
+
 
 def get_config_for_deployment(
     target_size_gb: float,
@@ -173,9 +182,9 @@ def get_config_for_deployment(
     """
     if deployment_type == "web":
         return SubBillionConfigs.CONFIG_0_5B_20LAYERS.copy()
-    elif deployment_type == "mobile" and target_size_gb <= 1.5:
-        return SubBillionConfigs.CONFIG_0_5B_20LAYERS.copy()
-    elif deployment_type == "mobile" and target_size_gb <= 2.5:
+    elif deployment_type == "mobile" and target_size_gb < 1.0:  
+        return SubBillionConfigs.CONFIG_0_5B_20LAYERS.copy()  
+    elif deployment_type == "mobile" and target_size_gb <= 1.5:  
         return SubBillionConfigs.CONFIG_0_9B_26LAYERS.copy()
     elif deployment_type == "mobile" and target_size_gb <= 3.5:
         return SubBillionConfigs.CONFIG_1_3B_28LAYERS.copy()
