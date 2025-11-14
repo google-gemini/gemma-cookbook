@@ -48,7 +48,7 @@ class SubBillionConfigs:
         "layers_to_skip": [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27],
         "ffn_hidden_dims": (
             [2048 * 2] * 8 +       # Layers 0-7: Minimal capacity (4,096)
-            [2048 * 2.5] * 7 +     # Layers 8-14: Moderate capacity (5,120)
+            [int(2048 * 2.5)] * 7 +     # Layers 8-14: Moderate capacity (5,120)
             [2048 * 3] * 5         # Layers 15-19: Higher capacity (6,144)
         ),
         "deployment_target": "Web and ultra-light mobile",
