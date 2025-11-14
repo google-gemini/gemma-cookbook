@@ -72,7 +72,7 @@ layers_to_skip = [19, 20, 21, 22, 23, 24, 25, 26, 27]
 # FFN hidden dimensions (optimized distribution)
 ffn_hidden_dims = (
     [2048 * 3] * 10 +      # Layers 0-9: 6,144
-    [2048 * 3.5] * 9 +     # Layers 10-18: 7,168
+    [int(2048 * 3.5)] * 9 +     # Layers 10-18: 7,168
     [2048 * 4] * 7         # Layers 19-25: 8,192
 )
 
