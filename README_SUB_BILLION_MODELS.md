@@ -388,7 +388,7 @@ gemma-cookbook/
 ├── RESPONSE_SUB_BILLION_AND_AUDIO_SLICING.md    ← Deep technical analysis
 ├── QUICK_START_SUB_BILLION_MODELS.md            ← Implementation guide
 ├── custom_slicing_configs.py                    ← Configuration tool (runnable)
-├── README.md (this file)                        ← Navigation & overview
+├── README_SUB_BILLION_MODELS.md (this file)                        ← Navigation & overview
 └── Gemma/
     └── [Gemma_3n]MatFormer_Lab.ipynb            ← Use this notebook to slice
 ```
