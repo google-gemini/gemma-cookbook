@@ -38,7 +38,7 @@ final_num_layers = 35 - 8  # 27
 ffn_hidden_dims = [2048 * 3] * 10 + [int(2048 * 3.5)] * 10 + [2048 * 4] * 7
 
 # Estimated model size:
-# - Embedding: ~250M (token embedding, ~100B vocab)
+# - Embedding: ~250M (token embedding, ~256k vocab)
 # - 27 layers × (attention + FFN) with varying capacities: ~600M
 # - Output projection: ~100M
 # **Total: ~950M (0.95B)**
