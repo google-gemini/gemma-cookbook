@@ -114,7 +114,7 @@ api.upload_folder(
 ### Step 6: Load and Test
 
 ```python
-from transformers import AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, BitsAndBytesConfig
 import torch
 
 # Load your sliced model
