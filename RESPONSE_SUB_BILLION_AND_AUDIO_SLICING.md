@@ -32,7 +32,7 @@ For a **0.9B model with 26 layers**, consider this configuration:
 ```python
 # Proposed configuration for 0.9B model
 layers_to_skip = [17, 18, 19, 20, 21, 22, 23, 24]  # Skip 8 layers (from original 35)
-final_num_layers = 35 - 8 = 27
+final_num_layers = 35 - 8  # 27
 
 # FFN Hidden Dimensions (suggested)
 ffn_hidden_dims = [
