@@ -107,18 +107,7 @@ config_name = "Custom 0.9B (26-layer)"
 layers_to_skip = [19, 20, 21, 22, 23, 24, 25, 26, 27]
 
 # FFN Hidden Dimensions (optimized for Pareto frontier)
-ffn_hidden_dims = [
-    2048 * 3,    # [0-9]: Layers 0-9
-    2048 * 3, 2048 * 3, 2048 * 3, 2048 * 3, 2048 * 3,
-    2048 * 3, 2048 * 3, 2048 * 3, 2048 * 3,
-    2048 * 3.5,  # [10-18]: Layers 10-18
-    2048 * 3.5, 2048 * 3.5, 2048 * 3.5, 2048 * 3.5,
-    2048 * 3.5, 2048 * 3.5, 2048 * 3.5, 2048 * 3.5,
-    2048 * 4,    # [19-25]: Layers 19-25 (global layers preserved)
-    2048 * 4, 2048 * 4, 2048 * 4,
-    2048 * 4, 2048 * 4, 2048 * 4
-]
-
+ffn_hidden_dims = [2048 * 3] * 10 + [int(2048 * 3.5)] * 9 + [2048 * 4] * 7
 # Estimated MMLU Performance: 46-48% (compared to E2B's 50.9%)
 # Memory Requirements: ~2.2-2.4 GB for inference (FP32)
 # Target Deployment: 4-6 GB RAM mobile devices (with 4-bit quantization)
