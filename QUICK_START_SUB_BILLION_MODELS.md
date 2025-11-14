@@ -315,7 +315,7 @@ layers_to_skip = [19, 20, 21, 22, 23, 24, 33, 34]  # Skips global layers!
 **Solution**: Ensure length matches final layer count
 ```python
 final_layers = 35 - len(layers_to_skip)  # Should be 26
-ffn_dims = [2048*3]*10 + [2048*3.5]*9 + [2048*4]*7  # Length must be 26
+ffn_dims = [2048*3]*10 + [int(2048*3.5)]*9 + [2048*4]*7  # Length must be 26
 
 assert len(ffn_dims) == final_layers  # Verify
 ```
