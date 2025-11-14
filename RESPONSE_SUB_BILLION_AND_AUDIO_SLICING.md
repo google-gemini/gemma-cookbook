@@ -35,35 +35,7 @@ layers_to_skip = [17, 18, 19, 20, 21, 22, 23, 24]  # Skip 8 layers (from origina
 final_num_layers = 35 - 8  # 27
 
 # FFN Hidden Dimensions (suggested)
-ffn_hidden_dims = [
-    2048 * 3,  # 6,144 for layers 0-9 (earlier blocks - lower capacity)
-    2048 * 3,
-    2048 * 3,
-    2048 * 3,
-    2048 * 3,
-    2048 * 3,
-    2048 * 3,
-    2048 * 3,
-    2048 * 3,
-    2048 * 3,
-    2048 * 3.5,  # 7,168 for layers 10-19 (middle blocks)
-    2048 * 3.5,
-    2048 * 3.5,
-    2048 * 3.5,
-    2048 * 3.5,
-    2048 * 3.5,
-    2048 * 3.5,
-    2048 * 3.5,
-    2048 * 3.5,
-    2048 * 3.5,
-    2048 * 4,  # 8,192 for layers 20-26 (later blocks - higher capacity)
-    2048 * 4,
-    2048 * 4,
-    2048 * 4,
-    2048 * 4,
-    2048 * 4,
-    2048 * 4,
-]
+ffn_hidden_dims = [2048 * 3] * 10 + [int(2048 * 3.5)] * 10 + [2048 * 4] * 7
 
 # Estimated model size:
 # - Embedding: ~250M (token embedding, ~100B vocab)
