@@ -230,13 +230,16 @@ Unlike the text encoder, audio encoder slicing requires:
    ```python
    # Add audio processing to the tensor slicing loop
    elif '.audio_model.layers.' in tensor_name:
+       match = re.search(r'\.layers\.(\d+)\.', tensor_name)
+       if not match:
+           continue  # Or handle error appropriately
+
        # Apply similar slicing logic as text encoder
-       old_layer_idx = int(re.search(r'\.layers\.(\d+)\.', tensor_name).group(1))
+       old_layer_idx = int(match.group(1))
        if old_layer_idx in audio_layers_to_skip:
            continue
        new_layer_idx = audio_layer_rename_map[old_layer_idx]
        # ... slice audio FFN dimensions ...
-   ```
 
 3. **Update config.json**:
    ```python
