@@ -161,8 +161,8 @@ ffn_hidden_dims = [2048*2]*8 + [int(2048*2.5)]*7 + [2048*3]*5
 
 ```python
 # Best: 1.3B with 4-bit
-layers_to_skip = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
-ffn_hidden_dims = [2048*3]*10 + [2048*3.5]*9 + [2048*4]*9
+layers_to_skip = [21, 22, 23, 24, 25, 26, 27] # Corrected to skip 7 layers for a 28-layer model
+ffn_hidden_dims = [2048*3]*10 + [int(2048*3.5)]*9 + [2048*4]*9
 
 # Expected:
 # - MMLU: 48-50%
