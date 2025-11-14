@@ -120,7 +120,7 @@ To use this configuration with the existing MatFormer Lab notebook:
 ```python
 # In the "Config details" cell, uncomment and set:
 layers_to_skip = [19, 20, 21, 22, 23, 24, 25, 26, 27]
-ffn_hidden_dims = [2048*3]*10 + [2048*3.5]*9 + [2048*4]*7
+ffn_hidden_dims = [2048*3]*10 + [int(2048*3.5)]*9 + [2048*4]*7
 ffn_hidden_dims_str = str(ffn_hidden_dims)
 ```
 
