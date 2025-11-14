@@ -99,7 +99,7 @@ class SubBillionConfigs:
         "layers_to_skip": [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27],
         "ffn_hidden_dims": (
             [2048 * 3] * 10 +      # Layers 0-9: Lower capacity (6,144)
-            [2048 * 3.5] * 10 +    # Layers 10-19: Medium capacity (7,168)
+            [int(2048 * 3.5)] * 10 +    # Layers 10-19: Medium capacity (7,168)
             [2048 * 4] * 10        # Layers 20-29: Higher capacity (8,192)
         ),
         "deployment_target": "High-end mobile (6-8GB RAM) or edge servers",
