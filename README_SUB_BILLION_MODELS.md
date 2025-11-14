@@ -68,7 +68,7 @@ This package provides comprehensive guidance and tools for creating **sub-billio
 1. **Get the configuration**:
    ```python
    layers_to_skip = [19, 20, 21, 22, 23, 24, 25, 26, 27]
-   ffn_hidden_dims = [2048*3]*10 + [2048*3.5]*9 + [2048*4]*7
+   ffn_hidden_dims = [2048*3]*10 + [int(2048*3.5)]*9 + [2048*4]*7
    ```
 
 2. **Open** `[Gemma_3n]MatFormer_Lab.ipynb`
