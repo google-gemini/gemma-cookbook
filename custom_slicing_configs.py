@@ -45,7 +45,7 @@ class SubBillionConfigs:
         "num_layers": 20,
         "estimated_params_b": 0.52,
         "estimated_mmlu_accuracy": "40-42%",
-        "layers_to_skip": [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27],
+        "layers_to_skip": [12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27],
         "ffn_hidden_dims": (
             [2048 * 2] * 8 +       # Layers 0-7: Minimal capacity (4,096)
             [int(2048 * 2.5)] * 7 +     # Layers 8-14: Moderate capacity (5,120)
