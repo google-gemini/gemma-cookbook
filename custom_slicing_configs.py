@@ -81,9 +81,9 @@ class SubBillionConfigs:
         "estimated_mmlu_accuracy": "44-46%",
         "layers_to_skip": [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27],
         "ffn_hidden_dims": (
-            [2048 * 2.5] * 10 +    # Layers 0-9: Lower capacity (5,120)
+            [int(2048 * 2.5)] * 10 +    # Layers 0-9: Lower capacity (5,120)
             [2048 * 3] * 8 +       # Layers 10-17: Medium capacity (6,144)
-            [2048 * 3.5] * 5       # Layers 18-22: Higher capacity (7,168)
+            [int(2048 * 3.5)] * 5       # Layers 18-22: Higher capacity (7,168)
         ),
         "deployment_target": "Mid-range mobile (5-6GB RAM)",
         "notes": "Good balance between compression and quality"
