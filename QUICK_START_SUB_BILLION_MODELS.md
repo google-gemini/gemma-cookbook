@@ -137,7 +137,7 @@ print(f"Model parameters: {model.num_parameters():,}")
 ```python
 # Best: 0.9B with 4-bit quantization
 layers_to_skip = [19, 20, 21, 22, 23, 24, 25, 26, 27]
-ffn_hidden_dims = [2048*3]*10 + [2048*3.5]*9 + [2048*4]*7
+ffn_hidden_dims = [2048*3]*10 + [int(2048*3.5)]*9 + [2048*4]*7
 
 # Expected performance:
 # - Model size: ~1.2 GB (quantized)
