@@ -219,20 +219,22 @@ A: Yes! Use LoRA to adapt to your domain data. The slicing process preserves the
 
 To validate these recommendations:
 
-```python
 # 1. Load and test the sliced model
-from transformers import AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM
 model = AutoModelForCausalLM.from_pretrained("your-sliced-model")
+tokenizer = AutoTokenizer.from_pretrained("your-sliced-model")
 
 # 2. Check parameter count
 print(f"Parameters: {model.num_parameters() / 1e9:.2f}B")  # Should be ~0.95B
 
 # 3. Test inference
-outputs = model.generate(input_ids, max_new_tokens=100)
+input_text = "An example of a prompt to the model"
+input_ids = tokenizer(input_text, return_tensors="pt")
+outputs = model.generate(**input_ids, max_new_tokens=100)
+print(tokenizer.decode(outputs[0]))
 
 # 4. Measure memory during inference
 # Use `nvidia-smi` or similar tools
-```
 
 ---
 
