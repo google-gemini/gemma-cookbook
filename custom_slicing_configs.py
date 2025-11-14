@@ -103,7 +103,7 @@ class SubBillionConfigs:
             [2048 * 4] * 10        # Layers 20-29: Higher capacity (8,192)
         ),
         "deployment_target": "High-end mobile (6-8GB RAM) or edge servers",
-        "notes": "Larger than E2B (1.91B official) but similar inference cost"
+        "notes": "Smaller than official E2B (1.91B) but with the same number of layers."
     }
 
 
