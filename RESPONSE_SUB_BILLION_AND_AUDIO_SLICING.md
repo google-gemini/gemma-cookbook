@@ -51,7 +51,7 @@ For even more aggressive compression:
 ```python
 # Proposed configuration for 0.5B model
 layers_to_skip = [12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24]  # Skip 12 layers
-final_num_layers = 35 - 12 = 23
+final_num_layers = 35 - 12  # 23
 
 # FFN Hidden Dimensions (ultra-compact)
 ffn_hidden_dims = [
