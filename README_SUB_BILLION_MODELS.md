@@ -157,13 +157,13 @@ Final model:  26 layers, smart FFN → 0.95B parameters ✓
 
 ## ✅ What's Included
 
-| File | Lines | Purpose | Status |
-|------|-------|---------|--------|
-| FEATURE_REQUEST_RESPONSE_SUMMARY.md | 280 | Executive summary | ✅ Complete |
-| RESPONSE_SUB_BILLION_AND_AUDIO_SLICING.md | 520 | Deep technical analysis | ✅ Complete |
-| QUICK_START_SUB_BILLION_MODELS.md | 410 | Implementation guide | ✅ Complete |
-| custom_slicing_configs.py | 370 | Configuration tool | ✅ Complete & tested |
-| This file (INDEX) | ~400 | Navigation & overview | ✅ You're reading it |
+| File | Purpose | Status |
+|------|---------|--------|
+| FEATURE_REQUEST_RESPONSE_SUMMARY.md | Executive summary | ✅ Complete |
+| RESPONSE_SUB_BILLION_AND_AUDIO_SLICING.md | Deep technical analysis | ✅ Complete |
+| QUICK_START_SUB_BILLION_MODELS.md | Implementation guide | ✅ Complete |
+| custom_slicing_configs.py | Configuration tool | ✅ Complete & tested |
+| This file (README_SUB_BILLION_MODELS.md) | Navigation & overview | ✅ You're reading it |
 
 **Total**: ~2,000 lines of comprehensive guidance
 
