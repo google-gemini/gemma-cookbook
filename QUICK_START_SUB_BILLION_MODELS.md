@@ -293,7 +293,7 @@ INT8:
   0.9B: ~0.9 GB
 
 INT4 / NF4:
-  0.9B: ~0.5-0.7 GB  ← Recommended for mobile
+  0.9B: ~0.5-0.7 GB (params) → ~1.5 GB (total)  ← Recommended for mobile
 ```
 
 ---

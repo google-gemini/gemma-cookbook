@@ -172,9 +172,12 @@ audio_ffn_dims = [1024 * 3] * 12         # Reduce from 1024*4
 
 ```
 gemma-cookbook/
-├── RESPONSE_SUB_BILLION_AND_AUDIO_SLICING.md (Main analysis - 400+ lines)
-├── QUICK_START_SUB_BILLION_MODELS.md (User guide - 350+ lines)
-└── custom_slicing_configs.py (Tool - 350+ lines, runnable)
+├── README_SUB_BILLION_MODELS.md (Navigation & TL;DR)
+├── FEATURE_REQUEST_RESPONSE_SUMMARY.md (This file - Executive summary)
+├── RESPONSE_SUB_BILLION_AND_AUDIO_SLICING.md (Main analysis)
+├── QUICK_START_SUB_BILLION_MODELS.md (User guide)
+├── custom_slicing_configs.py (Tool, runnable)
+└── INDEX_SUB_BILLION_RESPONSE.txt (Consolidated index)
 ```
 
 ---
