@@ -192,7 +192,7 @@ def validate_config(config: Dict) -> Tuple[bool, List[str]]:
     """
     errors = []
     
-    expected_layers = 35 - len(config["layers_to_skip"])
+    expected_layers = BASE_MODEL_NUM_LAYERS - len(config["layers_to_skip"])
     if expected_layers != config["num_layers"]:
         errors.append(
             f"Layer mismatch: {expected_layers} expected but {config['num_layers']} specified"
