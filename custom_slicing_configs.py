@@ -183,7 +183,7 @@ def get_config_for_deployment(
         return SubBillionConfigs.CONFIG_1_5B_30LAYERS.copy()
 
 
-def validate_config(config: Dict) -> Tuple[bool, List[str]]:
+def validate_config(config: Dict, base_model_num_layers: int = 35, base_hidden_size: int = 2048, max_ffn_dim: int = 16384) -> Tuple[bool, List[str]]:
     """
     Validate a configuration for logical consistency.
     
