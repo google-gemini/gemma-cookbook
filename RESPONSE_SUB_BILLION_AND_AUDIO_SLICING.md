@@ -19,7 +19,7 @@ The MatFormer Lab notebook (`[Gemma_3n]MatFormer_Lab.ipynb`) currently supports 
   - Effective Parameters: 1.91B
   - Number of Layers: 30
   - Layers Skipped: [20, 21, 22, 23, 24]
-  - FFN Hidden Dims: [2_048 * 4] (8,192) for all layers
+  - FFN Hidden Dims: [2048 * 4] (8,192) for all layers
 
 ### Feasibility of Sub-Billion Models
 
