@@ -332,7 +332,7 @@ assert len(ffn_dims) == final_layers  # Verify
 **Solution**: Check FFN dimension distribution
 ```python
 # Better: Keep later layers at full capacity
-ffn = [2048*2.5]*10 + [2048*3.5]*8 + [2048*4]*8  # ✓
+ffn = [int(2048*2.5)]*10 + [int(2048*3.5)]*8 + [2048*4]*8  # ✓
 
 # Worse: Uniform low capacity
 ffn = [2048*2.5]*26  # ✗ (poor quality)
