@@ -207,8 +207,8 @@ def validate_config(config: Dict) -> Tuple[bool, List[str]]:
         errors.append("FFN dimensions must be integers.")
 
     for dim in config["ffn_hidden_dims"]:
-        if dim < 2048 or dim > 16384:
-            errors.append(f"FFN dimension {dim} outside reasonable range [2048, 16384]")
+        if dim < BASE_HIDDEN_SIZE or dim > MAX_FFN_DIM:
+            errors.append(f"FFN dimension {dim} outside reasonable range [{BASE_HIDDEN_SIZE}, {MAX_FFN_DIM}]")
     
     return len(errors) == 0, errors
 
