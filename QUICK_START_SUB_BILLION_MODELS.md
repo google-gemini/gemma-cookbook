@@ -147,15 +147,14 @@ ffn_hidden_dims = [2048*3]*10 + [int(2048*3.5)]*9 + [2048*4]*7
 
 ### Scenario 2: Web Browser (Client-side)
 
-```python
 # Best: 0.5B with extreme quantization
+layers_to_skip = [12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
 ffn_hidden_dims = [2048*2]*8 + [int(2048*2.5)]*7 + [2048*3]*5
 
 # Expected:
 # - Model size: ~0.8-0.9 GB
 # - Inference in browser (ONNX/WebGPU)
 # - Fast first response
-```
 
 ### Scenario 3: Edge Device (6GB RAM, prefer accuracy)
 
