@@ -69,7 +69,7 @@ class SubBillionConfigs:
             [2048 * 4] * 9         # Layers 19-27: Higher capacity (8,192)
         ),
         "deployment_target": "Higher-end mobile devices (6-8GB RAM)",
-        "notes": "Better accuracy than E2B with only slightly larger size"
+        "notes": "A smaller alternative to the official E2B model, offering a good balance of size and performance."
     }
     
     # Configuration 4: 0.7B Model (23 layers)
