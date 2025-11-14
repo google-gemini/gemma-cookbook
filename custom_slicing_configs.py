@@ -203,6 +203,9 @@ def validate_config(config: Dict) -> Tuple[bool, List[str]]:
             f"FFN dims length ({len(config['ffn_hidden_dims'])}) != num_layers ({config['num_layers']})"
         )
     
+    if not all(isinstance(d, int) for d in config["ffn_hidden_dims"]):
+        errors.append("FFN dimensions must be integers.")
+
     for dim in config["ffn_hidden_dims"]:
         if dim < 2048 or dim > 16384:
             errors.append(f"FFN dimension {dim} outside reasonable range [2048, 16384]")
