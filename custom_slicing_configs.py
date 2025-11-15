@@ -264,7 +264,7 @@ def create_config_comparison_table() -> pd.DataFrame:
             "Layers": cfg["num_layers"],
             "Params (B)": cfg["estimated_params_b"],
             "MMLU Est.": cfg["estimated_mmlu_accuracy"],
-            "Size 4-bit (GB)": cfg["estimated_params_b"] * 0.5,  # Rough estimate
+            "Size 4-bit (GB)": cfg.get("estimated_4bit_size_gb", "N/A"),
             "Target": cfg["deployment_target"],
         })
     
