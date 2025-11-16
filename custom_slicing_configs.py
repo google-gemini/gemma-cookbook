@@ -320,17 +320,17 @@ if __name__ == "__main__":
     print("\n**For 4GB Mobile RAM with 4-bit quantization:**")
     rec = get_config_for_deployment(target_size_gb=1.5, deployment_type="mobile")
     print(f"Recommended: {rec['name']}")
-    print(f"Size: {rec['estimated_params_b']}B → ~{rec['estimated_params_b'] * 0.5:.1f}GB (4-bit)")
+    print(f"Size: {rec['estimated_params_b']}B → ~{rec.get('estimated_4bit_size_gb', 'N/A')}GB (4-bit)")
     
     print("\n**For Web Browser:**")
     rec = get_config_for_deployment(target_size_gb=1.0, deployment_type="web")
     print(f"Recommended: {rec['name']}")
-    print(f"Size: {rec['estimated_params_b']}B → ~{rec['estimated_params_b'] * 0.5:.1f}GB (4-bit)")
+    print(f"Size: {rec['estimated_params_b']}B → ~{rec.get('estimated_4bit_size_gb', 'N/A')}GB (4-bit)")
     
     print("\n**For High-End Mobile (8GB RAM):**")
     rec = get_config_for_deployment(target_size_gb=3.5, deployment_type="mobile")
     print(f"Recommended: {rec['name']}")
-    print(f"Size: {rec['estimated_params_b']}B → ~{rec['estimated_params_b'] * 0.5:.1f}GB (4-bit)")
+    print(f"Size: {rec['estimated_params_b']}B → ~{rec.get('estimated_4bit_size_gb', 'N/A')}GB (4-bit)")
     
     # Audio encoder configs
     print("\n" + "=" * 80)
