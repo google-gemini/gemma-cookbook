@@ -96,6 +96,7 @@ T5Gemma (aka encoder-decoder Gemma) is a family of encoder-decoder large languag
 | Notebook Name | Description |
 | :--- | :--- |
 | [[T5Gemma]Example.ipynb]([T5Gemma]Example.ipynb) | Guide to sampling and fine-tuning T5Gemma using Flax and Hugging Face |
+| [[T5Gemma_2]Example.ipynb]([T5Gemma_2]Example.ipynb) | Guide to inference with T5Gemma 2 270m-270m via Hugging Face |
 
 ### Features
 
