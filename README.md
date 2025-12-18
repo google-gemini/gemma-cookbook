@@ -19,6 +19,8 @@ Gemma is a family of lightweight, generative artificial intelligence (AI) open m
 * Gemma variants
   * [CodeGemma](https://ai.google.dev/gemma/docs/codegemma)\
     Fine-tuned for a variety of coding tasks
+  * [FunctionGemma](https://ai.google.dev/gemma/docs/functiongemma)\
+    Fine-tuned on Gemma 3 270M IT checkpoint for function calling
   * [PaliGemma](https://ai.google.dev/gemma/docs/paligemma/model-card)\
     Vision Language Model\
     For a deeper analysis of images and provide useful insights
@@ -30,7 +32,7 @@ Gemma is a family of lightweight, generative artificial intelligence (AI) open m
   * [ShieldGemma](https://ai.google.dev/gemma/docs/shieldgemma/model_card)\
     Fine-tuned for evaluating the safety of text prompt input and text output responses against a set of defined safety policies
   * [ShieldGemma 2](https://ai.google.dev/gemma/docs/shieldgemma/model_card_2)\
-    Fine-tuned on Gemma 3's 4B IT checkpoint for image safety classification
+    Fine-tuned on Gemma 3 4B IT checkpoint for image safety classification
   * [DataGemma](https://ai.google.dev/gemma/docs/datagemma)\
     Fine-tuned for using Data Commons to address AI hallucinations
   * [MedGemma](https://developers.google.com/health-ai-developer-foundations/medgemma)
@@ -41,6 +43,7 @@ You can find the Gemma models on the Hugging Face Hub, Kaggle, Google Cloud Vert
 ## Table of Notebooks
 * [Gemma](Gemma/README.md)
 * [CodeGemma](CodeGemma/README.md)
+* [FunctionGemma](FunctionGemma/README.md)
 * [PaliGemma](PaliGemma/README.md)
 * [MedGemma](MedGemma/README.md)
 * [MedGemma on Google-Health](https://github.com/Google-Health/medgemma/tree/main/notebooks) : Google-Health has additional notebooks for using MedGemma
