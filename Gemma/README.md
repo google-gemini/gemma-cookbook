@@ -55,6 +55,7 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_3n]Audio_understanding_with_HF.ipynb]([Gemma_3n]Audio_understanding_with_HF.ipynb)                           | Run Gemma 3n with audio input |
 | [[Gemma_3n]Multimodal_understanding_with_HF.ipynb]([Gemma_3n]Multimodal_understanding_with_HF.ipynb)                 | Run Gemma 3n with image + audio input |
 | [[Gemma_3n]MatFormer_Lab.ipynb]([Gemma_3n]MatFormer_Lab.ipynb)                                                       | Run Gemma 3n with MatFormers and Mix-n-Match |
+| [[Gemma_3n]Using_with_Transformersjs.ipynb]([Gemma_3n]Using_with_Transformersjs.ipynb)                                                       | Run Gemma 3n with [Transformers.js](https://github.com/huggingface/transformers.js). |
 
 ## Prompting
 | Notebook Name | Description |
