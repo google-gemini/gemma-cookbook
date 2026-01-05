@@ -19,7 +19,6 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[PaliGemma_2]Inference_PaliGemma2_with_Transformers_js.ipynb]([PaliGemma_2]Inference_PaliGemma2_with_Transformers_js.ipynb)                                                     | Inference PaliGemma 2 with Transformers.js for tasks like image captioning, zero-shot object detection, OCR, and visual Q&A.                                                                                                                                    |
 | [[PaliGemma_2]Keras_Quickstart.ipynb]([PaliGemma_2]Keras_Quickstart.ipynb)                                                              | PaliGemma 2 3B DOCCI model quickstart tutorial with Keras                                                                                                        |
 | [[PaliGemma_2]Using_with_Transformersjs.ipynb]([PaliGemma_2]Using_with_Transformersjs.ipynb)                                                         | Run PaliGemma 2 with Transformers.js.                                                                                                                                      |
-| [[Gemma_3]Visual_Document_Extraction_to_JSON.ipynb]([Gemma_3]Visual_Document_Extraction_to_JSON.ipynb) | Demonstrate zero-shot OCR and structured JSON data extraction from images using the natively multimodal Gemma 3 4B-IT model. |
 
 ## Finetuning
 | Notebook Name | Description |
