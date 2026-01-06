@@ -1,5 +1,7 @@
 # Sub-Billion Gemma 3n Model Slicing - Complete Response Package
 
+Author: [Solventerritory](https://github.com/Solventerritory)
+
 ## 📋 Overview
 
 This package provides comprehensive guidance and tools for creating **sub-billion Gemma 3n models** (0.9B and smaller) optimized for deployment on **resource-constrained mobile devices (4-6GB RAM) and web applications**.
@@ -383,13 +385,14 @@ You now have:
 ## 📁 File Structure
 
 ```
-gemma-cookbook/
+gemma-cookbook/Guides/Gemma-3n-Submodels
 ├── FEATURE_REQUEST_RESPONSE_SUMMARY.md          ← Start here (executive summary)
 ├── RESPONSE_SUB_BILLION_AND_AUDIO_SLICING.md    ← Deep technical analysis
 ├── QUICK_START_SUB_BILLION_MODELS.md            ← Implementation guide
 ├── custom_slicing_configs.py                    ← Configuration tool (runnable)
-├── README_SUB_BILLION_MODELS.md (this file)      ← Navigation & overview
-└── Gemma/
+└── README.md (this file)                        ← Navigation & overview
+
+gemma-cookbook/Gemma/
     └── [Gemma_3n]MatFormer_Lab.ipynb            ← Use this notebook to slice
 ```
 
