@@ -9,9 +9,8 @@ Fixed the incorrect median calculation in `[Gemma_2]Finetune_with_Function_Calli
 The fine-tuned model incorrectly calculated the median of `[5, 2, 9, 1, 7, 4, 6, 3, 8]` as **4** instead of the correct answer **5**.
 
 **Root Cause**: Insufficient training configuration for algorithmic/mathematical tasks:
-- Only 100 training steps (very limited)
+- The configuration used `max_steps=100` while `num_train_epochs` was commented out, resulting in insufficient training (~0.39 epochs)
 - Low LoRA rank (r=16) providing insufficient model capacity
-- The configuration used `max_steps=100` and had `num_train_epochs` commented out, resulting in insufficient training.
 
 ## Solution
 
