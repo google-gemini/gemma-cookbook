@@ -11,7 +11,7 @@ The fine-tuned model incorrectly calculated the median of `[5, 2, 9, 1, 7, 4, 6,
 **Root Cause**: Insufficient training configuration for algorithmic/mathematical tasks:
 - Only 100 training steps (very limited)
 - Low LoRA rank (r=16) providing insufficient model capacity
-- Only 1 epoch (commented out) was insufficient for learning
+- The configuration used `max_steps=100` and had `num_train_epochs` commented out, resulting in insufficient training.
 
 ## Solution
 
