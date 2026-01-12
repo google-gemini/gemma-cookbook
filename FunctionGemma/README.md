@@ -7,4 +7,5 @@ This folder is organized into several categories, each focusing on a specific as
 ## Finetuning
 | Notebook Name | Description |
 | :--------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [[FunctionGemma]Finetune_FunctionGemma_270M_for_Mobile_Actions_with_Hugging_Face.ipynb]([FunctionGemma]Finetune_FunctionGemma_270M_for_Mobile_Actions_with_Hugging_Face.ipynb) | Fine-Tuning FunctionGemma for the task of taking user request to perform mobile actions. |
+| [[FunctionGemma]Finetune_FunctionGemma_270M_for_Mobile_Actions_with_Hugging_Face.ipynb]([FunctionGemma]Finetune_FunctionGemma_270M_for_Mobile_Actions_with_Hugging_Face.ipynb) | Fine-Tuning FunctionGemma for the task of taking user request to perform mobile actions using Hugging Face TRL |
+| [[FunctionGemma]Finetune_FunctionGemma_270M_for_Mobile_Actions_with_Tunix.ipynb]([FunctionGemma]Finetune_FunctionGemma_270M_for_Mobile_Actions_with_Tunix.ipynb) | Fine-Tuning FunctionGemma for the task of taking user request to perform mobile actions using Google Tunix. |
