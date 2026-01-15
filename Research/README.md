@@ -6,6 +6,7 @@ This directory contains research experiments and examples using Google's Gemma m
 
 *   **[VaultGemma](#vaultgemma)**: Privacy-focused fine-tuning with differential privacy.
 *   **[T5Gemma](#t5gemma)**: Encoder-decoder variant of Gemma.
+*   **[TranslateGemma](#translategemma)**: Translation models built on Gemma 3
 
 ---
 
@@ -121,3 +122,17 @@ kagglehub
 transformers
 datasets
 ```
+
+---
+
+## TranslateGemma
+
+TranslateGemma is a family of lightweight, state-of-the-art open translation models from Google, based on the Gemma 3 family of models.
+
+TranslateGemma models are designed to handle translation tasks across 55 languages. Their relatively small size makes it possible to deploy them in environments with limited resources such as laptops, desktops or your own cloud infrastructure, democratizing access to state of the art translation models and helping foster innovation for everyone.
+
+### Notebooks
+
+| Notebook Name | Description |
+| :--- | :--- |
+| [[TranslateGemma]Example.ipynb]([TranslateGemma]Example.ipynb) | Guide to inference with TranslateGemma via Hugging Face |
