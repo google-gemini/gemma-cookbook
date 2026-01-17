@@ -81,8 +81,10 @@ async function generate(messages) {
 
   // Tell the main thread we are starting
   self.postMessage({ status: "start" });
+  
+  const MAX_TOKENS_WARNING_THRESHOLD = 256;
 
-  if (SAFE_WEBGPU_GENERATION_CONFIG.max_new_tokens > 256) {
+  if (SAFE_WEBGPU_GENERATION_CONFIG.max_new_tokens > MAX_TOKENS_WARNING_THRESHOLD) {
     console.warn(
       "[Gemma WebGPU] Large max_new_tokens may cause unstable output. Consider reducing to ≤256."
   );
