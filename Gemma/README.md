@@ -51,6 +51,7 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_3]Activation_Hacking.ipynb]([Gemma_3]Activation_Hacking.ipynb)                                                         | Examine and modify internal states, including the residual stream, MLP activations, and attention mechanisms. |
 | [[Gemma_3]Chess.ipynb]([Gemma_3]Chess.ipynb)                                                         | Gemma \| Chess: Learn, Analyze, and Discover a New Dimension! |
 | [[Gemma_3]Gradio_LlamaCpp_Chatbot.ipynb]([Gemma_3]Gradio_LlamaCpp_Chatbot.ipynb)                                                         | Building a Chatbot with Gemma 3 QAT text model using Llama.cpp and Gradio. |
+| [[Gemma_3]Speculative_Decoding.ipynb]([Gemma_3]Speculative_Decoding.ipynb)                                                         | Achieve 2-3x inference speedup for Gemma models using speculative decoding. |
 | [[Gemma_3]Visual_Document_Extraction_to_JSON.ipynb]([Gemma_3]Visual_Document_Extraction_to_JSON.ipynb) | Demonstrate zero-shot OCR and structured JSON data extraction from images using the natively multimodal Gemma 3 4B-IT model. |
 | [[Gemma_3n]Audio_understanding_with_HF.ipynb]([Gemma_3n]Audio_understanding_with_HF.ipynb)                           | Run Gemma 3n with audio input |
 | [[Gemma_3n]Multimodal_understanding_with_HF.ipynb]([Gemma_3n]Multimodal_understanding_with_HF.ipynb)                 | Run Gemma 3n with image + audio input |
