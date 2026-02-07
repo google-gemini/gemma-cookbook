@@ -34,6 +34,8 @@ var geminiToOpenAiAPIVersionhMapping = map[string]string{
 
 const geminiAPIPathRegexPattern = `/([^/]+)/models/([^/]+):([^/]+)$`
 
+var geminiAPIPathRegex = regexp.MustCompile(geminiAPIPathRegexPattern)
+
 func modifyNonStreamResponse(resp *http.Response, action string) error {
 	targetBodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -90,14 +92,15 @@ func main() {
 		log.Printf("Error parsing target URL %s: %v", targetURLStr, err)
 	}
 
-	// --- Setup Proxy ---
-	proxy := httputil.NewSingleHostReverseProxy(targetURL)
 	// --- Http Handler ---
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// --- Setup Proxy ---
+		// We create a new proxy for each request to avoid race conditions on Director and ModifyResponse
+		proxy := httputil.NewSingleHostReverseProxy(targetURL)
+
 		log.Printf("Received URL apth: %s", r.URL.Path)
 
-		re := regexp.MustCompile(geminiAPIPathRegexPattern)
-		matches := re.FindStringSubmatch(r.URL.Path)
+		matches := geminiAPIPathRegex.FindStringSubmatch(r.URL.Path)
 
 		var (
 			isCurrentRequestGeminiStyle bool   = false
