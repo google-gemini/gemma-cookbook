@@ -17,7 +17,6 @@
 import os
 from dotenv import load_dotenv
 import keras
-import datasets
 import json
 
 # Set the backbend before importing Keras
