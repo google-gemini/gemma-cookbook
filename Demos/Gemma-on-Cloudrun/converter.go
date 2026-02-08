@@ -139,7 +139,12 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 }
 
 func flatten[T any](nested [][]T) []T {
-	var flattened []T
+	totalLen := 0
+	for _, innerList := range nested {
+		totalLen += len(innerList)
+	}
+
+	flattened := make([]T, 0, totalLen)
 	for _, innerList := range nested {
 		flattened = append(flattened, innerList...)
 	}
