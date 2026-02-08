@@ -27,7 +27,7 @@ var geminiToOpenAiActionMapping = map[string]string{
 	"generateAnswer":        "chat/completions",
 }
 
-var geminiToOpenAiAPIVersionhMapping = map[string]string{
+var geminiToOpenAiAPIVersionMapping = map[string]string{
 	"v1beta": "v1",
 	"v1":     "v1",
 }
@@ -74,173 +74,218 @@ func modifyStreamResponse(resp *http.Response) error {
 	return nil
 }
 
-func main() {
-	// --- Configuration ---
-	envApiKey := os.Getenv("API_KEY")
+type Config struct {
+	Port      string
+	TargetURL *url.URL
+	APIKey    string
+}
 
+func loadConfig() (*Config, error) {
+	envApiKey := os.Getenv("API_KEY")
 	port := os.Getenv("PORT")
-	targetURLStr := os.Getenv("OLLAMA_HOST")
 	if port == "" {
 		port = defaultPort
 	}
+
+	targetURLStr := os.Getenv("OLLAMA_HOST")
 	if targetURLStr == "" {
 		targetURLStr = defaultTargetURL
 	}
 
 	targetURL, err := url.Parse(targetURLStr)
 	if err != nil {
-		log.Printf("Error parsing target URL %s: %v", targetURLStr, err)
+		return nil, fmt.Errorf("error parsing target URL %s: %v", targetURLStr, err)
 	}
 
-	// --- Http Handler ---
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// --- Setup Proxy ---
-		// We create a new proxy for each request to avoid race conditions on Director and ModifyResponse
-		proxy := httputil.NewSingleHostReverseProxy(targetURL)
+	return &Config{
+		Port:      port,
+		TargetURL: targetURL,
+		APIKey:    envApiKey,
+	}, nil
+}
 
-		log.Printf("Received URL apth: %s", r.URL.Path)
+type ProxyHandler struct {
+	config *Config
+}
 
-		matches := geminiAPIPathRegex.FindStringSubmatch(r.URL.Path)
+func NewProxyHandler(config *Config) *ProxyHandler {
+	return &ProxyHandler{config: config}
+}
 
-		var (
-			isCurrentRequestGeminiStyle bool   = false
-			actionForResponse           string // Stores action for response modification
-		)
+func (h *ProxyHandler) setupGeminiProxy(w http.ResponseWriter, r *http.Request, proxy *httputil.ReverseProxy, matches []string) (string, bool) {
+	apiVersion := matches[1]
+	modelVersion := matches[2]
+	action := matches[3]
 
-		if len(matches) == 4 {
-			apiVersion := matches[1]
-			modelVersion := matches[2]
-			action := matches[3]
+	log.Printf("API Version: %s\n", apiVersion)
+	log.Printf("Model Version: %s\n", modelVersion)
+	log.Printf("Real Path: %s\n", action)
 
-			log.Printf("API Version: %s\n", apiVersion)
-			log.Printf("Model Version: %s\n", modelVersion)
-			log.Printf("Real Path: %s\n", action)
+	convertedAPIVersion, convertedAPIVersionOk := geminiToOpenAiAPIVersionMapping[apiVersion]
+	convertedAction, convertedActionOk := geminiToOpenAiActionMapping[action]
 
-			isCurrentRequestGeminiStyle = true
-			actionForResponse = action
+	if !(convertedAPIVersionOk && convertedActionOk) {
+		log.Printf("Error occurred during conversion: convertedAPIVersionOk: %v, convertedActionOk: %v. URL path will not be converted. ", convertedAPIVersionOk, convertedActionOk)
+		http.Error(w, "Failed to read request path.", http.StatusNotFound)
+		return "", false
+	}
 
-			convertedAPIVersion, convertedAPIVersionOk := geminiToOpenAiAPIVersionhMapping[apiVersion]
-			convertedAction, convertedActionOk := geminiToOpenAiActionMapping[action]
+	queryParams := r.URL.Query()
+	requestApiKey := r.Header.Get("x-goog-api-key")
+	if requestApiKey == "" {
+		requestApiKey = queryParams.Get("key")
+	}
+	if h.config.APIKey != "" && requestApiKey != h.config.APIKey {
+		log.Printf("Invalid API key provided in the request.")
+		http.Error(w, "Permission denied. Invalid API Key.  Configure your SDK to use this URL, and use the API key provided at deployment (https://github.com/google-gemini/gemma-cookbook/blob/main/Demos/Gemma-on-Cloudrun/README.md)", http.StatusForbidden)
+		return "", false
+	}
+	// 1. Read original request body
+	originalBodyBytes, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Printf("Error reading request body: %v", err)
+		http.Error(w, "Failed to read request body", http.StatusBadRequest)
+		return "", false
+	}
+	// It's important to close the original body
+	r.Body.Close()
+	// Create a new reader with the read bytes for potential later use (like logging)
+	r.Body = io.NopCloser(bytes.NewBuffer(originalBodyBytes))
 
-			if !(convertedAPIVersionOk && convertedActionOk) {
-				log.Printf("Error occurred during conversion: convertedAPIVersionOk: %v, convertedActionOk: %v. URL path will not be converted. ", convertedAPIVersionOk, convertedActionOk)
-				http.Error(w, "Failed to read request path.", http.StatusNotFound)
-				return
-			}
+	bodyBytes, err := ConvertRequestBody(originalBodyBytes, action, modelVersion)
+	if err != nil {
+		log.Printf("Error encountered during request body conversion: %v", err)
+		http.Error(w, "Failed to convert request for target.", http.StatusInternalServerError)
+		return "", false
+	}
+	log.Printf("Updated request body: %s", string(bodyBytes))
 
-			queryParams := r.URL.Query()
-			requestApiKey := r.Header.Get("x-goog-api-key")
-			if requestApiKey == "" {
-				requestApiKey = queryParams.Get("key")
-			}
-			if envApiKey != "" && requestApiKey != envApiKey {
-				log.Printf("Invalid API key provided in the request.")
-				http.Error(w, "Permission denied. Invalid API Key.  Configure your SDK to use this URL, and use the API key provided at deployment (https://github.com/google-gemini/gemma-cookbook/blob/main/Demos/Gemma-on-Cloudrun/README.md)", http.StatusForbidden)
-				return
-			}
-			// 1. Read original request body
-			originalBodyBytes, err := io.ReadAll(r.Body)
-			if err != nil {
-				log.Printf("Error reading request body: %v", err)
-				http.Error(w, "Failed to read request body", http.StatusBadRequest)
-				return
-			}
-			// It's important to close the original body
-			r.Body.Close()
-			// Create a new reader with the read bytes for potential later use (like logging)
-			r.Body = io.NopCloser(bytes.NewBuffer(originalBodyBytes))
+	proxy.Director = func(req *http.Request) {
+		req.Body = io.NopCloser(bytes.NewReader(bodyBytes))
+		req.URL.Scheme = h.config.TargetURL.Scheme
+		req.URL.Host = h.config.TargetURL.Host
+		req.URL.Path = fmt.Sprintf("/%s/%s", convertedAPIVersion, convertedAction)
+		req.Header.Set("Content-Type", "application/json")
+		req.ContentLength = int64(len(bodyBytes))
+		req.Host = h.config.TargetURL.Host
 
-			bodyBytes, err := ConvertRequestBody(originalBodyBytes, action, modelVersion)
-			if err != nil {
-				log.Printf("Error encountered during request body conversion: %v", err)
-				http.Error(w, "Failed to convert request for target.", http.StatusInternalServerError)
-				return
-			}
-			log.Printf("Updated request body: %s", string(bodyBytes))
+		log.Printf(">>> Director: Proxying request to: %s %s", req.Method, req.URL.String())
+		log.Printf(">>> Director: Outgoing Host header: %s", req.Host)
+		log.Printf(">>> Director: Outgoing Content-Length: %d", req.ContentLength)
+		log.Printf(">>> Director: Outgoing Content-Type: %s", req.Header.Get("Content-Type"))
+	}
 
-			proxy.Director = func(req *http.Request) {
-				req.Body = io.NopCloser(bytes.NewReader(bodyBytes))
-				req.URL.Scheme = targetURL.Scheme
-				req.URL.Host = targetURL.Host
-				req.URL.Path = fmt.Sprintf("/%s/%s", convertedAPIVersion, convertedAction)
-				req.Header.Set("Content-Type", "application/json")
-				req.ContentLength = int64(len(bodyBytes))
-				req.Host = targetURL.Host
+	return action, true
+}
 
-				log.Printf(">>> Director: Proxying request to: %s %s", req.Method, req.URL.String())
-				log.Printf(">>> Director: Outgoing Host header: %s", req.Host)
-				log.Printf(">>> Director: Outgoing Content-Length: %d", req.ContentLength)
-				log.Printf(">>> Director: Outgoing Content-Type: %s", req.Header.Get("Content-Type"))
-			}
+func (h *ProxyHandler) setupStandardProxy(w http.ResponseWriter, r *http.Request, proxy *httputil.ReverseProxy) bool {
+	log.Printf("URL path does not match the expected format. No conversion applied.")
 
-		} else {
-			log.Printf("URL path does not match the expected format. No conversion applied.")
-			isCurrentRequestGeminiStyle = false
+	apiKey := r.Header.Get("Authorization")
+	expectedPrefix := "Bearer "
+	if apiKey == "" {
+		apiKey = r.URL.Query().Get("key")
+		expectedPrefix = ""
+	}
+	if h.config.APIKey != "" && apiKey != expectedPrefix+h.config.APIKey {
+		log.Printf("Invalid API key provided in the request.")
+		http.Error(w, "Permission denied. Invalid API Key.  Configure your SDK to use this URL, and use the API key provided at deployment (https://github.com/google-gemini/gemma-cookbook/blob/main/Demos/Gemma-on-Cloudrun/README.md)", http.StatusForbidden)
+		return false
+	}
 
-			apiKey := r.Header.Get("Authorization")
-			expectedPrefix := "Bearer "
-			if apiKey == "" {
-				apiKey = r.URL.Query().Get("key")
-				expectedPrefix = ""
-			}
-			if envApiKey != "" && apiKey != expectedPrefix+envApiKey {
-				log.Printf("Invalid API key provided in the request.")
-				http.Error(w, "Permission denied. Invalid API Key.  Configure your SDK to use this URL, and use the API key provided at deployment (https://github.com/google-gemini/gemma-cookbook/blob/main/Demos/Gemma-on-Cloudrun/README.md)", http.StatusForbidden)
-				return
-			}
+	proxy.Director = func(req *http.Request) {
+		req.URL.Scheme = h.config.TargetURL.Scheme
+		req.URL.Host = h.config.TargetURL.Host
+		req.Host = h.config.TargetURL.Host
 
-			proxy.Director = func(req *http.Request) {
-				req.URL.Scheme = targetURL.Scheme
-				req.URL.Host = targetURL.Host
-				req.Host = targetURL.Host
+		log.Printf(">>> Director: Proxying request to: %s %s", req.Method, req.URL.String())
+		log.Printf(">>> Director: Outgoing Host header: %s", req.Host)
+	}
+	return true
+}
 
-				log.Printf(">>> Director: Proxying request to: %s %s", req.Method, req.URL.String())
-				log.Printf(">>> Director: Outgoing Host header: %s", req.Host)
-			}
+func (h *ProxyHandler) proxyErrorHandler(w http.ResponseWriter, r *http.Request, err error) {
+	log.Printf("!!! Proxy Error: %v", err)
+	// Check for specific errors if needed, e.g., connection refused
+	http.Error(w, "Proxy Error: "+err.Error(), http.StatusBadGateway)
+}
+
+func (h *ProxyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// --- Setup Proxy ---
+	// We create a new proxy for each request to avoid race conditions on Director and ModifyResponse
+	proxy := httputil.NewSingleHostReverseProxy(h.config.TargetURL)
+
+	log.Printf("Received URL path: %s", r.URL.Path)
+
+	matches := geminiAPIPathRegex.FindStringSubmatch(r.URL.Path)
+
+	var (
+		isCurrentRequestGeminiStyle bool   = false
+		actionForResponse           string // Stores action for response modification
+	)
+
+	if len(matches) == 4 {
+		isCurrentRequestGeminiStyle = true
+		var ok bool
+		actionForResponse, ok = h.setupGeminiProxy(w, r, proxy, matches)
+		if !ok {
+			return
 		}
 
-		// --- Modify Response ---
-		proxy.ModifyResponse = func(resp *http.Response) error {
-			// Handle non-GenAI style requests - pass them through without modification
-			if !isCurrentRequestGeminiStyle {
-				return nil
-			}
+	} else {
+		if !h.setupStandardProxy(w, r, proxy) {
+			return
+		}
+	}
 
-			// Handle non-200 responses - pass them through without modification
-			if resp.StatusCode != http.StatusOK {
-				log.Printf("<<< ModifyResponse: Target returned non-200 status (%d). Forwarding original body.", resp.StatusCode)
-				return nil
-			}
-
-			switch actionForResponse {
-			case "generateContent", "generateAnswer":
-				modifyNonStreamResponse(resp, actionForResponse)
-			case "streamGenerateContent":
-				modifyStreamResponse(resp)
-			default:
-				return fmt.Errorf("unexpected action %s", actionForResponse)
-			}
-
+	// --- Modify Response ---
+	proxy.ModifyResponse = func(resp *http.Response) error {
+		// Handle non-GenAI style requests - pass them through without modification
+		if !isCurrentRequestGeminiStyle {
 			return nil
 		}
 
-		// --- Error Handling for the Proxy ---
-		proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
-			log.Printf("!!! Proxy Error: %v", err)
-			// Check for specific errors if needed, e.g., connection refused
-			http.Error(w, "Proxy Error: "+err.Error(), http.StatusBadGateway)
+		// Handle non-200 responses - pass them through without modification
+		if resp.StatusCode != http.StatusOK {
+			log.Printf("<<< ModifyResponse: Target returned non-200 status (%d). Forwarding original body.", resp.StatusCode)
+			return nil
 		}
 
-		// --- Serve the request using the proxy ---
-		log.Printf("Forwarding request to target: %s", targetURL.String())
-		proxy.ServeHTTP(w, r)
-	})
+		switch actionForResponse {
+		case "generateContent", "generateAnswer":
+			modifyNonStreamResponse(resp, actionForResponse)
+		case "streamGenerateContent":
+			modifyStreamResponse(resp)
+		default:
+			return fmt.Errorf("unexpected action %s", actionForResponse)
+		}
+
+		return nil
+	}
+
+	// --- Error Handling for the Proxy ---
+	proxy.ErrorHandler = h.proxyErrorHandler
+
+	// --- Serve the request using the proxy ---
+	log.Printf("Forwarding request to target: %s", h.config.TargetURL.String())
+	proxy.ServeHTTP(w, r)
+}
+
+func main() {
+	// --- Configuration ---
+	config, err := loadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
+
+	// --- Http Handler ---
+	handler := NewProxyHandler(config)
 
 	// --- Start Server ---
-	serverAddr := fmt.Sprintf(":%s", port)
+	serverAddr := fmt.Sprintf(":%s", config.Port)
 	log.Printf("Proxy server starting on %s", serverAddr)
-	log.Printf("Proxying requests to %s", targetURL.String())
-	if err := http.ListenAndServe(serverAddr, nil); err != nil {
+	log.Printf("Proxying requests to %s", config.TargetURL.String())
+	if err := http.ListenAndServe(serverAddr, handler); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }

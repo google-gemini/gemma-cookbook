@@ -3,11 +3,10 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"os"
+	"net/url"
 	"reflect"
 	"strings"
 	"testing"
@@ -88,14 +87,21 @@ func TestProxy_GenerateContent(t *testing.T) {
 	defer mockTargetServer.Close()
 
 	// 2. Set up the proxy server to point to the mock target
-	os.Setenv("PORT", "8085")                      // Use a test port
-	os.Setenv("OLLAMA_HOST", mockTargetServer.URL) // Ensure proxy targets the mock
-	os.Setenv("API_KEY", apiKey)
+	mockTargetURL, err := url.Parse(mockTargetServer.URL)
+	if err != nil {
+		t.Fatalf("Failed to parse mock target URL: %v", err)
+	}
 
-	// Start the proxy server in a goroutine
-	go main()
+	config := &Config{
+		Port:      "8085",
+		TargetURL: mockTargetURL,
+		APIKey:    apiKey,
+	}
+	handler := NewProxyHandler(config)
+	proxyServer := httptest.NewServer(handler)
+	defer proxyServer.Close()
 
-	proxyURL := fmt.Sprintf("http://localhost:%s", os.Getenv("PORT"))
+	proxyURL := proxyServer.URL
 
 	// 3. Make a request to the proxy server
 	reqBody := `{
