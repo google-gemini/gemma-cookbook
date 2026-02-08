@@ -143,8 +143,8 @@ def generate_from_model(prompt_text, use_tuned_weights):
 
     if use_tuned_weights:
         # load and compile tuned model weights
-        gemma.backbone.enable_lora(rank=4)
-        gemma.backbone.load_lora_weights(f"./weights/gemma2-2b_inquiry_tuned_4_epoch3.lora.h5")
+        gemma.backbone.enable_lora(rank=lora_rank)
+        gemma.backbone.load_lora_weights(f"weights/{lora_name}_{lora_rank}_epoch{train_epochs}.lora.h5")
 
     # For this use case, the greedy sampler is best
     gemma.compile(sampler="greedy")
