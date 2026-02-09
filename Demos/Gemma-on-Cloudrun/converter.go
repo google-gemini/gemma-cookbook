@@ -138,54 +138,43 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 	}()
 }
 
-func flatten[T any](nested [][]T) []T {
-	totalLen := 0
-	for _, innerList := range nested {
-		totalLen += len(innerList)
-	}
-
-	flattened := make([]T, 0, totalLen)
-	for _, innerList := range nested {
-		flattened = append(flattened, innerList...)
-	}
-	return flattened
-}
-
 func convertContentsToMessages(contents []*genai.Content) []openai.ChatCompletionMessageParamUnion {
-	nestedMessageList := make([][]openai.ChatCompletionMessageParamUnion, len(contents))
-	for i, content := range contents {
-		nestedMessageList[i] = convertContentToMessages(content)
+	// Calculate total capacity first to avoid intermediate allocations and resizing
+	totalParts := 0
+	for _, content := range contents {
+		totalParts += len(content.GetParts())
 	}
-	return flatten(nestedMessageList)
-}
 
-func convertContentToMessages(content *genai.Content) []openai.ChatCompletionMessageParamUnion {
-	openAiChatMessageList := make([]openai.ChatCompletionMessageParamUnion, len(content.GetParts()))
-	if content.Role == "model" {
-		for i, part := range content.GetParts() {
-			openAiChatMessageList[i] = openai.ChatCompletionMessageParamUnion{
-				OfAssistant: &openai.ChatCompletionAssistantMessageParam{
-					Content: openai.ChatCompletionAssistantMessageParamContentUnion{
-						OfString: param.NewOpt(part.GetText()),
+	messages := make([]openai.ChatCompletionMessageParamUnion, 0, totalParts)
+
+	for _, content := range contents {
+		isModel := content.Role == "model"
+
+		for _, part := range content.GetParts() {
+			var msg openai.ChatCompletionMessageParamUnion
+			if isModel {
+				msg = openai.ChatCompletionMessageParamUnion{
+					OfAssistant: &openai.ChatCompletionAssistantMessageParam{
+						Content: openai.ChatCompletionAssistantMessageParamContentUnion{
+							OfString: param.NewOpt(part.GetText()),
+						},
+						Role: "assistant",
 					},
-					Role: "assistant",
-				},
+				}
+			} else {
+				msg = openai.ChatCompletionMessageParamUnion{
+					OfUser: &openai.ChatCompletionUserMessageParam{
+						Content: openai.ChatCompletionUserMessageParamContentUnion{
+							OfString: param.NewOpt(part.GetText()),
+						},
+						Role: "user",
+					},
+				}
 			}
-		}
-		return openAiChatMessageList
-
-	}
-	for i, part := range content.GetParts() {
-		openAiChatMessageList[i] = openai.ChatCompletionMessageParamUnion{
-			OfUser: &openai.ChatCompletionUserMessageParam{
-				Content: openai.ChatCompletionUserMessageParamContentUnion{
-					OfString: param.NewOpt(part.GetText()),
-				},
-				Role: "user",
-			},
+			messages = append(messages, msg)
 		}
 	}
-	return openAiChatMessageList
+	return messages
 }
 
 func convertResponseMimeTypeToResponseFormat(responseFormat string) openai.ChatCompletionNewParamsResponseFormatUnion {
