@@ -31,6 +31,38 @@ steps:
     script: |
       set -x
       docker build --pull --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-27b:latest"
+  - id: 'Build gemma3 1b QAT Image'
+    name: 'gcr.io/cloud-builders/docker:latest'
+    dir: 'Demos/Gemma-on-Cloudrun/' # in CI cloudbuild.yaml's context is the root of the repo.
+    env:
+      - 'MODEL=gemma3:1b-it-qat'
+    script: |
+      set -x
+      docker build --pull --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-1b-it-qat:latest"
+  - id: 'Build gemma3 4b QAT Image'
+    name: 'gcr.io/cloud-builders/docker:latest'
+    dir: 'Demos/Gemma-on-Cloudrun/' # in CI cloudbuild.yaml's context is the root of the repo.
+    env:
+      - 'MODEL=gemma3:4b-it-qat'
+    script: |
+      set -x
+      docker build --pull --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-4b-it-qat:latest"
+  - id: 'Build gemma3 12b QAT Image'
+    name: 'gcr.io/cloud-builders/docker:latest'
+    dir: 'Demos/Gemma-on-Cloudrun/' # in CI cloudbuild.yaml's context is the root of the repo.
+    env:
+      - 'MODEL=gemma3:12b-it-qat'
+    script: |
+      set -x
+      docker build --pull --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-12b-it-qat:latest"
+  - id: 'Build gemma3 27b QAT Image'
+    name: 'gcr.io/cloud-builders/docker:latest'
+    dir: 'Demos/Gemma-on-Cloudrun/' # in CI cloudbuild.yaml's context is the root of the repo.
+    env:
+      - 'MODEL=gemma3:27b-it-qat'
+    script: |
+      set -x
+      docker build --pull --build-arg MODEL=${MODEL} . -t "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-27b-it-qat:latest"
   - id: 'Build gemma3n e2b Image'
     name: 'gcr.io/cloud-builders/docker:latest'
     dir: 'Demos/Gemma-on-Cloudrun/' # in CI cloudbuild.yaml's context is the root of the repo. 
@@ -56,6 +88,10 @@ images:
   - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-4b:latest
   - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-12b:latest
   - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-27b:latest
+  - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-1b-it-qat:latest
+  - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-4b-it-qat:latest
+  - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-12b-it-qat:latest
+  - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3-27b-it-qat:latest
   - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3n-e2b:latest
   - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gemma/gemma3n-e4b:latest
 
