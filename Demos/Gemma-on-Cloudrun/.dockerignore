@@ -1,0 +1,10 @@
+.git
+.gitignore
+.geminiignore
+code-examples
+README.md
+cloudbuild.yaml
+Dockerfile
+.dockerignore
+plans
+*.md
