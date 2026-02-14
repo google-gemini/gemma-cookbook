@@ -52,7 +52,7 @@ type ChatCompletionRequest struct {
 }
 
 func ConvertRequestBody(originalBodyBytes []byte, action string, model string) ([]byte, error) {
-	log.Printf("Receive req body: %s, action: %s", string(originalBodyBytes), action)
+	// log.Printf("Receive req body: %s, action: %s", string(originalBodyBytes), action) // Removed for performance
 	switch action {
 	case "generateContent":
 		return convertGenerateContentRequestToChatCompletionRequest(originalBodyBytes, model, false)
@@ -68,7 +68,7 @@ func ConvertRequestBody(originalBodyBytes []byte, action string, model string) (
 func ConvertNonStreamResponseBody(originalBodyBytes []byte, action string) ([]byte, error) {
 	switch action {
 	case "generateContent":
-		log.Printf("original answer: %s", originalBodyBytes)
+		// log.Printf("original answer: %s", originalBodyBytes) // Removed for performance
 		chatCompletion := &openai.ChatCompletion{}
 		err := json.Unmarshal(originalBodyBytes, chatCompletion)
 		if err != nil {
@@ -99,6 +99,9 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 		}()
 		reader := bufio.NewReader(originalBody)
 
+		// Pre-allocate newline slice to avoid repeated allocations
+		newLine := []byte{'\n'}
+
 		for {
 			line, err := reader.ReadBytes('\n')
 			if err != nil {
@@ -108,7 +111,7 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 				fmt.Fprintf(pw, "stream read error: %v", err)
 				break
 			}
-			log.Printf("original line: %s", line)
+			// log.Printf("original line: %s", line) // Removed for performance
 
 			trimmed := bytes.TrimSpace(line)
 			if len(trimmed) == 0 || !bytes.HasPrefix(trimmed, []byte("data: ")) {
@@ -133,7 +136,9 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 				fmt.Fprintf(pw, "failed to convert chunk, error: %v, raw: %s", err, string(raw))
 				continue
 			}
-			pw.Write(append(bodyBytes, '\n'))
+			// Avoid append allocation by writing twice
+			pw.Write(bodyBytes)
+			pw.Write(newLine)
 		}
 	}()
 }
