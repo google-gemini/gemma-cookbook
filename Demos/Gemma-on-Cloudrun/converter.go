@@ -33,6 +33,10 @@ var openAiToGeminiModelMapping = map[string]string{
 	"gemma3n:E4b": "gemma-3n-e4b-it",
 }
 
+var dataPrefix = []byte("data: ")
+var doneBytes = []byte("[DONE]")
+var newlineBytes = []byte{'\n'}
+
 type ChatCompletionRequest struct {
 	Stream           bool
 	StreamOptions    openai.ChatCompletionStreamOptionsParam
@@ -95,29 +99,23 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 			}
 			originalBody.Close()
 			pw.Close()
-			close(done)
-		}()
-		reader := bufio.NewReader(originalBody)
-
-		for {
-			line, err := reader.ReadBytes('\n')
-			if err != nil {
-				if err == io.EOF {
-					break
-				}
-				fmt.Fprintf(pw, "stream read error: %v", err)
-				break
+			if done != nil {
+				close(done)
 			}
-			log.Printf("original line: %s", line)
+		}()
+		scanner := bufio.NewScanner(originalBody)
+
+		for scanner.Scan() {
+			line := scanner.Bytes()
 
 			trimmed := bytes.TrimSpace(line)
-			if len(trimmed) == 0 || !bytes.HasPrefix(trimmed, []byte("data: ")) {
+			if len(trimmed) == 0 || !bytes.HasPrefix(trimmed, dataPrefix) {
 				continue
 			}
 
-			raw := bytes.TrimSpace(bytes.TrimPrefix(trimmed, []byte("data: ")))
+			raw := bytes.TrimSpace(bytes.TrimPrefix(trimmed, dataPrefix))
 
-			if bytes.Equal(raw, []byte("[DONE]")) {
+			if bytes.Equal(raw, doneBytes) {
 				break
 			}
 
@@ -133,7 +131,12 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 				fmt.Fprintf(pw, "failed to convert chunk, error: %v, raw: %s", err, string(raw))
 				continue
 			}
-			pw.Write(append(bodyBytes, '\n'))
+			pw.Write(bodyBytes)
+			pw.Write(newlineBytes)
+		}
+
+		if err := scanner.Err(); err != nil {
+			fmt.Fprintf(pw, "stream read error: %v", err)
 		}
 	}()
 }
