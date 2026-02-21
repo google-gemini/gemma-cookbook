@@ -7,3 +7,8 @@
 
 **Learning:** `append(b, '\n')` creates a new slice for every chunk.
 **Action:** Use sequential `pw.Write(b); pw.Write(newline)` to avoid allocation.
+
+## 2026-02-19 - Gradio Client Initialization
+
+**Learning:** `gradio_client.Client` initialization is expensive (network call to fetch config) and blocking.
+**Action:** Cache `Client` instances using `functools.lru_cache` (or global) to reuse connections across requests.
