@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 from flask import Flask, render_template, request
-#from k_mail_replier.models.gemini import create_message_processor
 from k_mail_replier.models.gemma import create_message_processor
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
