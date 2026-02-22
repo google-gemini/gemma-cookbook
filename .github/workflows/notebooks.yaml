@@ -1,6 +1,8 @@
 # Notebook-related checks
 
 name: Notebooks
+permissions:
+  contents: read
 
 on:
   # Relevant PRs
