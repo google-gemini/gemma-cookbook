@@ -16,6 +16,7 @@
 from flask import Flask, render_template, request
 #from k_mail_replier.models.gemini import create_message_processor
 from k_mail_replier.models.gemma import create_message_processor
+import os
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 customer_request = None
@@ -43,7 +44,8 @@ def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug = os.environ.get("FLASK_DEBUG", "").lower() in ("1", "true", "yes")
+    app.run(debug=debug)
 
 def get_prompt():
     """Write a polite reply to this email thanks the sender for the request and saying that we will reply with more detail soon:"""    
