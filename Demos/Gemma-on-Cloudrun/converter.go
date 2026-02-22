@@ -20,10 +20,6 @@ var geminiToOpenAiModelMapping = map[string]string{
 	"gemma-3-4b-it":  "gemma3:4b",
 	"gemma-3-12b-it": "gemma3:12b",
 	"gemma-3-27b-it": "gemma3:27b",
-	"gemma-3-1b-it-qat":  "gemma3:1b-it-qat",
-	"gemma-3-4b-it-qat":  "gemma3:4b-it-qat",
-	"gemma-3-12b-it-qat":  "gemma3:12b-it-qat",
-	"gemma-3-27b-it-qat":  "gemma3:27b-it-qat",
 	"gemma-3n-e2b-it": "gemma3n:E2b",
 	"gemma-3n-e4b-it": "gemma3n:E4b",
 }
@@ -33,17 +29,9 @@ var openAiToGeminiModelMapping = map[string]string{
 	"gemma3:4b":  "gemma-3-4b-it",
 	"gemma3:12b": "gemma-3-12b-it",
 	"gemma3:27b": "gemma-3-27b-it",
-	"gemma3:1b-it-qat": "gemma-3-1b-it-qat",
-	"gemma3:4b-it-qat": "gemma-3-4b-it-qat",
-	"gemma3:12b-it-qat": "gemma-3-12b-it-qat",
-	"gemma3:27b-it-qat": "gemma-3-27b-it-qat",
 	"gemma3n:E2b": "gemma-3n-e2b-it",
 	"gemma3n:E4b": "gemma-3n-e4b-it",
 }
-
-var dataPrefix = []byte("data: ")
-var doneBytes = []byte("[DONE]")
-var newlineBytes = []byte{'\n'}
 
 type ChatCompletionRequest struct {
 	Stream           bool
@@ -107,23 +95,27 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 			}
 			originalBody.Close()
 			pw.Close()
-			if done != nil {
-				close(done)
-			}
+			close(done)
 		}()
-		scanner := bufio.NewScanner(originalBody)
+		reader := bufio.NewReader(originalBody)
 
-		for scanner.Scan() {
-			line := scanner.Bytes()
-
+		for {
+			line, err := reader.ReadBytes('\n')
+			if err != nil {
+				if err == io.EOF {
+					break
+				}
+				fmt.Fprintf(pw, "stream read error: %v", err)
+				break
+			}
 			trimmed := bytes.TrimSpace(line)
-			if len(trimmed) == 0 || !bytes.HasPrefix(trimmed, dataPrefix) {
+			if len(trimmed) == 0 || !bytes.HasPrefix(trimmed, []byte("data: ")) {
 				continue
 			}
 
-			raw := bytes.TrimSpace(bytes.TrimPrefix(trimmed, dataPrefix))
+			raw := bytes.TrimSpace(bytes.TrimPrefix(trimmed, []byte("data: ")))
 
-			if bytes.Equal(raw, doneBytes) {
+			if bytes.Equal(raw, []byte("[DONE]")) {
 				break
 			}
 
@@ -139,12 +131,9 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 				fmt.Fprintf(pw, "failed to convert chunk, error: %v, raw: %s", err, string(raw))
 				continue
 			}
+			// Write separately to avoid allocation
 			pw.Write(bodyBytes)
-			pw.Write(newlineBytes)
-		}
-
-		if err := scanner.Err(); err != nil {
-			fmt.Fprintf(pw, "stream read error: %v", err)
+			pw.Write([]byte{'\n'})
 		}
 	}()
 }

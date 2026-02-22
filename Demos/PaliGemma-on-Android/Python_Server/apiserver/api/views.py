@@ -2,6 +2,8 @@ from ninja import NinjaAPI, File, UploadedFile, Form
 from gradio_client import Client, handle_file
 from PIL import Image
 
+# from decouple import config     #if using your own token
+
 from .models import ImageDetection
 
 import pathlib
@@ -82,10 +84,7 @@ def detect(request, prompt: Form[str], image: File[UploadedFile], width: Form[in
 
     	print(polygons)
     	# Delete images after processing.
-	if os.path.exists(img_path):
-		os.remove(img_path)
-	if os.path.exists(resized_img_path):
-		os.remove(resized_img_path)
+	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
 
     	return polygons
 
@@ -101,10 +100,7 @@ def detect(request, prompt: Form[str], image: File[UploadedFile], width: Form[in
     	print(result)
 
     	# Delete images after processing.
-	if os.path.exists(img_path):
-		os.remove(img_path)
-	if os.path.exists(resized_img_path):
-		os.remove(resized_img_path)
+	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
 
     	data = result[0]["value"]
     	img_x = result[2]["width"]
