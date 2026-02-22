@@ -82,7 +82,10 @@ def detect(request, prompt: Form[str], image: File[UploadedFile], width: Form[in
 
     	print(polygons)
     	# Delete images after processing.
-    	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
+	if os.path.exists(img_path):
+		os.remove(img_path)
+	if os.path.exists(resized_img_path):
+		os.remove(resized_img_path)
 
     	return polygons
 
@@ -98,7 +101,10 @@ def detect(request, prompt: Form[str], image: File[UploadedFile], width: Form[in
     	print(result)
 
     	# Delete images after processing.
-    	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
+	if os.path.exists(img_path):
+		os.remove(img_path)
+	if os.path.exists(resized_img_path):
+		os.remove(resized_img_path)
 
     	data = result[0]["value"]
     	img_x = result[2]["width"]
