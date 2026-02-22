@@ -15,6 +15,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
+var newline = []byte{'\n'}
+
 var geminiToOpenAiModelMapping = map[string]string{
 	"gemma-3-1b-it":  "gemma3:1b",
 	"gemma-3-4b-it":  "gemma3:4b",
