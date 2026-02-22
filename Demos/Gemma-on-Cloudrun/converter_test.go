@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestConvertRequestBody_GenerateContent(t *testing.T) {
