@@ -54,7 +54,7 @@ type ChatCompletionRequest struct {
 }
 
 func ConvertRequestBody(originalBodyBytes []byte, action string, model string) ([]byte, error) {
-	log.Printf("Receive req body: %s, action: %s", string(originalBodyBytes), action)
+	// log.Printf("Receive req body: %s, action: %s", string(originalBodyBytes), action)
 	switch action {
 	case "generateContent":
 		return convertGenerateContentRequestToChatCompletionRequest(originalBodyBytes, model, false)
@@ -70,7 +70,7 @@ func ConvertRequestBody(originalBodyBytes []byte, action string, model string) (
 func ConvertNonStreamResponseBody(originalBodyBytes []byte, action string) ([]byte, error) {
 	switch action {
 	case "generateContent":
-		log.Printf("original answer: %s", originalBodyBytes)
+		// log.Printf("original answer: %s", originalBodyBytes)
 		chatCompletion := &openai.ChatCompletion{}
 		err := json.Unmarshal(originalBodyBytes, chatCompletion)
 		if err != nil {
@@ -97,9 +97,10 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 			}
 			originalBody.Close()
 			pw.Close()
-			close(done)
+			if done != nil {
+				close(done)
+			}
 		}()
-		reader := bufio.NewReader(originalBody)
 
 		for {
 			line, err := reader.ReadBytes('\n')
@@ -111,19 +112,19 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 				break
 			}
 			trimmed := bytes.TrimSpace(line)
-			if len(trimmed) == 0 || !bytes.HasPrefix(trimmed, []byte("data: ")) {
+			if len(trimmed) == 0 || !bytes.HasPrefix(trimmed, dataPrefix) {
 				continue
 			}
 
-			raw := bytes.TrimSpace(bytes.TrimPrefix(trimmed, []byte("data: ")))
+			raw := bytes.TrimSpace(bytes.TrimPrefix(trimmed, dataPrefix))
 
-			if bytes.Equal(raw, []byte("[DONE]")) {
+			if bytes.Equal(raw, doneMarker) {
 				break
 			}
 
 			var chunk openai.ChatCompletionChunk
 			if err := json.Unmarshal(raw, &chunk); err != nil {
-				log.Printf("unmarshal error: %v, raw: '%s'", err, raw)
+				// log.Printf("unmarshal error: %v, raw: '%s'", err, raw) // Reduced logging
 				fmt.Fprintf(pw, "invalid chunk format, error: %v, raw: %s", err, string(raw))
 				continue
 			}
