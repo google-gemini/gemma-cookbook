@@ -18,6 +18,9 @@
 
 name: "Microsoft Defender For Devops"
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ "main" ]
