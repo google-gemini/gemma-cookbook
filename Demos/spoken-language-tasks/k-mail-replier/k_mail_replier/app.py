@@ -17,18 +17,11 @@ from flask import Flask, render_template, request
 from k_mail_replier.models.gemma import create_message_processor
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
-customer_request = None
 model_processor = create_message_processor() # initialize model
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    global customer_request
-    global model_processor
     """Set up web interface and handle POST input."""
-    # First run behavior: load a test email
-    if customer_request is None:
-        customer_request = get_test_email()
-        return render_template('index.html', request=customer_request)
 
     # Process email data
     if request.method == 'POST':
@@ -39,7 +32,9 @@ def index():
         # re-render page with data:
         return render_template('index.html', request=customer_request, result=result)
 
-    return render_template('index.html')
+    # First run behavior: load a test email
+    customer_request = get_test_email()
+    return render_template('index.html', request=customer_request)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -2,8 +2,6 @@ from ninja import NinjaAPI, File, UploadedFile, Form
 from gradio_client import Client, handle_file
 from PIL import Image
 
-# from decouple import config     #if using your own token
-
 from .models import ImageDetection
 
 import pathlib
