@@ -64,13 +64,12 @@ func modifyNonStreamResponse(resp *http.Response, action string) error {
 }
 
 func modifyStreamResponse(resp *http.Response) error {
-	done := make(chan struct{})
 	pr, pw := io.Pipe()
 	originalBody := resp.Body
 	resp.Body = pr
 	resp.Header.Del("Content-Length")
 	resp.Header.Set("Transfer-Encoding", "chunked")
-	ConvertStreamResponseBody(originalBody, pw, done)
+	ConvertStreamResponseBody(originalBody, pw, nil)
 	return nil
 }
 
