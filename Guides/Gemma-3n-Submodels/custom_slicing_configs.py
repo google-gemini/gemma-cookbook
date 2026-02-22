@@ -202,7 +202,7 @@ def validate_config(config: Dict, base_model_num_layers: int = 35, base_hidden_s
     """
     errors = []
     
-    expected_layers = BASE_MODEL_NUM_LAYERS - len(config["layers_to_skip"])
+    expected_layers = base_model_num_layers - len(config["layers_to_skip"])
     if expected_layers != config["num_layers"]:
         errors.append(
             f"Layer mismatch: {expected_layers} expected but {config['num_layers']} specified"
@@ -217,8 +217,8 @@ def validate_config(config: Dict, base_model_num_layers: int = 35, base_hidden_s
         errors.append("FFN dimensions must be integers.")
 
     for dim in config["ffn_hidden_dims"]:
-        if dim < BASE_HIDDEN_SIZE or dim > MAX_FFN_DIM:
-            errors.append(f"FFN dimension {dim} outside reasonable range [{BASE_HIDDEN_SIZE}, {MAX_FFN_DIM}]")
+        if dim < base_hidden_size or dim > max_ffn_dim:
+            errors.append(f"FFN dimension {dim} outside reasonable range [{base_hidden_size}, {max_ffn_dim}]")
     
     return len(errors) == 0, errors
 
