@@ -47,7 +47,7 @@
     gcov_include: # optional
     # If no coverage reports are found, do not raise an exception.
     handle_no_reports_found: # optional, default is false
-    # 
+    #
     job_code: # optional
     # Custom defined name of the upload. Visible in the Codecov UI
     name: # optional
@@ -101,4 +101,3 @@
     version: # optional, default is latest
     # Directory in which to execute codecov.sh
     working-directory: # optional
-          

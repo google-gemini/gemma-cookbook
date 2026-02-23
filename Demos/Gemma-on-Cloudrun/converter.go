@@ -15,8 +15,6 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-var newline = []byte{'\n'}
-
 var geminiToOpenAiModelMapping = map[string]string{
 	"gemma-3-1b-it":  "gemma3:1b",
 	"gemma-3-4b-it":  "gemma3:4b",
@@ -61,7 +59,6 @@ type ChatCompletionRequest struct {
 
 func ConvertRequestBody(originalBodyBytes []byte, action string, model string) ([]byte, error) {
 	// log.Printf("Receive req body: %s, action: %s", string(originalBodyBytes), action) // Removed for performance
-	// log.Printf("Receive req body: %s, action: %s", string(originalBodyBytes), action)
 	switch action {
 	case "generateContent":
 		return convertGenerateContentRequestToChatCompletionRequest(originalBodyBytes, model, false)
@@ -78,7 +75,6 @@ func ConvertNonStreamResponseBody(originalBodyBytes []byte, action string) ([]by
 	switch action {
 	case "generateContent":
 		// log.Printf("original answer: %s", originalBodyBytes) // Removed for performance
-		// log.Printf("original answer: %s", originalBodyBytes)
 		chatCompletion := &openai.ChatCompletion{}
 		err := json.Unmarshal(originalBodyBytes, chatCompletion)
 		if err != nil {
@@ -109,9 +105,7 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 				close(done)
 			}
 		}()
-
-		// Pre-allocate newline slice to avoid repeated allocations
-		newLine := []byte{'\n'}
+		reader := bufio.NewReader(originalBody)
 
 		for {
 			line, err := reader.ReadBytes('\n')
@@ -137,7 +131,7 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 
 			var chunk openai.ChatCompletionChunk
 			if err := json.Unmarshal(raw, &chunk); err != nil {
-				// log.Printf("unmarshal error: %v, raw: '%s'", err, raw) // Reduced logging
+				log.Printf("unmarshal error: %v, raw: '%s'", err, raw)
 				fmt.Fprintf(pw, "invalid chunk format, error: %v, raw: %s", err, string(raw))
 				continue
 			}
@@ -149,10 +143,7 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 			}
 			// Avoid append allocation by writing twice
 			pw.Write(bodyBytes)
-			pw.Write(newLine)
-			// Write separately to avoid allocation
-			pw.Write(bodyBytes)
-			pw.Write([]byte{'\n'})
+			pw.Write(newline)
 		}
 	}()
 }
