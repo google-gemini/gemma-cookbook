@@ -35,7 +35,12 @@ class ChatUiState(
     messages: List<ChatMessage> = emptyList()
 ) : UiState {
     private val _messages: MutableList<ChatMessage> = messages.toMutableStateList()
-    override val messages: List<ChatMessage> = _messages.reversed()
+    // Optimization: Map ID to index for O(1) access
+    private val _messageIdToIndex: MutableMap<String, Int> = messages.withIndex().associate { it.value.id to it.index }.toMutableMap()
+
+    // Fix: messages should reflect changes in _messages
+    override val messages: List<ChatMessage>
+        get() = _messages.reversed()
 
     // Prompt the model with the current chat history
     override val fullPrompt: String
@@ -44,11 +49,12 @@ class ChatUiState(
     override fun createLoadingMessage(): String {
         val chatMessage = ChatMessage(author = MODEL_PREFIX, isLoading = true)
         _messages.add(chatMessage)
+        _messageIdToIndex[chatMessage.id] = _messages.lastIndex
         return chatMessage.id
     }
 
     override fun appendMessage(id: String, text: String, done: Boolean) {
-        val index = _messages.indexOfFirst { it.id == id }
+        val index = _messageIdToIndex[id] ?: -1
         if (index != -1) {
             val newText = _messages[index].message + text
             _messages[index] = _messages[index].copy(message = newText, isLoading = false)
@@ -61,6 +67,7 @@ class ChatUiState(
             author = author
         )
         _messages.add(chatMessage)
+        _messageIdToIndex[chatMessage.id] = _messages.lastIndex
         return chatMessage.id
     }
 }
@@ -75,6 +82,9 @@ class GemmaUiState(
     private val END_TURN = "<end_of_turn>"
 
     private val _messages: MutableList<ChatMessage> = messages.toMutableStateList()
+    // Optimization: Map ID to index for O(1) access
+    private val _messageIdToIndex: MutableMap<String, Int> = messages.withIndex().associate { it.value.id to it.index }.toMutableMap()
+
     override val messages: List<ChatMessage>
         get() = _messages
             .map {
@@ -92,6 +102,7 @@ class GemmaUiState(
     override fun createLoadingMessage(): String {
         val chatMessage = ChatMessage(author = MODEL_PREFIX, isLoading = true)
         _messages.add(chatMessage)
+        _messageIdToIndex[chatMessage.id] = _messages.lastIndex
         return chatMessage.id
     }
 
@@ -100,7 +111,7 @@ class GemmaUiState(
     }
 
     override fun appendMessage(id: String, text: String, done: Boolean) {
-        val index = _messages.indexOfFirst { it.id == id }
+        val index = _messageIdToIndex[id] ?: -1
         if (index != -1) {
             val newText = if (done) {
                 // Append the Suffix when model is done generating the response
@@ -119,6 +130,7 @@ class GemmaUiState(
             author = author
         )
         _messages.add(chatMessage)
+        _messageIdToIndex[chatMessage.id] = _messages.lastIndex
         return chatMessage.id
     }
 }

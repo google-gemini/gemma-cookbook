@@ -3,8 +3,6 @@ from gradio_client import Client, handle_file
 from PIL import Image
 from functools import lru_cache
 
-# from decouple import config     #if using your own token
-
 from .models import ImageDetection
 
 import pathlib
@@ -86,7 +84,7 @@ def detect(request, prompt: Form[str], image: File[UploadedFile], width: Form[in
 
     	print(polygons)
     	# Delete images after processing.
-    	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
+	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
 
     	return polygons
 
@@ -102,7 +100,7 @@ def detect(request, prompt: Form[str], image: File[UploadedFile], width: Form[in
     	print(result)
 
     	# Delete images after processing.
-    	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
+	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
 
     	data = result[0]["value"]
     	img_x = result[2]["width"]
