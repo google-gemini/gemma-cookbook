@@ -37,7 +37,6 @@ def initialize_model():
 
     # create instance using Gemma 2 2B instruction tuned model
     gemma = keras_nlp.models.GemmaCausalLM.from_preset("gemma2_instruct_2b_en")
-    #gemma.summary() # REMOVE: FOR TESTING ONLY
 
     # load and compile tuned model weights
     gemma.backbone.enable_lora(rank=4)
@@ -58,7 +57,6 @@ def create_message_processor():
         # remove response tags
         response = extract_substring(response)
 
-        print(response) # REMOVE: FOR TESTING ONLY
         return response
 
     return process_message

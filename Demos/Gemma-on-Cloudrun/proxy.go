@@ -51,6 +51,7 @@ func modifyNonStreamResponse(resp *http.Response, action string) error {
 		return fmt.Errorf("failed to convert response for action %s", action)
 	}
 	// log.Printf("Updated response body: %s", string(finalBodyBytes)) // Removed for performance
+	// log.Printf("Updated response body: %s", string(finalBodyBytes))
 
 	resp.Body = io.NopCloser(bytes.NewReader(finalBodyBytes))
 	resp.Header.Set("Content-Length", strconv.Itoa(len(finalBodyBytes)))
@@ -64,13 +65,12 @@ func modifyNonStreamResponse(resp *http.Response, action string) error {
 }
 
 func modifyStreamResponse(resp *http.Response) error {
-	done := make(chan struct{})
 	pr, pw := io.Pipe()
 	originalBody := resp.Body
 	resp.Body = pr
 	resp.Header.Del("Content-Length")
 	resp.Header.Set("Transfer-Encoding", "chunked")
-	ConvertStreamResponseBody(originalBody, pw, done)
+	ConvertStreamResponseBody(originalBody, pw, nil)
 	return nil
 }
 
@@ -159,6 +159,7 @@ func (h *ProxyHandler) setupGeminiProxy(w http.ResponseWriter, r *http.Request, 
 		return "", false
 	}
 	// log.Printf("Updated request body: %s", string(bodyBytes)) // Removed for performance
+	// log.Printf("Updated request body: %s", string(bodyBytes))
 
 	proxy.Director = func(req *http.Request) {
 		req.Body = io.NopCloser(bytes.NewReader(bodyBytes))
