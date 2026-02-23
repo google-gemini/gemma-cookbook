@@ -35,6 +35,12 @@ var openAiToGeminiModelMapping = map[string]string{
 	"gemma3n:E4b": "gemma-3n-e4b-it",
 }
 
+var (
+	newline    = []byte("\n")
+	dataPrefix = []byte("data: ")
+	doneMarker = []byte("[DONE]")
+)
+
 type ChatCompletionRequest struct {
 	Stream           bool
 	StreamOptions    openai.ChatCompletionStreamOptionsParam
