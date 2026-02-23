@@ -14,15 +14,22 @@
 # limitations under the License.
 #
 from flask import Flask, render_template, request
+#from k_mail_replier.models.gemini import create_message_processor
 from k_mail_replier.models.gemma import create_message_processor
-import os
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
+customer_request = None
 model_processor = create_message_processor() # initialize model
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    global customer_request
+    global model_processor
     """Set up web interface and handle POST input."""
+    # First run behavior: load a test email
+    if customer_request is None:
+        customer_request = get_test_email()
+        return render_template('index.html', request=customer_request)
 
     # Process email data
     if request.method == 'POST':
@@ -33,13 +40,10 @@ def index():
         # re-render page with data:
         return render_template('index.html', request=customer_request, result=result)
 
-    # First run behavior: load a test email
-    customer_request = get_test_email()
-    return render_template('index.html', request=customer_request)
+    return render_template('index.html')
 
 if __name__ == '__main__':
-    debug = os.getenv("FLASK_DEBUG", "0") == "1"
-    app.run(debug=debug)
+    app.run(debug=True)
 
 def get_prompt():
     """Write a polite reply to this email thanks the sender for the request and saying that we will reply with more detail soon:"""    

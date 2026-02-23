@@ -3,6 +3,8 @@ from gradio_client import Client, handle_file
 from PIL import Image
 from functools import lru_cache
 
+# from decouple import config     #if using your own token
+
 from .models import ImageDetection
 
 import pathlib

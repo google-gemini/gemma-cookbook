@@ -15,7 +15,6 @@
 #
 from flask import Flask, render_template, request
 import json
-import os
 #from models.gemini import create_message_processor
 from models.gemma import create_message_processor
 
@@ -79,4 +78,4 @@ def get_test_email():
 
 # default method
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

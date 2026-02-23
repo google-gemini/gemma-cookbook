@@ -15,8 +15,6 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-var newline = []byte{'\n'}
-
 var geminiToOpenAiModelMapping = map[string]string{
 	"gemma-3-1b-it":  "gemma3:1b",
 	"gemma-3-4b-it":  "gemma3:4b",
@@ -35,11 +33,9 @@ var openAiToGeminiModelMapping = map[string]string{
 	"gemma3n:E4b": "gemma-3n-e4b-it",
 }
 
-var (
-	newline    = []byte("\n")
-	dataPrefix = []byte("data: ")
-	doneMarker = []byte("[DONE]")
-)
+var dataPrefix = []byte("data: ")
+var doneBytes = []byte("[DONE]")
+var newlineBytes = []byte{'\n'}
 
 type ChatCompletionRequest struct {
 	Stream           bool
@@ -60,7 +56,7 @@ type ChatCompletionRequest struct {
 }
 
 func ConvertRequestBody(originalBodyBytes []byte, action string, model string) ([]byte, error) {
-	// log.Printf("Receive req body: %s, action: %s", string(originalBodyBytes), action)
+	log.Printf("Receive req body: %s, action: %s", string(originalBodyBytes), action)
 	switch action {
 	case "generateContent":
 		return convertGenerateContentRequestToChatCompletionRequest(originalBodyBytes, model, false)
@@ -76,7 +72,7 @@ func ConvertRequestBody(originalBodyBytes []byte, action string, model string) (
 func ConvertNonStreamResponseBody(originalBodyBytes []byte, action string) ([]byte, error) {
 	switch action {
 	case "generateContent":
-		// log.Printf("original answer: %s", originalBodyBytes)
+		log.Printf("original answer: %s", originalBodyBytes)
 		chatCompletion := &openai.ChatCompletion{}
 		err := json.Unmarshal(originalBodyBytes, chatCompletion)
 		if err != nil {
@@ -107,16 +103,11 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 				close(done)
 			}
 		}()
+		scanner := bufio.NewScanner(originalBody)
 
-		for {
-			line, err := reader.ReadBytes('\n')
-			if err != nil {
-				if err == io.EOF {
-					break
-				}
-				fmt.Fprintf(pw, "stream read error: %v", err)
-				break
-			}
+		for scanner.Scan() {
+			line := scanner.Bytes()
+
 			trimmed := bytes.TrimSpace(line)
 			if len(trimmed) == 0 || !bytes.HasPrefix(trimmed, dataPrefix) {
 				continue
@@ -124,13 +115,13 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 
 			raw := bytes.TrimSpace(bytes.TrimPrefix(trimmed, dataPrefix))
 
-			if bytes.Equal(raw, doneMarker) {
+			if bytes.Equal(raw, doneBytes) {
 				break
 			}
 
 			var chunk openai.ChatCompletionChunk
 			if err := json.Unmarshal(raw, &chunk); err != nil {
-				// log.Printf("unmarshal error: %v, raw: '%s'", err, raw) // Reduced logging
+				log.Printf("unmarshal error: %v, raw: '%s'", err, raw)
 				fmt.Fprintf(pw, "invalid chunk format, error: %v, raw: %s", err, string(raw))
 				continue
 			}
@@ -140,9 +131,12 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 				fmt.Fprintf(pw, "failed to convert chunk, error: %v, raw: %s", err, string(raw))
 				continue
 			}
-			// Write separately to avoid allocation
 			pw.Write(bodyBytes)
-			pw.Write([]byte{'\n'})
+			pw.Write(newlineBytes)
+		}
+
+		if err := scanner.Err(); err != nil {
+			fmt.Fprintf(pw, "stream read error: %v", err)
 		}
 	}()
 }
