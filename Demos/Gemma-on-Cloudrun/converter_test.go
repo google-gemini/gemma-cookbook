@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
+	"time"
 	"reflect"
 	"strings"
 	"testing"
@@ -267,5 +269,84 @@ func TestConvertStreamResponseBody(t *testing.T) {
 		if !reflect.DeepEqual(actual, expected) {
 			t.Errorf("ConvertResponseBody returned incorrect response body. Got: %v, Want: %v", actual, expected)
 		}
+	}
+}
+
+type PanicReader struct{}
+
+func (p *PanicReader) Read(b []byte) (n int, err error) {
+	panic(errors.New("simulated panic"))
+}
+
+func (p *PanicReader) Close() error {
+	return nil
+}
+
+type ErrorReader struct {
+	Err error
+}
+
+func (e *ErrorReader) Read(b []byte) (n int, err error) {
+	return 0, e.Err
+}
+
+func (e *ErrorReader) Close() error {
+	return nil
+}
+
+func TestConvertStreamResponseBody_PanicRecovery(t *testing.T) {
+	// Setup
+	reader := &PanicReader{}
+	pr, pw := io.Pipe()
+	convertDone := make(chan struct{})
+
+	// Action
+	ConvertStreamResponseBody(reader, pw, convertDone)
+
+	// Verification
+	select {
+	case <-convertDone:
+		// Success: panic was recovered and done channel closed
+	case <-time.After(2 * time.Second):
+		t.Fatal("Timeout waiting for convertDone channel to close")
+	}
+
+	// Verify pipe is closed by reading from it
+	_, err := pr.Read(make([]byte, 10))
+	if err != io.EOF {
+		t.Errorf("Expected pipe to be closed (EOF), got error: %v", err)
+	}
+}
+
+func TestConvertStreamResponseBody_ReadError(t *testing.T) {
+	// Setup
+	expectedErr := errors.New("simulated read error")
+	reader := &ErrorReader{Err: expectedErr}
+	pr, pw := io.Pipe()
+	convertDone := make(chan struct{})
+
+	// Action
+	ConvertStreamResponseBody(reader, pw, convertDone)
+
+	// Verification
+	// The function should write the error to the pipe and then close it.
+	buf := new(bytes.Buffer)
+	_, err := io.Copy(buf, pr)
+	if err != nil {
+		t.Fatalf("Failed to read from pipe: %v", err)
+	}
+
+	// Verify done channel is closed
+	select {
+	case <-convertDone:
+		// Success
+	case <-time.After(1 * time.Second):
+		t.Fatal("Timeout waiting for convertDone channel to close")
+	}
+
+	// Verify output contains the error message
+	expectedOutput := "stream read error: simulated read error"
+	if !strings.Contains(buf.String(), expectedOutput) {
+		t.Errorf("Expected output to contain '%s', got '%s'", expectedOutput, buf.String())
 	}
 }

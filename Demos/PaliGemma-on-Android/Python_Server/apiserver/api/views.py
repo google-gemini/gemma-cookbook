@@ -1,22 +1,24 @@
 from ninja import NinjaAPI, File, UploadedFile, Form
 from gradio_client import Client, handle_file
 from PIL import Image
+from functools import lru_cache
 
 # from decouple import config     #if using your own token
 
 from .models import ImageDetection
 
 import pathlib
-import sys
 import os
 import re
 import json
-import numpy as np
 
-import subprocess
 
 
 api = NinjaAPI()
+
+@lru_cache(maxsize=4)
+def get_client(model_id):
+    return Client(model_id)
 
 def normalize_coordinates(coord: str, img_x, img_y):
     detect_pattern = r'<loc(\d+)>'
@@ -37,9 +39,9 @@ def detect(request, prompt: Form[str], image: File[UploadedFile], width: Form[in
     prompt_word = prompt.split()
 
     if prompt_word[0] == "segment":
-    	client = Client("gokaygokay/Florence-2")
+	client = get_client("gokaygokay/Florence-2")
     else:
-    	client = Client("big-vision/paligemma")
+	client = get_client("big-vision/paligemma")
    
     prompt_obj = ImageDetection.objects.create(
         prompt=prompt,
@@ -84,7 +86,7 @@ def detect(request, prompt: Form[str], image: File[UploadedFile], width: Form[in
 
     	print(polygons)
     	# Delete images after processing.
-    	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
+	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
 
     	return polygons
 
@@ -100,7 +102,7 @@ def detect(request, prompt: Form[str], image: File[UploadedFile], width: Form[in
     	print(result)
 
     	# Delete images after processing.
-    	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
+	[os.remove(os.path.join(media_path, f)) for f in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, f))]
 
     	data = result[0]["value"]
     	img_x = result[2]["width"]
@@ -127,7 +129,6 @@ def detect(request, prompt: Form[str], image: File[UploadedFile], width: Form[in
     			print(a)
     			return {"result": container}
     		else:
-    			b = temp
     			print(temp)
     			return temp
 

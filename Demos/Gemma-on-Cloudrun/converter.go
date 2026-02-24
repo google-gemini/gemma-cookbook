@@ -20,10 +20,6 @@ var geminiToOpenAiModelMapping = map[string]string{
 	"gemma-3-4b-it":  "gemma3:4b",
 	"gemma-3-12b-it": "gemma3:12b",
 	"gemma-3-27b-it": "gemma3:27b",
-	"gemma-3-1b-it-qat":  "gemma3:1b-it-qat",
-	"gemma-3-4b-it-qat":  "gemma3:4b-it-qat",
-	"gemma-3-12b-it-qat":  "gemma3:12b-it-qat",
-	"gemma-3-27b-it-qat":  "gemma3:27b-it-qat",
 	"gemma-3n-e2b-it": "gemma3n:E2b",
 	"gemma-3n-e4b-it": "gemma3n:E4b",
 }
@@ -33,13 +29,13 @@ var openAiToGeminiModelMapping = map[string]string{
 	"gemma3:4b":  "gemma-3-4b-it",
 	"gemma3:12b": "gemma-3-12b-it",
 	"gemma3:27b": "gemma-3-27b-it",
-	"gemma3:1b-it-qat": "gemma-3-1b-it-qat",
-	"gemma3:4b-it-qat": "gemma-3-4b-it-qat",
-	"gemma3:12b-it-qat": "gemma-3-12b-it-qat",
-	"gemma3:27b-it-qat": "gemma-3-27b-it-qat",
 	"gemma3n:E2b": "gemma-3n-e2b-it",
 	"gemma3n:E4b": "gemma-3n-e4b-it",
 }
+
+var dataPrefix = []byte("data: ")
+var doneBytes = []byte("[DONE]")
+var newlineBytes = []byte{'\n'}
 
 type ChatCompletionRequest struct {
 	Stream           bool
@@ -103,29 +99,23 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 			}
 			originalBody.Close()
 			pw.Close()
-			close(done)
-		}()
-		reader := bufio.NewReader(originalBody)
-
-		for {
-			line, err := reader.ReadBytes('\n')
-			if err != nil {
-				if err == io.EOF {
-					break
-				}
-				fmt.Fprintf(pw, "stream read error: %v", err)
-				break
+			if done != nil {
+				close(done)
 			}
-			log.Printf("original line: %s", line)
+		}()
+		scanner := bufio.NewScanner(originalBody)
+
+		for scanner.Scan() {
+			line := scanner.Bytes()
 
 			trimmed := bytes.TrimSpace(line)
-			if len(trimmed) == 0 || !bytes.HasPrefix(trimmed, []byte("data: ")) {
+			if len(trimmed) == 0 || !bytes.HasPrefix(trimmed, dataPrefix) {
 				continue
 			}
 
-			raw := bytes.TrimSpace(bytes.TrimPrefix(trimmed, []byte("data: ")))
+			raw := bytes.TrimSpace(bytes.TrimPrefix(trimmed, dataPrefix))
 
-			if bytes.Equal(raw, []byte("[DONE]")) {
+			if bytes.Equal(raw, doneBytes) {
 				break
 			}
 
@@ -141,54 +131,53 @@ func ConvertStreamResponseBody(originalBody io.ReadCloser, pw *io.PipeWriter, do
 				fmt.Fprintf(pw, "failed to convert chunk, error: %v, raw: %s", err, string(raw))
 				continue
 			}
-			pw.Write(append(bodyBytes, '\n'))
+			pw.Write(bodyBytes)
+			pw.Write(newlineBytes)
+		}
+
+		if err := scanner.Err(); err != nil {
+			fmt.Fprintf(pw, "stream read error: %v", err)
 		}
 	}()
 }
 
-func flatten[T any](nested [][]T) []T {
-	var flattened []T
-	for _, innerList := range nested {
-		flattened = append(flattened, innerList...)
-	}
-	return flattened
-}
-
 func convertContentsToMessages(contents []*genai.Content) []openai.ChatCompletionMessageParamUnion {
-	nestedMessageList := make([][]openai.ChatCompletionMessageParamUnion, len(contents))
-	for i, content := range contents {
-		nestedMessageList[i] = convertContentToMessages(content)
+	// Calculate total capacity first to avoid intermediate allocations and resizing
+	totalParts := 0
+	for _, content := range contents {
+		totalParts += len(content.GetParts())
 	}
-	return flatten(nestedMessageList)
-}
 
-func convertContentToMessages(content *genai.Content) []openai.ChatCompletionMessageParamUnion {
-	openAiChatMessageList := make([]openai.ChatCompletionMessageParamUnion, len(content.GetParts()))
-	if content.Role == "model" {
-		for i, part := range content.GetParts() {
-			openAiChatMessageList[i] = openai.ChatCompletionMessageParamUnion{
-				OfAssistant: &openai.ChatCompletionAssistantMessageParam{
-					Content: openai.ChatCompletionAssistantMessageParamContentUnion{
-						OfString: param.NewOpt(part.GetText()),
+	messages := make([]openai.ChatCompletionMessageParamUnion, 0, totalParts)
+
+	for _, content := range contents {
+		isModel := content.Role == "model"
+
+		for _, part := range content.GetParts() {
+			var msg openai.ChatCompletionMessageParamUnion
+			if isModel {
+				msg = openai.ChatCompletionMessageParamUnion{
+					OfAssistant: &openai.ChatCompletionAssistantMessageParam{
+						Content: openai.ChatCompletionAssistantMessageParamContentUnion{
+							OfString: param.NewOpt(part.GetText()),
+						},
+						Role: "assistant",
 					},
-					Role: "assistant",
-				},
+				}
+			} else {
+				msg = openai.ChatCompletionMessageParamUnion{
+					OfUser: &openai.ChatCompletionUserMessageParam{
+						Content: openai.ChatCompletionUserMessageParamContentUnion{
+							OfString: param.NewOpt(part.GetText()),
+						},
+						Role: "user",
+					},
+				}
 			}
-		}
-		return openAiChatMessageList
-
-	}
-	for i, part := range content.GetParts() {
-		openAiChatMessageList[i] = openai.ChatCompletionMessageParamUnion{
-			OfUser: &openai.ChatCompletionUserMessageParam{
-				Content: openai.ChatCompletionUserMessageParamContentUnion{
-					OfString: param.NewOpt(part.GetText()),
-				},
-				Role: "user",
-			},
+			messages = append(messages, msg)
 		}
 	}
-	return openAiChatMessageList
+	return messages
 }
 
 func convertResponseMimeTypeToResponseFormat(responseFormat string) openai.ChatCompletionNewParamsResponseFormatUnion {
