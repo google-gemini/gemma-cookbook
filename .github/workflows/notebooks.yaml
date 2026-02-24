@@ -2,6 +2,9 @@
 
 name: Notebooks
 
+permissions:
+  contents: read
+
 on:
   # Relevant PRs
   pull_request:

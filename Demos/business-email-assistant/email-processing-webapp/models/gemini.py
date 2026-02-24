@@ -33,6 +33,5 @@ def create_message_processor():
     def process_message(message):
         """Processes a message using the GenAI model."""
         response = model.generate_content(message)
-        print(response.text) # REMOVE: FOR TESTING ONLY
         return response.text
     return process_message
