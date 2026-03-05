@@ -22,6 +22,7 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_1]Using_with_OneTwo.ipynb]([Gemma_1]Using_with_OneTwo.ipynb)                                                     | Integrate Gemma with [Google OneTwo](https://github.com/google-deepmind/onetwo).                                                                                                        |
 | [[Gemma_1]data_parallel_inference_in_jax_tpu.ipynb]([Gemma_1]data_parallel_inference_in_jax_tpu.ipynb)               | Parallel inference of Gemma with JAX/Flax on TPU.                                                                                                                                       |
 | [[Gemma_2]Constrained_generation.ipynb]([Gemma_2]Constrained_generation.ipynb)                             | Constrained generation with Gemma models using [LlamaCpp](https://github.com/abetlen/llama-cpp-python/) and [Guidance](https://github.com/guidance-ai/guidance/tree/main/).             |
+| [[Gemma_2]DeFi_Protocol_Development.ipynb]([Gemma_2]DeFi_Protocol_Development.ipynb) | Explore DeFi protocol development (ERC-20 tokens, AMM mechanics, staking patterns) using Gemma 2. |
 | [[Gemma_2]Deploy_in_Vertex_AI.ipynb]([Gemma_2]Deploy_in_Vertex_AI.ipynb)                                             | Deploy a Gemma model using [Vertex AI](https://cloud.google.com/vertex-ai).                                                                                                             |
 | [[Gemma_2]Deploy_with_vLLM.ipynb]([Gemma_2]Deploy_with_vLLM.ipynb)                                                               | Deploy a Gemma model using [vLLM](https://github.com/vllm-project/vllm).                                                                                                                |
 | [[Gemma_2]Game_Design_Brainstorming.ipynb]([Gemma_2]Game_Design_Brainstorming.ipynb)                                             | Use Gemma to brainstorm ideas during game design using Keras.                                                                                                                           |
@@ -51,10 +52,12 @@ This folder is organized into several categories, each focusing on a speicific a
 | [[Gemma_3]Activation_Hacking.ipynb]([Gemma_3]Activation_Hacking.ipynb)                                                         | Examine and modify internal states, including the residual stream, MLP activations, and attention mechanisms. |
 | [[Gemma_3]Chess.ipynb]([Gemma_3]Chess.ipynb)                                                         | Gemma \| Chess: Learn, Analyze, and Discover a New Dimension! |
 | [[Gemma_3]Gradio_LlamaCpp_Chatbot.ipynb]([Gemma_3]Gradio_LlamaCpp_Chatbot.ipynb)                                                         | Building a Chatbot with Gemma 3 QAT text model using Llama.cpp and Gradio. |
+| [[Gemma_3]Speculative_Decoding.ipynb]([Gemma_3]Speculative_Decoding.ipynb)                                                         | Achieve 2-3x inference speedup for Gemma models using speculative decoding. |
 | [[Gemma_3]Visual_Document_Extraction_to_JSON.ipynb]([Gemma_3]Visual_Document_Extraction_to_JSON.ipynb) | Demonstrate zero-shot OCR and structured JSON data extraction from images using the natively multimodal Gemma 3 4B-IT model. |
 | [[Gemma_3n]Audio_understanding_with_HF.ipynb]([Gemma_3n]Audio_understanding_with_HF.ipynb)                           | Run Gemma 3n with audio input |
 | [[Gemma_3n]Multimodal_understanding_with_HF.ipynb]([Gemma_3n]Multimodal_understanding_with_HF.ipynb)                 | Run Gemma 3n with image + audio input |
 | [[Gemma_3n]MatFormer_Lab.ipynb]([Gemma_3n]MatFormer_Lab.ipynb)                                                       | Run Gemma 3n with MatFormers and Mix-n-Match |
+| [[Gemma_3n]Using_with_Transformersjs.ipynb]([Gemma_3n]Using_with_Transformersjs.ipynb)                                                       | Run Gemma 3n with [Transformers.js](https://github.com/huggingface/transformers.js). |
 
 ## Prompting
 | Notebook Name | Description |
