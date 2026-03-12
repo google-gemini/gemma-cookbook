@@ -267,7 +267,7 @@ Upload the contents generated for your custom model to your GCS bucket in corres
 For example,
 ```bash
 cd <your-local-ollama-model-dir>
-gsutil -m cp -r . gs://YOUR_MODEL_BUCKET_NAME
+gcloud storage cp --recursive . gs://YOUR_MODEL_BUCKET_NAME
 ```
 
 #### 3. Deploy Cloud Run Service with GCS Volume Mount
@@ -333,4 +333,3 @@ for chunk in response:
    print(chunk.text, end="")
 ```
 Similarly for OpenAI SDK and curl examples, replace `<model>` with `<your-custom-model-name>`.
-
