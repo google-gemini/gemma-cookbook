@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 # Deploying Gemma Models to Google Cloud Run
 
 This guide shows you how to deploy Google Gemma LLM to Google Cloud Run. These pre-built containers leverage Ollama for serving, with additional added support for the Google GenAI SDK . Use off the shelf, or fine-tune for your own use-cases.  These containers have both Google GenAI SDK and OpenAI SDK compatible.

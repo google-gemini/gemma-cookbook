@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 # FunctionGemma
 
 This folder is organized into several categories, each focusing on a specific aspect of working with FunctionGemma model:

@@ -1,3 +1,5 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
 
 # Welcome to the Gemma Cookbook
 This is a collection of guides and examples for [Google Gemma](https://ai.google.dev/gemma/).

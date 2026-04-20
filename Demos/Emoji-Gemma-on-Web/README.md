@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 # Emoji generator web app
 This demo runs a [Gemma 3 270M IT](https://huggingface.co/google/gemma-3-270m-it) model fine-tuned for text-to-emoji translation directly in the browser. Gemma 3 is supported by web AI frameworks that make deployment easy. Run the app using either:
 

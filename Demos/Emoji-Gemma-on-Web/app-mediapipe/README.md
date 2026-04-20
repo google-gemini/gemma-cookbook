@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 # Run a fine-tuned Gemma 3 270M model in the browser with MediaPipe LLM Inference API
 
 This app demonstrates how to generate emojis from a text input using a fine-tuned Gemma 3 270M model running directly in the browser. For this demo you'll just change one line of code to point to your MediaPipe Task model bundle.

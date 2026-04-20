@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 # Guides
 
 This folder houses the documentation-heavy contributions that includes supporting files (like `.md`, `.txt` and `.py` files).

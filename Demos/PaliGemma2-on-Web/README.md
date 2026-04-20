@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 ### Developed by [Nitin Tiwari](https://linkedin.com/in/tiwari-nitin).
 
 # Inference PaliGemma 2 on the browser with ONNX & Transformers.js

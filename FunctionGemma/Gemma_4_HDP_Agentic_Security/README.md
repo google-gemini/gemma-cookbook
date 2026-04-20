@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 # Gemma 4 + HDP: Securing Agentic Function Calls
 
 This example demonstrates how to integrate the **Human Delegation Provenance (HDP)** protocol with **Gemma 4's native function-calling** to cryptographically verify that every tool invocation was authorized by a human principal before execution.

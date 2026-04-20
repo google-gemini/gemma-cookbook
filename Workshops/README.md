@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 # Workshops and technical talks
 
 This folder provides resources from workshops and technical talks centered around Gemma models. Here, you'll find in-depth notebooks that go beyond basic usage and explore advanced techniques like context window manipulation.

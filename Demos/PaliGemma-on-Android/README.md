@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 #### Developed by [Nitin Tiwari](https://linkedin.com/in/tiwari-nitin), [Sagar Malhotra](https://linkedin.com/in/sagar0-0malhotra) and [Savio Rodrigues](https://x.com/sloathee).
 
 # PaliGemma Android HF

@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 # Sub-Billion Gemma 3n Model Slicing - Complete Response Package
 
 Author: [Solventerritory](https://github.com/Solventerritory)

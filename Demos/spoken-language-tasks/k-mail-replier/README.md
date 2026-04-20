@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 # Spoken Language Tasks Assistant with Gemma 
 
 This tutorial walks you through setting up, running, and extending a spoken 

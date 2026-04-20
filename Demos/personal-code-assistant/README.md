@@ -1,3 +1,6 @@
+> **⚠️ Deprecation Notice**
+> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+
 # Personal AI Code Assistant with Gemma | Build with Google AI
 
 This code project let's you create your own, personal AI coding assistant with Gemma by wrapping the model in a web service and creating a Visual Studio Code extention to communicate with it.
