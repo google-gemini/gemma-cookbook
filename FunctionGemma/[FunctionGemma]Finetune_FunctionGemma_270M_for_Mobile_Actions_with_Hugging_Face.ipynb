@@ -1,0 +1,1883 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "926bada6"
+      },
+      "source": [
+        "Copyright 2025 Google LLC."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "cellView": "form",
+        "id": "a110dfce"
+      },
+      "outputs": [],
+      "source": [
+        "#@title Licensed under the Apache License, Version 2.0 (the \"License\");\n",
+        "# you may not use this file except in compliance with the License.\n",
+        "# You may obtain a copy of the License at\n",
+        "#\n",
+        "# https://www.apache.org/licenses/LICENSE-2.0\n",
+        "#\n",
+        "# Unless required by applicable law or agreed to in writing, software\n",
+        "# distributed under the License is distributed on an \"AS IS\" BASIS,\n",
+        "# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n",
+        "# See the License for the specific language governing permissions and\n",
+        "# limitations under the License."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "pkOtOq0jDE0c"
+      },
+      "source": [
+        "<table align=\"left\">\n",
+        "  <td>\n",
+        "      <a target=\"_blank\" href=\"https://colab.research.google.com/github/google-gemini/gemma-cookbook/blob/main/FunctionGemma/%5BFunctionGemma%5DFinetune_FunctionGemma_270M_for_Mobile_Actions_with_Hugging_Face.ipynb\"><img src=\"https://www.tensorflow.org/images/colab_logo_32px.png\" />Run in Google Colab</a>\n",
+        "  </td>\n",
+        "</table>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "e624ec07"
+      },
+      "source": [
+        "# Fine-tune FunctionGemma 270M for Mobile Actions\n",
+        "\n",
+        "This notebook fine-tunes FunctionGemma for the task of taking user request to perform mobile actions through the Hugging Face Transformer Reinforcement Learning ([TRL](https://huggingface.co/docs/trl/en/index)) library.\n",
+        "\n",
+        "When training [FunctionGemma 270M](https://huggingface.co/google/functiongemma-270m-it) on a Google Colab A100 GPU accelerator, this process can take 60 minutes end-to-end. Run each code snippet to:\n",
+        "\n",
+        "1. Set up the Colab environment\n",
+        "2. Prepare a dataset for fine-tuning\n",
+        "3. Load and test the base FunctionGemma 270M model\n",
+        "4. Fine-tune the model\n",
+        "5. Test, evaluate, and save the model for further use\n",
+        "6. Convert the checkpoint to `.litertlm` for deployment\n",
+        "\n",
+        "## Prerequisites\n",
+        "\n",
+        "This colab needs the **A100 GPU**. You will need a Colab Pro subscription or Colab Pay to Go with credits.\n",
+        "\n",
+        "## Set up development environment\n",
+        "\n",
+        "The first step is to install the necessary libraries using the `pip` package installer."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "id": "BEK9IfKBqQaA"
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "Requirement already satisfied: torch in /usr/local/lib/python3.12/dist-packages (2.9.0+cu126)\n",
+            "Requirement already satisfied: filelock in /usr/local/lib/python3.12/dist-packages (from torch) (3.20.0)\n",
+            "Requirement already satisfied: typing-extensions>=4.10.0 in /usr/local/lib/python3.12/dist-packages (from torch) (4.15.0)\n",
+            "Requirement already satisfied: setuptools in /usr/local/lib/python3.12/dist-packages (from torch) (75.2.0)\n",
+            "Requirement already satisfied: sympy>=1.13.3 in /usr/local/lib/python3.12/dist-packages (from torch) (1.14.0)\n",
+            "Requirement already satisfied: networkx>=2.5.1 in /usr/local/lib/python3.12/dist-packages (from torch) (3.6.1)\n",
+            "Requirement already satisfied: jinja2 in /usr/local/lib/python3.12/dist-packages (from torch) (3.1.6)\n",
+            "Requirement already satisfied: fsspec>=0.8.5 in /usr/local/lib/python3.12/dist-packages (from torch) (2025.3.0)\n",
+            "Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch) (12.6.77)\n",
+            "Requirement already satisfied: nvidia-cuda-runtime-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch) (12.6.77)\n",
+            "Requirement already satisfied: nvidia-cuda-cupti-cu12==12.6.80 in /usr/local/lib/python3.12/dist-packages (from torch) (12.6.80)\n",
+            "Requirement already satisfied: nvidia-cudnn-cu12==9.10.2.21 in /usr/local/lib/python3.12/dist-packages (from torch) (9.10.2.21)\n",
+            "Requirement already satisfied: nvidia-cublas-cu12==12.6.4.1 in /usr/local/lib/python3.12/dist-packages (from torch) (12.6.4.1)\n",
+            "Requirement already satisfied: nvidia-cufft-cu12==11.3.0.4 in /usr/local/lib/python3.12/dist-packages (from torch) (11.3.0.4)\n",
+            "Requirement already satisfied: nvidia-curand-cu12==10.3.7.77 in /usr/local/lib/python3.12/dist-packages (from torch) (10.3.7.77)\n",
+            "Requirement already satisfied: nvidia-cusolver-cu12==11.7.1.2 in /usr/local/lib/python3.12/dist-packages (from torch) (11.7.1.2)\n",
+            "Requirement already satisfied: nvidia-cusparse-cu12==12.5.4.2 in /usr/local/lib/python3.12/dist-packages (from torch) (12.5.4.2)\n",
+            "Requirement already satisfied: nvidia-cusparselt-cu12==0.7.1 in /usr/local/lib/python3.12/dist-packages (from torch) (0.7.1)\n",
+            "Requirement already satisfied: nvidia-nccl-cu12==2.27.5 in /usr/local/lib/python3.12/dist-packages (from torch) (2.27.5)\n",
+            "Requirement already satisfied: nvidia-nvshmem-cu12==3.3.20 in /usr/local/lib/python3.12/dist-packages (from torch) (3.3.20)\n",
+            "Requirement already satisfied: nvidia-nvtx-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch) (12.6.77)\n",
+            "Requirement already satisfied: nvidia-nvjitlink-cu12==12.6.85 in /usr/local/lib/python3.12/dist-packages (from torch) (12.6.85)\n",
+            "Requirement already satisfied: nvidia-cufile-cu12==1.11.1.6 in /usr/local/lib/python3.12/dist-packages (from torch) (1.11.1.6)\n",
+            "Requirement already satisfied: triton==3.5.0 in /usr/local/lib/python3.12/dist-packages (from torch) (3.5.0)\n",
+            "Requirement already satisfied: mpmath<1.4,>=1.1.0 in /usr/local/lib/python3.12/dist-packages (from sympy>=1.13.3->torch) (1.3.0)\n",
+            "Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.12/dist-packages (from jinja2->torch) (3.0.3)\n",
+            "Collecting transformers==4.57.1\n",
+            "  Downloading transformers-4.57.1-py3-none-any.whl.metadata (43 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m44.0/44.0 kB\u001b[0m \u001b[31m1.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hCollecting trl==0.25.1\n",
+            "  Downloading trl-0.25.1-py3-none-any.whl.metadata (11 kB)\n",
+            "Collecting datasets==4.4.1\n",
+            "  Downloading datasets-4.4.1-py3-none-any.whl.metadata (19 kB)\n",
+            "Requirement already satisfied: filelock in /usr/local/lib/python3.12/dist-packages (from transformers==4.57.1) (3.20.0)\n",
+            "Requirement already satisfied: huggingface-hub<1.0,>=0.34.0 in /usr/local/lib/python3.12/dist-packages (from transformers==4.57.1) (0.36.0)\n",
+            "Requirement already satisfied: numpy>=1.17 in /usr/local/lib/python3.12/dist-packages (from transformers==4.57.1) (2.0.2)\n",
+            "Requirement already satisfied: packaging>=20.0 in /usr/local/lib/python3.12/dist-packages (from transformers==4.57.1) (25.0)\n",
+            "Requirement already satisfied: pyyaml>=5.1 in /usr/local/lib/python3.12/dist-packages (from transformers==4.57.1) (6.0.3)\n",
+            "Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.12/dist-packages (from transformers==4.57.1) (2025.11.3)\n",
+            "Requirement already satisfied: requests in /usr/local/lib/python3.12/dist-packages (from transformers==4.57.1) (2.32.4)\n",
+            "Requirement already satisfied: tokenizers<=0.23.0,>=0.22.0 in /usr/local/lib/python3.12/dist-packages (from transformers==4.57.1) (0.22.1)\n",
+            "Requirement already satisfied: safetensors>=0.4.3 in /usr/local/lib/python3.12/dist-packages (from transformers==4.57.1) (0.7.0)\n",
+            "Requirement already satisfied: tqdm>=4.27 in /usr/local/lib/python3.12/dist-packages (from transformers==4.57.1) (4.67.1)\n",
+            "Requirement already satisfied: accelerate>=1.4.0 in /usr/local/lib/python3.12/dist-packages (from trl==0.25.1) (1.12.0)\n",
+            "Collecting pyarrow>=21.0.0 (from datasets==4.4.1)\n",
+            "  Downloading pyarrow-22.0.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (3.2 kB)\n",
+            "Requirement already satisfied: dill<0.4.1,>=0.3.0 in /usr/local/lib/python3.12/dist-packages (from datasets==4.4.1) (0.3.8)\n",
+            "Requirement already satisfied: pandas in /usr/local/lib/python3.12/dist-packages (from datasets==4.4.1) (2.2.2)\n",
+            "Requirement already satisfied: httpx<1.0.0 in /usr/local/lib/python3.12/dist-packages (from datasets==4.4.1) (0.28.1)\n",
+            "Requirement already satisfied: xxhash in /usr/local/lib/python3.12/dist-packages (from datasets==4.4.1) (3.6.0)\n",
+            "Requirement already satisfied: multiprocess<0.70.19 in /usr/local/lib/python3.12/dist-packages (from datasets==4.4.1) (0.70.16)\n",
+            "Requirement already satisfied: fsspec<=2025.10.0,>=2023.1.0 in /usr/local/lib/python3.12/dist-packages (from fsspec[http]<=2025.10.0,>=2023.1.0->datasets==4.4.1) (2025.3.0)\n",
+            "Requirement already satisfied: psutil in /usr/local/lib/python3.12/dist-packages (from accelerate>=1.4.0->trl==0.25.1) (5.9.5)\n",
+            "Requirement already satisfied: torch>=2.0.0 in /usr/local/lib/python3.12/dist-packages (from accelerate>=1.4.0->trl==0.25.1) (2.9.0+cu126)\n",
+            "Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /usr/local/lib/python3.12/dist-packages (from fsspec[http]<=2025.10.0,>=2023.1.0->datasets==4.4.1) (3.13.2)\n",
+            "Requirement already satisfied: anyio in /usr/local/lib/python3.12/dist-packages (from httpx<1.0.0->datasets==4.4.1) (4.12.0)\n",
+            "Requirement already satisfied: certifi in /usr/local/lib/python3.12/dist-packages (from httpx<1.0.0->datasets==4.4.1) (2025.11.12)\n",
+            "Requirement already satisfied: httpcore==1.* in /usr/local/lib/python3.12/dist-packages (from httpx<1.0.0->datasets==4.4.1) (1.0.9)\n",
+            "Requirement already satisfied: idna in /usr/local/lib/python3.12/dist-packages (from httpx<1.0.0->datasets==4.4.1) (3.11)\n",
+            "Requirement already satisfied: h11>=0.16 in /usr/local/lib/python3.12/dist-packages (from httpcore==1.*->httpx<1.0.0->datasets==4.4.1) (0.16.0)\n",
+            "Requirement already satisfied: typing-extensions>=3.7.4.3 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<1.0,>=0.34.0->transformers==4.57.1) (4.15.0)\n",
+            "Requirement already satisfied: hf-xet<2.0.0,>=1.1.3 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<1.0,>=0.34.0->transformers==4.57.1) (1.2.0)\n",
+            "Requirement already satisfied: charset_normalizer<4,>=2 in /usr/local/lib/python3.12/dist-packages (from requests->transformers==4.57.1) (3.4.4)\n",
+            "Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/local/lib/python3.12/dist-packages (from requests->transformers==4.57.1) (2.5.0)\n",
+            "Requirement already satisfied: python-dateutil>=2.8.2 in /usr/local/lib/python3.12/dist-packages (from pandas->datasets==4.4.1) (2.9.0.post0)\n",
+            "Requirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.12/dist-packages (from pandas->datasets==4.4.1) (2025.2)\n",
+            "Requirement already satisfied: tzdata>=2022.7 in /usr/local/lib/python3.12/dist-packages (from pandas->datasets==4.4.1) (2025.3)\n",
+            "Requirement already satisfied: aiohappyeyeballs>=2.5.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.10.0,>=2023.1.0->datasets==4.4.1) (2.6.1)\n",
+            "Requirement already satisfied: aiosignal>=1.4.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.10.0,>=2023.1.0->datasets==4.4.1) (1.4.0)\n",
+            "Requirement already satisfied: attrs>=17.3.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.10.0,>=2023.1.0->datasets==4.4.1) (25.4.0)\n",
+            "Requirement already satisfied: frozenlist>=1.1.1 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.10.0,>=2023.1.0->datasets==4.4.1) (1.8.0)\n",
+            "Requirement already satisfied: multidict<7.0,>=4.5 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.10.0,>=2023.1.0->datasets==4.4.1) (6.7.0)\n",
+            "Requirement already satisfied: propcache>=0.2.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.10.0,>=2023.1.0->datasets==4.4.1) (0.4.1)\n",
+            "Requirement already satisfied: yarl<2.0,>=1.17.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.10.0,>=2023.1.0->datasets==4.4.1) (1.22.0)\n",
+            "Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.12/dist-packages (from python-dateutil>=2.8.2->pandas->datasets==4.4.1) (1.17.0)\n",
+            "Requirement already satisfied: setuptools in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (75.2.0)\n",
+            "Requirement already satisfied: sympy>=1.13.3 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (1.14.0)\n",
+            "Requirement already satisfied: networkx>=2.5.1 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (3.6.1)\n",
+            "Requirement already satisfied: jinja2 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (3.1.6)\n",
+            "Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (12.6.77)\n",
+            "Requirement already satisfied: nvidia-cuda-runtime-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (12.6.77)\n",
+            "Requirement already satisfied: nvidia-cuda-cupti-cu12==12.6.80 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (12.6.80)\n",
+            "Requirement already satisfied: nvidia-cudnn-cu12==9.10.2.21 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (9.10.2.21)\n",
+            "Requirement already satisfied: nvidia-cublas-cu12==12.6.4.1 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (12.6.4.1)\n",
+            "Requirement already satisfied: nvidia-cufft-cu12==11.3.0.4 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (11.3.0.4)\n",
+            "Requirement already satisfied: nvidia-curand-cu12==10.3.7.77 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (10.3.7.77)\n",
+            "Requirement already satisfied: nvidia-cusolver-cu12==11.7.1.2 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (11.7.1.2)\n",
+            "Requirement already satisfied: nvidia-cusparse-cu12==12.5.4.2 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (12.5.4.2)\n",
+            "Requirement already satisfied: nvidia-cusparselt-cu12==0.7.1 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (0.7.1)\n",
+            "Requirement already satisfied: nvidia-nccl-cu12==2.27.5 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (2.27.5)\n",
+            "Requirement already satisfied: nvidia-nvshmem-cu12==3.3.20 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (3.3.20)\n",
+            "Requirement already satisfied: nvidia-nvtx-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (12.6.77)\n",
+            "Requirement already satisfied: nvidia-nvjitlink-cu12==12.6.85 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (12.6.85)\n",
+            "Requirement already satisfied: nvidia-cufile-cu12==1.11.1.6 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (1.11.1.6)\n",
+            "Requirement already satisfied: triton==3.5.0 in /usr/local/lib/python3.12/dist-packages (from torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (3.5.0)\n",
+            "Requirement already satisfied: mpmath<1.4,>=1.1.0 in /usr/local/lib/python3.12/dist-packages (from sympy>=1.13.3->torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (1.3.0)\n",
+            "Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.12/dist-packages (from jinja2->torch>=2.0.0->accelerate>=1.4.0->trl==0.25.1) (3.0.3)\n",
+            "Downloading transformers-4.57.1-py3-none-any.whl (12.0 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m12.0/12.0 MB\u001b[0m \u001b[31m127.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading trl-0.25.1-py3-none-any.whl (465 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m465.5/465.5 kB\u001b[0m \u001b[31m34.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading datasets-4.4.1-py3-none-any.whl (511 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m511.6/511.6 kB\u001b[0m \u001b[31m49.0 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading pyarrow-22.0.0-cp312-cp312-manylinux_2_28_x86_64.whl (47.7 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m47.7/47.7 MB\u001b[0m \u001b[31m49.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hInstalling collected packages: pyarrow, transformers, datasets, trl\n",
+            "  Attempting uninstall: pyarrow\n",
+            "    Found existing installation: pyarrow 18.1.0\n",
+            "    Uninstalling pyarrow-18.1.0:\n",
+            "      Successfully uninstalled pyarrow-18.1.0\n",
+            "  Attempting uninstall: transformers\n",
+            "    Found existing installation: transformers 4.57.3\n",
+            "    Uninstalling transformers-4.57.3:\n",
+            "      Successfully uninstalled transformers-4.57.3\n",
+            "  Attempting uninstall: datasets\n",
+            "    Found existing installation: datasets 4.0.0\n",
+            "    Uninstalling datasets-4.0.0:\n",
+            "      Successfully uninstalled datasets-4.0.0\n",
+            "Successfully installed datasets-4.4.1 pyarrow-22.0.0 transformers-4.57.1 trl-0.25.1\n"
+          ]
+        }
+      ],
+      "source": [
+        "%pip install torch\n",
+        "%pip install -U transformers==4.57.1 trl==0.25.1 datasets==4.4.1"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "TTuW1LPfLXi9"
+      },
+      "source": [
+        "**You may have to restart your session (runtime) to use newly installed libraries.**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "7ef3d54b"
+      },
+      "source": [
+        "##Enable Hugging Face permissions\n",
+        "\n",
+        "To use Gemma models, you'll need to accept the model usage license and create an Access Token:\n",
+        "\n",
+        "1. **Accept license** on the [model page](http://huggingface.co/google/functiongemma-270m-it).\n",
+        "\n",
+        "2. **Get a valid [Access Token](https://huggingface.co/settings/tokens) with 'Write' access (very important!)**\n",
+        "\n",
+        "3. **Create a new Colab secret** in the left toolbar. Specify `HF_TOKEN` as the 'Name', add your unique token as the 'Value', and toggle 'Notebook access' on."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "b6d79c93"
+      },
+      "outputs": [],
+      "source": [
+        "from google.colab import userdata\n",
+        "from huggingface_hub import login\n",
+        "\n",
+        "# Login into Hugging Face Hub\n",
+        "hf_token = userdata.get('HF_TOKEN')\n",
+        "login(hf_token)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "c0eb2e06"
+      },
+      "source": [
+        "## Load the model\n",
+        "\n",
+        "You can access [FunctionGemma 270M](https://huggingface.co/google/functiongemma-270m-it) from Hugging Face Hub by accepting the license terms. The instruction-tuned version of the model has already been trained on how to follow directions and with fine-tuning, you'll now adapt it to a new task."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 2,
+      "metadata": {
+        "id": "18069ed2"
+      },
+      "outputs": [
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "62448d4c516646608a4c4e4dd7912be7",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "config.json:   0%|          | 0.00/1.37k [00:00<?, ?B/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "bc8e40adca4d4d1ca5c6217876e0301e",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "model.safetensors:   0%|          | 0.00/536M [00:00<?, ?B/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "cdedf49b8ca647d593c0e912b4fffd7b",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "generation_config.json:   0%|          | 0.00/176 [00:00<?, ?B/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "4e4f425e4513407b8d089a6a10666a1a",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "tokenizer_config.json:   0%|          | 0.00/1.16M [00:00<?, ?B/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "42338cb0014a455eb0a351f5e9f767f0",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "tokenizer.model:   0%|          | 0.00/4.69M [00:00<?, ?B/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "682d46d64e624e3fa21bf2919f37a719",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "tokenizer.json:   0%|          | 0.00/33.4M [00:00<?, ?B/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "37c0a8acb12c41f7aaca4c07c80ed716",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "added_tokens.json:   0%|          | 0.00/63.0 [00:00<?, ?B/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "28061b5bf3894b1ca1193cadcd523058",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "special_tokens_map.json:   0%|          | 0.00/706 [00:00<?, ?B/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "5226427085eb4858a0be3b31c606001b",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "chat_template.jinja:   0%|          | 0.00/13.8k [00:00<?, ?B/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "Device: cuda:0\n",
+            "DType:  torch.bfloat16\n"
+          ]
+        }
+      ],
+      "source": [
+        "from transformers import AutoTokenizer, AutoModelForCausalLM\n",
+        "\n",
+        "gemma_model = \"google/functiongemma-270m-it\"\n",
+        "base_model = AutoModelForCausalLM.from_pretrained(\n",
+        "    gemma_model,\n",
+        "    device_map=\"auto\",\n",
+        "    attn_implementation=\"eager\",\n",
+        "    dtype=\"auto\")\n",
+        "tokenizer = AutoTokenizer.from_pretrained(gemma_model)\n",
+        "\n",
+        "print(f\"Device: {base_model.device}\")\n",
+        "print(f\"DType:  {base_model.dtype}\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "7hI4twbrz0xj"
+      },
+      "source": [
+        "Device should print as `cuda` if you're using a GPU runtime."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "IB0Fo8MRbxxY"
+      },
+      "source": [
+        "## Load the dataset\n",
+        "\n",
+        "To fine-tune FunctionGemma, we utilize the [Mobile Actions\n",
+        "dataset](https://huggingface.co/datasets/google/mobile-actions), which is\n",
+        "publicly available on Hugging Face. Each entry in this dataset provides:\n",
+        "\n",
+        "*   The set of tools (functions) the model can use:\n",
+        "    1. Turn the flashlight on\n",
+        "    2. Turn the flashlight off\n",
+        "    3. Create a contact in the phone's contact list\n",
+        "    4. Send an email\n",
+        "    5. Show a location on the map\n",
+        "    6. Open the WiFi settings\n",
+        "    7. Create a new calendar event\n",
+        "*   The system prompt providing the context like current date and time\n",
+        "*   The user prompt, like `turn on the flashlight`.\n",
+        "*   The expected model response, including the appropriate function calls."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 7,
+      "metadata": {
+        "id": "N2AwsZMkRioU"
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "\n",
+            "\u001b[1mHere's an example from your dataset:\u001b[0m \n",
+            "{\n",
+            "  \"metadata\": \"eval\",\n",
+            "  \"tools\": [\n",
+            "    {\n",
+            "      \"function\": {\n",
+            "        \"name\": \"send_email\",\n",
+            "        \"description\": \"Sends an email.\",\n",
+            "        \"parameters\": {\n",
+            "          \"type\": \"OBJECT\",\n",
+            "          \"properties\": {\n",
+            "            \"body\": {\n",
+            "              \"type\": \"STRING\",\n",
+            "              \"description\": \"The body of the email.\"\n",
+            "            },\n",
+            "            \"to\": {\n",
+            "              \"type\": \"STRING\",\n",
+            "              \"description\": \"The email address of the recipient.\"\n",
+            "            },\n",
+            "            \"subject\": {\n",
+            "              \"type\": \"STRING\",\n",
+            "              \"description\": \"The subject of the email.\"\n",
+            "            }\n",
+            "          },\n",
+            "          \"required\": [\n",
+            "            \"to\",\n",
+            "            \"subject\"\n",
+            "          ]\n",
+            "        }\n",
+            "      }\n",
+            "    },\n",
+            "    {\n",
+            "      \"function\": {\n",
+            "        \"name\": \"turn_on_flashlight\",\n",
+            "        \"description\": \"Turns the flashlight on.\",\n",
+            "        \"parameters\": {\n",
+            "          \"type\": \"OBJECT\",\n",
+            "          \"properties\": {}\n",
+            "        }\n",
+            "      }\n",
+            "    },\n",
+            "    {\n",
+            "      \"function\": {\n",
+            "        \"name\": \"open_wifi_settings\",\n",
+            "        \"description\": \"Opens the Wi-Fi settings.\",\n",
+            "        \"parameters\": {\n",
+            "          \"type\": \"OBJECT\",\n",
+            "          \"properties\": {}\n",
+            "        }\n",
+            "      }\n",
+            "    },\n",
+            "    {\n",
+            "      \"function\": {\n",
+            "        \"name\": \"create_calendar_event\",\n",
+            "        \"description\": \"Creates a new calendar event.\",\n",
+            "        \"parameters\": {\n",
+            "          \"type\": \"OBJECT\",\n",
+            "          \"properties\": {\n",
+            "            \"title\": {\n",
+            "              \"type\": \"STRING\",\n",
+            "              \"description\": \"The title of the event.\"\n",
+            "            },\n",
+            "            \"datetime\": {\n",
+            "              \"type\": \"STRING\",\n",
+            "              \"description\": \"The date and time of the event in the format YYYY-MM-DDTHH:MM:SS.\"\n",
+            "            }\n",
+            "          },\n",
+            "          \"required\": [\n",
+            "            \"title\",\n",
+            "            \"datetime\"\n",
+            "          ]\n",
+            "        }\n",
+            "      }\n",
+            "    },\n",
+            "    {\n",
+            "      \"function\": {\n",
+            "        \"name\": \"show_map\",\n",
+            "        \"description\": \"Shows a location on the map.\",\n",
+            "        \"parameters\": {\n",
+            "          \"type\": \"OBJECT\",\n",
+            "          \"properties\": {\n",
+            "            \"query\": {\n",
+            "              \"type\": \"STRING\",\n",
+            "              \"description\": \"The location to search for. May be the name of a place, a business, or an address.\"\n",
+            "            }\n",
+            "          },\n",
+            "          \"required\": [\n",
+            "            \"query\"\n",
+            "          ]\n",
+            "        }\n",
+            "      }\n",
+            "    },\n",
+            "    {\n",
+            "      \"function\": {\n",
+            "        \"name\": \"create_contact\",\n",
+            "        \"description\": \"Creates a contact in the phone's contact list.\",\n",
+            "        \"parameters\": {\n",
+            "          \"type\": \"OBJECT\",\n",
+            "          \"properties\": {\n",
+            "            \"email\": {\n",
+            "              \"type\": \"STRING\",\n",
+            "              \"description\": \"The email address of the contact.\"\n",
+            "            },\n",
+            "            \"last_name\": {\n",
+            "              \"type\": \"STRING\",\n",
+            "              \"description\": \"The last name of the contact.\"\n",
+            "            },\n",
+            "            \"phone_number\": {\n",
+            "              \"type\": \"STRING\",\n",
+            "              \"description\": \"The phone number of the contact.\"\n",
+            "            },\n",
+            "            \"first_name\": {\n",
+            "              \"type\": \"STRING\",\n",
+            "              \"description\": \"The first name of the contact.\"\n",
+            "            }\n",
+            "          },\n",
+            "          \"required\": [\n",
+            "            \"first_name\",\n",
+            "            \"last_name\"\n",
+            "          ]\n",
+            "        }\n",
+            "      }\n",
+            "    },\n",
+            "    {\n",
+            "      \"function\": {\n",
+            "        \"name\": \"turn_off_flashlight\",\n",
+            "        \"description\": \"Turns the flashlight off.\",\n",
+            "        \"parameters\": {\n",
+            "          \"type\": \"OBJECT\",\n",
+            "          \"properties\": {}\n",
+            "        }\n",
+            "      }\n",
+            "    }\n",
+            "  ],\n",
+            "  \"messages\": [\n",
+            "    {\n",
+            "      \"role\": \"developer\",\n",
+            "      \"content\": \"Current date and time given in YYYY-MM-DDTHH:MM:SS format: 2024-10-20T14:27:48\\nDay of week is Sunday\\nYou are a model that can do function calling with the following functions\\n\"\n",
+            "    },\n",
+            "    {\n",
+            "      \"role\": \"user\",\n",
+            "      \"content\": \"Please create a calendar event titled \\\"Q4 Planning Meeting\\\" for October 24, 2024, at 2:00 PM.\"\n",
+            "    },\n",
+            "    {\n",
+            "      \"role\": \"assistant\",\n",
+            "      \"tool_calls\": [\n",
+            "        {\n",
+            "          \"function\": {\n",
+            "            \"name\": \"create_calendar_event\",\n",
+            "            \"arguments\": {\n",
+            "              \"title\": \"Q4 Planning Meeting\",\n",
+            "              \"datetime\": \"2024-10-24T14:00:00\"\n",
+            "            }\n",
+            "          }\n",
+            "        }\n",
+            "      ]\n",
+            "    }\n",
+            "  ]\n",
+            "}\n"
+          ]
+        }
+      ],
+      "source": [
+        "import json\n",
+        "from random import randint\n",
+        "from datasets import load_dataset\n",
+        "from transformers import AutoTokenizer\n",
+        "from huggingface_hub import hf_hub_download\n",
+        "\n",
+        "data_file = hf_hub_download(repo_id=\"google/mobile-actions\", filename=\"dataset.jsonl\", repo_type=\"dataset\")\n",
+        "dataset = load_dataset(\"text\", data_files=data_file, encoding=\"utf-8\")[\"train\"].shuffle()\n",
+        "\n",
+        "print(f\"\\n\\033[1mHere's an example from your dataset:\\033[0m \\n{json.dumps(json.loads(dataset[randint(0, len(dataset) - 1)]['text']), indent=2)}\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "PafivP8u1Gv9"
+      },
+      "source": [
+        "## Process the dataset for training and evaluation\n",
+        "\n",
+        "Now that you've loaded your data, format the training dataset into [Prompt-completion](https://huggingface.co/docs/trl/main/en/dataset_formats#prompt-completion) format for more efficient training later (`completion_only_loss=True`). This means the model will only learn from the `completion` instead of the `prompt`.\n",
+        "\n",
+        "- `prompt` for the non-trainable parts\n",
+        "- `completion` for the trainable parts"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 8,
+      "metadata": {
+        "id": "VWz32s5h074E"
+      },
+      "outputs": [
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "1928fd6e8396423d9dbe6b42eb8108e8",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Map:   0%|          | 0/9654 [00:00<?, ? examples/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        }
+      ],
+      "source": [
+        "import json\n",
+        "\n",
+        "def apply_format(sample):\n",
+        "  template_iputs = json.loads(sample['text'])\n",
+        "\n",
+        "  prompt_and_completion = tokenizer.apply_chat_template(\n",
+        "    template_iputs['messages'],\n",
+        "    tools=template_iputs['tools'],\n",
+        "    tokenize=False,\n",
+        "    # add_generation_prompt is False since we don't need model output after all\n",
+        "    # messages.\n",
+        "    add_generation_prompt=False)\n",
+        "\n",
+        "  prompt = tokenizer.apply_chat_template(\n",
+        "    template_iputs['messages'][:-1],\n",
+        "    tools=template_iputs['tools'],\n",
+        "    tokenize=False,\n",
+        "    # add_generation_prompt is True since we would like to include\n",
+        "    # \"<start_of_turn>model\" in the prompt, if needed.\n",
+        "    add_generation_prompt=True)\n",
+        "\n",
+        "  completion = prompt_and_completion[len(prompt):]\n",
+        "\n",
+        "  return {\n",
+        "     \"prompt\": prompt,\n",
+        "     \"completion\": completion,\n",
+        "     \"split\": template_iputs[\"metadata\"],\n",
+        "  }\n",
+        "\n",
+        "processed_dataset = dataset.map(apply_format)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 9,
+      "metadata": {
+        "id": "YWf9Vlfm9tkh"
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "\u001b[1mHere's an example from the formatted dataset:\u001b[0m\n",
+            "{\n",
+            "  \"text\": \"{\\\"metadata\\\": \\\"train\\\", \\\"tools\\\": [{\\\"function\\\": {\\\"name\\\": \\\"send_email\\\", \\\"description\\\": \\\"Sends an email.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {\\\"subject\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The subject of the email.\\\"}, \\\"body\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The body of the email.\\\"}, \\\"to\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The email address of the recipient.\\\"}}, \\\"required\\\": [\\\"to\\\", \\\"subject\\\"]}}}, {\\\"function\\\": {\\\"name\\\": \\\"show_map\\\", \\\"description\\\": \\\"Shows a location on the map.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {\\\"query\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The location to search for. May be the name of a place, a business, or an address.\\\"}}, \\\"required\\\": [\\\"query\\\"]}}}, {\\\"function\\\": {\\\"name\\\": \\\"turn_off_flashlight\\\", \\\"description\\\": \\\"Turns the flashlight off.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {}}}}, {\\\"function\\\": {\\\"name\\\": \\\"open_wifi_settings\\\", \\\"description\\\": \\\"Opens the Wi-Fi settings.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {}}}}, {\\\"function\\\": {\\\"name\\\": \\\"create_calendar_event\\\", \\\"description\\\": \\\"Creates a new calendar event.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {\\\"title\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The title of the event.\\\"}, \\\"datetime\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The date and time of the event in the format YYYY-MM-DDTHH:MM:SS.\\\"}}, \\\"required\\\": [\\\"title\\\", \\\"datetime\\\"]}}}, {\\\"function\\\": {\\\"name\\\": \\\"create_contact\\\", \\\"description\\\": \\\"Creates a contact in the phone's contact list.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {\\\"last_name\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The last name of the contact.\\\"}, \\\"phone_number\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The phone number of the contact.\\\"}, \\\"email\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The email address of the contact.\\\"}, \\\"first_name\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The first name of the contact.\\\"}}, \\\"required\\\": [\\\"first_name\\\", \\\"last_name\\\"]}}}, {\\\"function\\\": {\\\"name\\\": \\\"turn_on_flashlight\\\", \\\"description\\\": \\\"Turns the flashlight on.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {}}}}], \\\"messages\\\": [{\\\"role\\\": \\\"developer\\\", \\\"content\\\": \\\"Current date and time given in YYYY-MM-DDTHH:MM:SS format: 2026-01-16T00:50:30\\\\nDay of week is Friday\\\\nYou are a model that can do function calling with the following functions\\\\n\\\"}, {\\\"role\\\": \\\"user\\\", \\\"content\\\": \\\"Please schedule a calendar event titled 'Meeting with Mr. Dubois' for January 20th, 2026 at 3:00 PM.\\\"}, {\\\"role\\\": \\\"assistant\\\", \\\"tool_calls\\\": [{\\\"function\\\": {\\\"name\\\": \\\"create_calendar_event\\\", \\\"arguments\\\": {\\\"title\\\": \\\"Meeting with Mr. Dubois\\\", \\\"datetime\\\": \\\"2026-01-20T15:00:00\\\"}}}]}]}\",\n",
+            "  \"prompt\": \"<bos><start_of_turn>developer\\nCurrent date and time given in YYYY-MM-DDTHH:MM:SS format: 2026-01-16T00:50:30\\nDay of week is Friday\\nYou are a model that can do function calling with the following functions<start_function_declaration>declaration:send_email{description:<escape>Sends an email.<escape>,parameters:{properties:{body:{description:<escape>The body of the email.<escape>,type:<escape>STRING<escape>},subject:{description:<escape>The subject of the email.<escape>,type:<escape>STRING<escape>},to:{description:<escape>The email address of the recipient.<escape>,type:<escape>STRING<escape>}},required:[<escape>to<escape>,<escape>subject<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:show_map{description:<escape>Shows a location on the map.<escape>,parameters:{properties:{query:{description:<escape>The location to search for. May be the name of a place, a business, or an address.<escape>,type:<escape>STRING<escape>}},required:[<escape>query<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:turn_off_flashlight{description:<escape>Turns the flashlight off.<escape>,parameters:{type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:open_wifi_settings{description:<escape>Opens the Wi-Fi settings.<escape>,parameters:{type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:create_calendar_event{description:<escape>Creates a new calendar event.<escape>,parameters:{properties:{datetime:{description:<escape>The date and time of the event in the format YYYY-MM-DDTHH:MM:SS.<escape>,type:<escape>STRING<escape>},title:{description:<escape>The title of the event.<escape>,type:<escape>STRING<escape>}},required:[<escape>title<escape>,<escape>datetime<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:create_contact{description:<escape>Creates a contact in the phone's contact list.<escape>,parameters:{properties:{email:{description:<escape>The email address of the contact.<escape>,type:<escape>STRING<escape>},first_name:{description:<escape>The first name of the contact.<escape>,type:<escape>STRING<escape>},last_name:{description:<escape>The last name of the contact.<escape>,type:<escape>STRING<escape>},phone_number:{description:<escape>The phone number of the contact.<escape>,type:<escape>STRING<escape>}},required:[<escape>first_name<escape>,<escape>last_name<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:turn_on_flashlight{description:<escape>Turns the flashlight on.<escape>,parameters:{type:<escape>OBJECT<escape>}}<end_function_declaration><end_of_turn>\\n<start_of_turn>user\\nPlease schedule a calendar event titled 'Meeting with Mr. Dubois' for January 20th, 2026 at 3:00 PM.<end_of_turn>\\n<start_of_turn>model\\n\",\n",
+            "  \"completion\": \"<start_function_call>call:create_calendar_event{datetime:<escape>2026-01-20T15:00:00<escape>,title:<escape>Meeting with Mr. Dubois<escape>}<end_function_call><start_function_response>\",\n",
+            "  \"split\": \"train\"\n",
+            "}\n",
+            "\n",
+            "\u001b[1mThe longest example length is 4157 with 897 tokens. We need to set the max_length larger than the token count in SFTConfig below.\u001b[0m\n",
+            "{\n",
+            "  \"text\": \"{\\\"metadata\\\": \\\"train\\\", \\\"tools\\\": [{\\\"function\\\": {\\\"name\\\": \\\"open_wifi_settings\\\", \\\"description\\\": \\\"Opens the Wi-Fi settings.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {}}}}, {\\\"function\\\": {\\\"name\\\": \\\"turn_off_flashlight\\\", \\\"description\\\": \\\"Turns the flashlight off.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {}}}}, {\\\"function\\\": {\\\"name\\\": \\\"create_calendar_event\\\", \\\"description\\\": \\\"Creates a new calendar event.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {\\\"datetime\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The date and time of the event in the format YYYY-MM-DDTHH:MM:SS.\\\"}, \\\"title\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The title of the event.\\\"}}, \\\"required\\\": [\\\"title\\\", \\\"datetime\\\"]}}}, {\\\"function\\\": {\\\"name\\\": \\\"create_contact\\\", \\\"description\\\": \\\"Creates a contact in the phone's contact list.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {\\\"last_name\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The last name of the contact.\\\"}, \\\"email\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The email address of the contact.\\\"}, \\\"first_name\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The first name of the contact.\\\"}, \\\"phone_number\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The phone number of the contact.\\\"}}, \\\"required\\\": [\\\"first_name\\\", \\\"last_name\\\"]}}}, {\\\"function\\\": {\\\"name\\\": \\\"turn_on_flashlight\\\", \\\"description\\\": \\\"Turns the flashlight on.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {}}}}, {\\\"function\\\": {\\\"name\\\": \\\"show_map\\\", \\\"description\\\": \\\"Shows a location on the map.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {\\\"query\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The location to search for. May be the name of a place, a business, or an address.\\\"}}, \\\"required\\\": [\\\"query\\\"]}}}, {\\\"function\\\": {\\\"name\\\": \\\"send_email\\\", \\\"description\\\": \\\"Sends an email.\\\", \\\"parameters\\\": {\\\"type\\\": \\\"OBJECT\\\", \\\"properties\\\": {\\\"to\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The email address of the recipient.\\\"}, \\\"body\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The body of the email.\\\"}, \\\"subject\\\": {\\\"type\\\": \\\"STRING\\\", \\\"description\\\": \\\"The subject of the email.\\\"}}, \\\"required\\\": [\\\"to\\\", \\\"subject\\\"]}}}], \\\"messages\\\": [{\\\"role\\\": \\\"developer\\\", \\\"content\\\": \\\"Current date and time given in YYYY-MM-DDTHH:MM:SS format: 2025-11-24T12:55:01\\\\nDay of week is Monday\\\\nYou are a model that can do function calling with the following functions\\\\n\\\"}, {\\\"role\\\": \\\"user\\\", \\\"content\\\": \\\"I need to create a calendar event titled \\\\\\\"Q4 Review Strategy Session\\\\\\\" for 2025-11-26T15:00:00, and simultaneously send an email to elena.vasiliev@corpmail.com with the subject \\\\\\\"Follow-up on Q4 Review Prep\\\\\\\" and the body \\\\\\\"Hi Elena, I've scheduled our follow-up meeting to discuss the Q4 review strategy. Please review the attached calendar invite. Let me know if you have any conflicts. Thanks.\\\\\\\"\\\\n\\\\nPlease schedule a calendar event titled \\\\\\\"Q4 Review Strategy Session\\\\\\\" for 2025-11-26 at 3:00 PM, and immediately send an email to elena.vasiliev@corpmail.com with the subject \\\\\\\"Follow-up on Q4 Review Prep\\\\\\\" and the body \\\\\\\"Hi Elena, I've scheduled our follow-up meeting to discuss the Q4 review strategy. Please review the attached calendar invite. Let me know if you have any conflicts. Thanks.\\\\\\\"\\\"}, {\\\"role\\\": \\\"assistant\\\", \\\"tool_calls\\\": [{\\\"function\\\": {\\\"name\\\": \\\"create_calendar_event\\\", \\\"arguments\\\": {\\\"title\\\": \\\"Q4 Review Strategy Session\\\", \\\"datetime\\\": \\\"2025-11-26T15:00:00\\\"}}}, {\\\"function\\\": {\\\"name\\\": \\\"send_email\\\", \\\"arguments\\\": {\\\"body\\\": \\\"Hi Elena, I've scheduled our follow-up meeting to discuss the Q4 review strategy. Please review the attached calendar invite. Let me know if you have any conflicts. Thanks.\\\", \\\"subject\\\": \\\"Follow-up on Q4 Review Prep\\\", \\\"to\\\": \\\"elena.vasiliev@corpmail.com\\\"}}}]}]}\",\n",
+            "  \"prompt\": \"<bos><start_of_turn>developer\\nCurrent date and time given in YYYY-MM-DDTHH:MM:SS format: 2025-11-24T12:55:01\\nDay of week is Monday\\nYou are a model that can do function calling with the following functions<start_function_declaration>declaration:open_wifi_settings{description:<escape>Opens the Wi-Fi settings.<escape>,parameters:{type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:turn_off_flashlight{description:<escape>Turns the flashlight off.<escape>,parameters:{type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:create_calendar_event{description:<escape>Creates a new calendar event.<escape>,parameters:{properties:{datetime:{description:<escape>The date and time of the event in the format YYYY-MM-DDTHH:MM:SS.<escape>,type:<escape>STRING<escape>},title:{description:<escape>The title of the event.<escape>,type:<escape>STRING<escape>}},required:[<escape>title<escape>,<escape>datetime<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:create_contact{description:<escape>Creates a contact in the phone's contact list.<escape>,parameters:{properties:{email:{description:<escape>The email address of the contact.<escape>,type:<escape>STRING<escape>},first_name:{description:<escape>The first name of the contact.<escape>,type:<escape>STRING<escape>},last_name:{description:<escape>The last name of the contact.<escape>,type:<escape>STRING<escape>},phone_number:{description:<escape>The phone number of the contact.<escape>,type:<escape>STRING<escape>}},required:[<escape>first_name<escape>,<escape>last_name<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:turn_on_flashlight{description:<escape>Turns the flashlight on.<escape>,parameters:{type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:show_map{description:<escape>Shows a location on the map.<escape>,parameters:{properties:{query:{description:<escape>The location to search for. May be the name of a place, a business, or an address.<escape>,type:<escape>STRING<escape>}},required:[<escape>query<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:send_email{description:<escape>Sends an email.<escape>,parameters:{properties:{body:{description:<escape>The body of the email.<escape>,type:<escape>STRING<escape>},subject:{description:<escape>The subject of the email.<escape>,type:<escape>STRING<escape>},to:{description:<escape>The email address of the recipient.<escape>,type:<escape>STRING<escape>}},required:[<escape>to<escape>,<escape>subject<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><end_of_turn>\\n<start_of_turn>user\\nI need to create a calendar event titled \\\"Q4 Review Strategy Session\\\" for 2025-11-26T15:00:00, and simultaneously send an email to elena.vasiliev@corpmail.com with the subject \\\"Follow-up on Q4 Review Prep\\\" and the body \\\"Hi Elena, I've scheduled our follow-up meeting to discuss the Q4 review strategy. Please review the attached calendar invite. Let me know if you have any conflicts. Thanks.\\\"\\n\\nPlease schedule a calendar event titled \\\"Q4 Review Strategy Session\\\" for 2025-11-26 at 3:00 PM, and immediately send an email to elena.vasiliev@corpmail.com with the subject \\\"Follow-up on Q4 Review Prep\\\" and the body \\\"Hi Elena, I've scheduled our follow-up meeting to discuss the Q4 review strategy. Please review the attached calendar invite. Let me know if you have any conflicts. Thanks.\\\"<end_of_turn>\\n<start_of_turn>model\\n\",\n",
+            "  \"completion\": \"<start_function_call>call:create_calendar_event{datetime:<escape>2025-11-26T15:00:00<escape>,title:<escape>Q4 Review Strategy Session<escape>}<end_function_call><start_function_call>call:send_email{body:<escape>Hi Elena, I've scheduled our follow-up meeting to discuss the Q4 review strategy. Please review the attached calendar invite. Let me know if you have any conflicts. Thanks.<escape>,subject:<escape>Follow-up on Q4 Review Prep<escape>,to:<escape>elena.vasiliev@corpmail.com<escape>}<end_function_call><start_function_response>\",\n",
+            "  \"split\": \"train\"\n",
+            "}\n",
+            "\n",
+            "\u001b[1mUsing max_token_count of 997 (= 897 + 100) for training below.\u001b[0m\n"
+          ]
+        }
+      ],
+      "source": [
+        "#@title Review the processed dataset\n",
+        "\n",
+        "print(\"\\033[1mHere's an example from the formatted dataset:\\033[0m\")\n",
+        "print(json.dumps(processed_dataset[randint(0, len(processed_dataset) - 1)], indent=2))\n",
+        "\n",
+        "longest_example = max(processed_dataset, key=lambda example: len(example['prompt'] + example['completion']))\n",
+        "longest_example_token_count = len(tokenizer.tokenize(longest_example['prompt'] + longest_example['completion']))\n",
+        "\n",
+        "print(f\"\\n\\033[1mThe longest example length is {len(longest_example['prompt'] + longest_example['completion'])} with {longest_example_token_count} tokens. We need to set the max_length larger than the token count in SFTConfig below.\\033[0m\")\n",
+        "print(json.dumps(longest_example, indent=2))\n",
+        "\n",
+        "max_token_count = longest_example_token_count + 100\n",
+        "print(f\"\\n\\033[1mUsing max_token_count of {max_token_count} (= {longest_example_token_count} + 100) for training below.\\033[0m\")"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 10,
+      "metadata": {
+        "id": "2QPMjN_vwQf5"
+      },
+      "outputs": [
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "29408dedeacf4190a0474481799697bb",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Filter:   0%|          | 0/9654 [00:00<?, ? examples/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "af7b3d96d77e41b1a912649c925cd3e7",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Filter:   0%|          | 0/9654 [00:00<?, ? examples/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        }
+      ],
+      "source": [
+        "#@title Prepare train and eval dataset.\n",
+        "\n",
+        "train_dataset = processed_dataset.filter(lambda example: example['split'] == 'train')\n",
+        "eval_dataset = processed_dataset.filter(lambda example: example['split'] == 'eval')"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "M3w3b9-O4fDz"
+      },
+      "source": [
+        "## Recommended: Test the base model\n",
+        "\n",
+        "Now, we have loaded both the base model and the dataset. Let's first check how the base model's ability to respond to  \n",
+        "a random sample.\n",
+        "\n",
+        "Try testing it a few times."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "7S8X9LBKYD3f"
+      },
+      "outputs": [
+        {
+          "name": "stderr",
+          "output_type": "stream",
+          "text": [
+            "Device set to use cuda:0\n"
+          ]
+        },
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "\n",
+            "\u001b[1mPrompt:\u001b[0m Schedule a \"team meeting\" tomorrow at 4pm.\n",
+            "\n",
+            "\u001b[1mBase model output:\u001b[0m I apologize, but I cannot assist with scheduling meetings. My current capabilities are limited to managing calendar events and contact management tools. I cannot generate or update meeting schedules.\n"
+          ]
+        }
+      ],
+      "source": [
+        "#@title Test with a prompt\n",
+        "\n",
+        "from transformers import pipeline\n",
+        "from random import randint\n",
+        "import re\n",
+        "\n",
+        "# Create a transformers inference pipeline\n",
+        "pipe = pipeline(\"text-generation\", model=gemma_model, tokenizer=tokenizer)\n",
+        "\n",
+        "user_prompt = \"Schedule a \\\"team meeting\\\" tomorrow at 4pm.\"  #@param {type:\"string\"}\n",
+        "messages = [\n",
+        "    {\"role\": \"developer\", \"content\": \"Current date and time given in YYYY-MM-DDTHH:MM:SS format: 2024-11-15T05:59:00. You are a model that can do function calling with the following functions\"},\n",
+        "    {\"role\": \"user\", \"content\": user_prompt}\n",
+        "]\n",
+        "\n",
+        "# Reuse the tools from the sample\n",
+        "tools = json.loads(dataset[0]['text'])['tools']\n",
+        "\n",
+        "prompt = tokenizer.apply_chat_template(\n",
+        "    messages,\n",
+        "    tools=tools,\n",
+        "    tokenize=False,\n",
+        "    add_generation_prompt=True)\n",
+        "\n",
+        "print(f\"\\n\\033[1mPrompt:\\033[0m {user_prompt}\")\n",
+        "output = pipe(prompt, max_new_tokens=max_token_count)\n",
+        "model_output = output[0]['generated_text'][len(prompt):].strip()\n",
+        "\n",
+        "print(f\"\\n\\033[1mBase model output:\\033[0m {model_output}\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "nNfNON0yBJlg"
+      },
+      "source": [
+        "Note that how the base model is unable to successfully call the `create_calendar_event` function for this prompt.\n",
+        "\n",
+        "Now, we will pick a sample from the training dataset and see how it performs."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "XvgTeVQCAcxe"
+      },
+      "source": [
+        "## Test with training dataset\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "u8L0_INJyUok"
+      },
+      "outputs": [
+        {
+          "name": "stderr",
+          "output_type": "stream",
+          "text": [
+            "Device set to use cuda:0\n"
+          ]
+        },
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "\n",
+            "\u001b[1mInput prompt\u001b[0m   : <bos><start_of_turn>developer\n",
+            "Current date and time given in YYYY-MM-DDTHH:MM:SS format: 2026-09-16T18:59:36\n",
+            "Day of week is Wednesday\n",
+            "You are a model that can do function calling with the following functions<start_function_declaration>declaration:turn_on_flashlight{description:<escape>Turns the flashlight on.<escape>,parameters:{type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:create_contact{description:<escape>Creates a contact in the phone's contact list.<escape>,parameters:{properties:{email:{description:<escape>The email address of the contact.<escape>,type:<escape>STRING<escape>},first_name:{description:<escape>The first name of the contact.<escape>,type:<escape>STRING<escape>},last_name:{description:<escape>The last name of the contact.<escape>,type:<escape>STRING<escape>},phone_number:{description:<escape>The phone number of the contact.<escape>,type:<escape>STRING<escape>}},required:[<escape>first_name<escape>,<escape>last_name<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:send_email{description:<escape>Sends an email.<escape>,parameters:{properties:{body:{description:<escape>The body of the email.<escape>,type:<escape>STRING<escape>},subject:{description:<escape>The subject of the email.<escape>,type:<escape>STRING<escape>},to:{description:<escape>The email address of the recipient.<escape>,type:<escape>STRING<escape>}},required:[<escape>to<escape>,<escape>subject<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:create_calendar_event{description:<escape>Creates a new calendar event.<escape>,parameters:{properties:{datetime:{description:<escape>The date and time of the event in the format YYYY-MM-DDTHH:MM:SS.<escape>,type:<escape>STRING<escape>},title:{description:<escape>The title of the event.<escape>,type:<escape>STRING<escape>}},required:[<escape>title<escape>,<escape>datetime<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:show_map{description:<escape>Shows a location on the map.<escape>,parameters:{properties:{query:{description:<escape>The location to search for. May be the name of a place, a business, or an address.<escape>,type:<escape>STRING<escape>}},required:[<escape>query<escape>],type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:open_wifi_settings{description:<escape>Opens the Wi-Fi settings.<escape>,parameters:{type:<escape>OBJECT<escape>}}<end_function_declaration><start_function_declaration>declaration:turn_off_flashlight{description:<escape>Turns the flashlight off.<escape>,parameters:{type:<escape>OBJECT<escape>}}<end_function_declaration><end_of_turn>\n",
+            "<start_of_turn>user\n",
+            "Please save a new contact named Kenji Tanaka with the phone number 090-1234-5678 and email address kenji.tanaka@corpmail.jp. At the same time, schedule a calendar event titled 'Q3 Review Prep' for the following Friday at 2:00 PM.<end_of_turn>\n",
+            "<start_of_turn>model\n",
+            "\n",
+            "\n",
+            "\u001b[1mExpected output\u001b[0m: <start_function_call>call:create_contact{email:<escape>kenji.tanaka@corpmail.jp<escape>,first_name:<escape>Kenji<escape>,last_name:<escape>Tanaka<escape>,phone_number:<escape>090-1234-5678<escape>}<end_function_call><start_function_call>call:create_calendar_event{datetime:<escape>2026-09-18T14:00:00<escape>,title:<escape>Q3 Review Prep<escape>}<end_function_call><start_function_response>\n",
+            "\n",
+            "\u001b[1mActual output\u001b[0m  : <start_function_call>call:create_contact{email:<escape>kenji.tanaka@corpmail.jp<escape>,first_name:<escape>Kenji<escape>,last_name:<escape>Tanaka<escape>,phone_number:<escape>090-1234-5678<escape>}<end_function_call><start_function_call>call:send_email{to:<escape>kenji.tanaka@corpmail.jp<escape>,subject:<escape>Q3 Review Prep<escape>,message:<escape>Save the new contact Kenji Tanaka with the phone number 090-1234-5678.</h1><end_of_turn>\n"
+          ]
+        }
+      ],
+      "source": [
+        "from transformers import pipeline\n",
+        "from random import randint\n",
+        "import re\n",
+        "\n",
+        "# Create a transformers inference pipeline\n",
+        "pipe = pipeline(\"text-generation\", model=gemma_model, tokenizer=tokenizer)\n",
+        "\n",
+        "# Select a random sample from the test dataset\n",
+        "rand_idx = randint(0, len(train_dataset) - 1)\n",
+        "test_sample = train_dataset[rand_idx]\n",
+        "\n",
+        "input_prompt = test_sample['prompt']\n",
+        "expected_output = test_sample['completion']\n",
+        "\n",
+        "# Generate the output\n",
+        "output = pipe(input_prompt, max_new_tokens=max_token_count, skip_special_tokens=False)\n",
+        "actual_output = output[0]['generated_text'][len(input_prompt):].strip()\n",
+        "\n",
+        "print(f\"\\n\\033[1mInput prompt\\033[0m   : {input_prompt}\")\n",
+        "print(f\"\\n\\033[1mExpected output\\033[0m: {expected_output}\")\n",
+        "print(f\"\\n\\033[1mActual output\\033[0m  : {actual_output}\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "ph26HDJgua3W"
+      },
+      "source": [
+        "The base model output may not meet your expectations—and that's okay!\n",
+        "\n",
+        "FunctionGemma 270M was designed for task specialization, which means it can improve performance for specific tasks when trained with representative examples. Let's fine-tune the model for more reliable outputs."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "bbd9fc1b"
+      },
+      "source": [
+        "## Fine-tune the model\n",
+        "\n",
+        "Hugging Face [TRL](https://huggingface.co/docs/trl/index) provides tools for training and fine-tuning LLMs."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "-BJFoOdL0y8w"
+      },
+      "source": [
+        "### Configure the tuning job\n",
+        "Define the training configuration for the FunctionGemma base model."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "qiIj1ADc-exw"
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "Training configured\n"
+          ]
+        }
+      ],
+      "source": [
+        "import torch\n",
+        "from transformers import AutoModelForCausalLM\n",
+        "from trl import SFTConfig\n",
+        "\n",
+        "output_dir = \"/content/mobile-actions-functiongemma\"  # Where to save your fine-tuned checkpoints\n",
+        "tokenizer = AutoTokenizer.from_pretrained(gemma_model)\n",
+        "\n",
+        "args = SFTConfig(\n",
+        "    output_dir=output_dir,                            # Directory to save adapters\n",
+        "    num_train_epochs=2,                               # Number of training epochs\n",
+        "    per_device_train_batch_size=4,                    # Batch size per device during training\n",
+        "    gradient_accumulation_steps=8,                    # Gradient accumulation during training\n",
+        "    logging_strategy=\"steps\",                         # Log every steps\n",
+        "    eval_strategy=\"steps\",                            # Evaluate loss metrics based on steps\n",
+        "    eval_steps=50,                                    # Evaluate loss metrics every 50 steps\n",
+        "    logging_steps=50,                                 # Log loss metrics every 50 steps\n",
+        "    save_strategy=\"epoch\",                            # Save checkpoint every epoch\n",
+        "    learning_rate=1e-5,                               # Learning rate,\n",
+        "    lr_scheduler_type=\"cosine\",                       # Cosine scheduler is often better for full FT\n",
+        "    max_length=max_token_count,                       # Max sequence length for model and packing of the dataset\n",
+        "    gradient_checkpointing=True,                      # Use gradient checkpointing to save memory\n",
+        "    packing=False,                                    # Groups multiple samples in the dataset into a single sequence\n",
+        "    optim=\"adamw_torch_fused\",                        # Use fused adamw optimizer\n",
+        "    bf16=True,                                        # Use bf16 for mixed precision training\n",
+        "    completion_only_loss=True,                        # Train on completion only to improve quality\n",
+        "    report_to=\"none\"                                  # No reporting.\n",
+        ")\n",
+        "\n",
+        "base_model = AutoModelForCausalLM.from_pretrained(\n",
+        "    gemma_model,\n",
+        "    device_map=\"auto\",\n",
+        "    dtype=torch.bfloat16,\n",
+        "    attn_implementation='eager')\n",
+        "\n",
+        "base_model.config.pad_token_id = tokenizer.pad_token_id\n",
+        "\n",
+        "print(\"Training configured\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "dd88e798"
+      },
+      "source": [
+        "### Start training\n",
+        "\n",
+        "`SFTTrainer` tokenizes the datasets and trains the base model using the hyperparameters from the previous step.\n",
+        "\n",
+        "The training time varies based on a range of factors, such as the size of your dataset or number of epochs. Using a A100 GPU, this takes about 8 minutes for 1 epoch."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "WqacJNeU9v7b"
+      },
+      "outputs": [
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "dfa36d627c58433ea9e120f8f0e7ff61",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Adding EOS to train dataset:   0%|          | 0/8693 [00:00<?, ? examples/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "241579edb6eb422aa45da91da702528a",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Tokenizing train dataset:   0%|          | 0/8693 [00:00<?, ? examples/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "a719e0468d9c43809dea6962bef95186",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Truncating train dataset:   0%|          | 0/8693 [00:00<?, ? examples/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "e395ebe28eb9433d9927296c3149e046",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Adding EOS to eval dataset:   0%|          | 0/961 [00:00<?, ? examples/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "b16de08d69c64b22968bacf7ce342678",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Tokenizing eval dataset:   0%|          | 0/961 [00:00<?, ? examples/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "data": {
+            "application/vnd.jupyter.widget-view+json": {
+              "model_id": "dd5cd9911a8a499d8ab7ec3ac13fcdb3",
+              "version_major": 2,
+              "version_minor": 0
+            },
+            "text/plain": [
+              "Truncating eval dataset:   0%|          | 0/961 [00:00<?, ? examples/s]"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "name": "stderr",
+          "output_type": "stream",
+          "text": [
+            "The model is already on multiple devices. Skipping the move to device specified in `args`.\n",
+            "The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': 2, 'pad_token_id': 0}.\n"
+          ]
+        },
+        {
+          "data": {
+            "text/html": [
+              "\n",
+              "    <div>\n",
+              "      \n",
+              "      <progress value='544' max='544' style='width:300px; height:20px; vertical-align: middle;'></progress>\n",
+              "      [544/544 19:38, Epoch 2/2]\n",
+              "    </div>\n",
+              "    <table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              " <tr style=\"text-align: left;\">\n",
+              "      <th>Step</th>\n",
+              "      <th>Training Loss</th>\n",
+              "      <th>Validation Loss</th>\n",
+              "      <th>Entropy</th>\n",
+              "      <th>Num Tokens</th>\n",
+              "      <th>Mean Token Accuracy</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <td>50</td>\n",
+              "      <td>0.034100</td>\n",
+              "      <td>0.020567</td>\n",
+              "      <td>0.534150</td>\n",
+              "      <td>1049453.000000</td>\n",
+              "      <td>0.994737</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <td>100</td>\n",
+              "      <td>0.016000</td>\n",
+              "      <td>0.017114</td>\n",
+              "      <td>0.548209</td>\n",
+              "      <td>2093954.000000</td>\n",
+              "      <td>0.995557</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <td>150</td>\n",
+              "      <td>0.015400</td>\n",
+              "      <td>0.015405</td>\n",
+              "      <td>0.543126</td>\n",
+              "      <td>3134560.000000</td>\n",
+              "      <td>0.996056</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <td>200</td>\n",
+              "      <td>0.012900</td>\n",
+              "      <td>0.014391</td>\n",
+              "      <td>0.563650</td>\n",
+              "      <td>4178739.000000</td>\n",
+              "      <td>0.996431</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <td>250</td>\n",
+              "      <td>0.010600</td>\n",
+              "      <td>0.013738</td>\n",
+              "      <td>0.553759</td>\n",
+              "      <td>5224247.000000</td>\n",
+              "      <td>0.996450</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <td>300</td>\n",
+              "      <td>0.012300</td>\n",
+              "      <td>0.013411</td>\n",
+              "      <td>0.552985</td>\n",
+              "      <td>6260126.000000</td>\n",
+              "      <td>0.996673</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <td>350</td>\n",
+              "      <td>0.008900</td>\n",
+              "      <td>0.013343</td>\n",
+              "      <td>0.537549</td>\n",
+              "      <td>7306471.000000</td>\n",
+              "      <td>0.996601</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <td>400</td>\n",
+              "      <td>0.009200</td>\n",
+              "      <td>0.013451</td>\n",
+              "      <td>0.532500</td>\n",
+              "      <td>8347062.000000</td>\n",
+              "      <td>0.996600</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <td>450</td>\n",
+              "      <td>0.009600</td>\n",
+              "      <td>0.013342</td>\n",
+              "      <td>0.532079</td>\n",
+              "      <td>9390265.000000</td>\n",
+              "      <td>0.996630</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <td>500</td>\n",
+              "      <td>0.008800</td>\n",
+              "      <td>0.013452</td>\n",
+              "      <td>0.533780</td>\n",
+              "      <td>10436648.000000</td>\n",
+              "      <td>0.996691</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table><p>"
+            ],
+            "text/plain": [
+              "<IPython.core.display.HTML object>"
+            ]
+          },
+          "metadata": {},
+          "output_type": "display_data"
+        },
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "Fine-tuned model saved to /content/mobile-actions-functiongemma\n"
+          ]
+        }
+      ],
+      "source": [
+        "from trl import SFTTrainer\n",
+        "\n",
+        "# Train and save the fine-tuned model\n",
+        "trainer = SFTTrainer(\n",
+        "    model=base_model,\n",
+        "    args=args,\n",
+        "    train_dataset=train_dataset,\n",
+        "    eval_dataset=eval_dataset,\n",
+        ")\n",
+        "\n",
+        "trainer.train()\n",
+        "\n",
+        "trainer.save_model(output_dir)\n",
+        "tokenizer.save_pretrained(output_dir)\n",
+        "\n",
+        "print(f\"Fine-tuned model saved to {output_dir}\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "dDvGlb5xO34z"
+      },
+      "source": [
+        "The weights for each training checkpoint (epoch) will be saved in your temporary Colab session storage. Now, you can evaluate the training and validation loss metrics to choose which checkpoint to for the model."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "xll8zZ3_u8Mt"
+      },
+      "source": [
+        "### Plot training results\n",
+        "To evaluate the model, you can plot the training and validation losses using Matplotlib to visualize these metrics over training steps or epochs. This helps monitor the training process and make informed decisions about which hyperparameters to adjust."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "vPN-DTopaUIy"
+      },
+      "outputs": [],
+      "source": [
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "# Access the log history\n",
+        "log_history = trainer.state.log_history\n",
+        "\n",
+        "# Extract training / validation loss\n",
+        "train_losses = [log[\"loss\"] for log in log_history if \"loss\" in log]\n",
+        "epoch_train = [log[\"epoch\"] for log in log_history if \"loss\" in log]\n",
+        "eval_losses = [log[\"eval_loss\"] for log in log_history if \"eval_loss\" in log]\n",
+        "epoch_eval = [log[\"epoch\"] for log in log_history if \"eval_loss\" in log]\n",
+        "\n",
+        "# Plot the training loss\n",
+        "plt.plot(epoch_train, train_losses, label=\"Training Loss\")\n",
+        "plt.plot(epoch_eval, eval_losses, label=\"Validation Loss\")\n",
+        "plt.xlabel(\"Epoch\")\n",
+        "plt.ylabel(\"Loss\")\n",
+        "plt.title(\"Training and Validation Loss per Epoch\")\n",
+        "plt.legend()\n",
+        "plt.grid(True)\n",
+        "plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "bf86e31d"
+      },
+      "source": [
+        "### Test the fine-tuned model\n",
+        "\n",
+        "Let's compare your fine-tuned model performance against the base model! Test a few inputs by updating `user_prompt`."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "28R3pRN_hai7"
+      },
+      "outputs": [],
+      "source": [
+        "from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline\n",
+        "\n",
+        "# Create Transformers inference pipeline\n",
+        "trained_model = AutoModelForCausalLM.from_pretrained(output_dir, device_map=\"auto\")\n",
+        "tokenizer = AutoTokenizer.from_pretrained(output_dir)\n",
+        "pipe = pipeline(\"text-generation\", model=trained_model, tokenizer=tokenizer)\n",
+        "pipe_base = pipeline(\"text-generation\", model=gemma_model, device_map=\"auto\")\n",
+        "\n",
+        "# Test a prompt\n",
+        "user_prompt = \"Schedule a \\\"team meeting\\\" tomorrow at 4pm.\"  #@param {type:\"string\"}\n",
+        "messages = [\n",
+        "    {\"role\": \"developer\", \"content\": \"Current date and time given in YYYY-MM-DDTHH:MM:SS format: 2024-11-15T05:59:00. You are a model that can do function calling with the following functions\"},\n",
+        "    {\"role\": \"user\", \"content\": user_prompt}\n",
+        "]\n",
+        "\n",
+        "# Reuse the tools from the sample\n",
+        "tools = json.loads(dataset[0]['text'])['tools']\n",
+        "\n",
+        "prompt = tokenizer.apply_chat_template(\n",
+        "    messages,\n",
+        "    tools=tools,\n",
+        "    tokenize=False,\n",
+        "    add_generation_prompt=True)\n",
+        "\n",
+        "print(f\"\\n\\033[1mPrompt:\\033[0m {prompt}\")\n",
+        "output = pipe(prompt, max_new_tokens=max_token_count)\n",
+        "output_base = pipe_base(prompt, max_new_tokens=max_token_count)\n",
+        "model_output = output[0]['generated_text'][len(prompt):].strip()\n",
+        "model_output_base = output_base[0]['generated_text'][len(prompt):].strip()\n",
+        "\n",
+        "print(f\"\\n\\033[1mFine-tuned model output:\\033[0m {model_output}\")\n",
+        "\n",
+        "print(f\"\\n\\033[1mBase model output:\\033[0m       {model_output_base}\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "wmpAI15UeGcs"
+      },
+      "source": [
+        "### Evaluate the fine-tuned model\n",
+        "\n",
+        "Evaluating a fine-tuned model is essential to ensure that the process actually improved the model's performance without introducing new issues."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "cellView": "form",
+        "id": "O6HmcMawflSP"
+      },
+      "outputs": [],
+      "source": [
+        "#@title Helper functions for evaluation\n",
+        "\n",
+        "import pandas as pd\n",
+        "\n",
+        "def extract_function_call(model_output):\n",
+        "    \"\"\"\n",
+        "    Parses a string containing specific function call markers and returns\n",
+        "    a list of function call objects. Here is an example of the obejct:\n",
+        "\n",
+        "    ```\n",
+        "    <start_function_call>call:open_map{query:<escape>San Francisco<escape>}<end_function_call>\n",
+        "    ```\n",
+        "\n",
+        "    Args:\n",
+        "        model_output (str): The model output string.\n",
+        "\n",
+        "    Returns:\n",
+        "        list: A list of dictionaries representing the function calls.\n",
+        "    \"\"\"\n",
+        "    results = []\n",
+        "\n",
+        "    # Pattern to extract the full content of a single function call\n",
+        "    # Flags: DOTALL allows matching across newlines if necessary\n",
+        "    call_pattern = r\"<start_function_call>(.*?)<end_function_call>\"\n",
+        "    raw_calls = re.findall(call_pattern, model_output, re.DOTALL)\n",
+        "\n",
+        "    for raw_call in raw_calls:\n",
+        "        # Check if the content starts with 'call:'\n",
+        "        if not raw_call.strip().startswith(\"call:\"):\n",
+        "            continue\n",
+        "\n",
+        "        # Extract function name\n",
+        "        # Expected format: call:func_name{...}\n",
+        "        try:\n",
+        "            # Split only on the first brace to separate name and args\n",
+        "            pre_brace, args_segment = raw_call.split(\"{\", 1)\n",
+        "\n",
+        "            function_name = pre_brace.replace(\"call:\", \"\").strip()\n",
+        "\n",
+        "            # Remove the trailing closing brace '}'\n",
+        "            args_content = args_segment.strip()\n",
+        "            if args_content.endswith(\"}\"):\n",
+        "                args_content = args_content[:-1]\n",
+        "\n",
+        "            arguments = {}\n",
+        "\n",
+        "            # Pattern to extract arguments\n",
+        "            # Looks for: key:<escape>value<escape>\n",
+        "            # The key pattern [^:,]* ensures we don't accidentally eat previous commas\n",
+        "            arg_pattern = r\"(?P<key>[^:,]*?):<escape>(?P<value>.*?)<escape>\"\n",
+        "\n",
+        "            arg_matches = re.finditer(arg_pattern, args_content, re.DOTALL)\n",
+        "\n",
+        "            for match in arg_matches:\n",
+        "                key = match.group(\"key\").strip()\n",
+        "                value = match.group(\"value\")\n",
+        "                arguments[key] = value\n",
+        "\n",
+        "            results.append({\n",
+        "                \"function\": {\n",
+        "                    \"name\": function_name,\n",
+        "                    \"arguments\": arguments\n",
+        "                }\n",
+        "            })\n",
+        "\n",
+        "        except ValueError:\n",
+        "            # Handles cases where syntax might be malformed (e.g., missing '{')\n",
+        "            continue\n",
+        "\n",
+        "    return results\n",
+        "\n",
+        "def extract_text(model_output):\n",
+        "    \"\"\"\n",
+        "    Extracts text content and removing the <end_of_turn> marker.\n",
+        "\n",
+        "    Args:\n",
+        "        model_output (str): The model output string.\n",
+        "\n",
+        "    Returns:\n",
+        "        str: The cleaned text.\n",
+        "    \"\"\"\n",
+        "    if not model_output or model_output.startswith(\"<start_function_call>\"):\n",
+        "        return None\n",
+        "    return model_output.replace(\"<end_of_turn>\", \"\").strip()\n",
+        "\n",
+        "from transformers import pipeline\n",
+        "from transformers.pipelines.pt_utils import KeyDataset\n",
+        "\n",
+        "def get_eval_logs(dataset, pipe):\n",
+        "  batch_size = 1\n",
+        "  logs = []\n",
+        "  # Select a random sample from the test dataset\n",
+        "  for i, output in enumerate(pipe(KeyDataset(dataset, \"prompt\"), batch_size=batch_size)):\n",
+        "    orig_data = dataset[i]['text']\n",
+        "    messages = json.loads(orig_data)['messages']\n",
+        "    user_message = messages[1]\n",
+        "    assistant_first_message = messages[2]\n",
+        "    input_prompt = dataset[i]['prompt']\n",
+        "    # Generate the output\n",
+        "    model_output_only = output[0]['generated_text'][len(input_prompt):].strip()\n",
+        "\n",
+        "    logs.append(\n",
+        "        {\n",
+        "            # The original user prompt/query.\n",
+        "            \"user\": user_message['content'],\n",
+        "\n",
+        "            # List of ground truth function call objects.\n",
+        "            \"target_fc\": assistant_first_message.get('tool_calls', []),\n",
+        "\n",
+        "            # Ground truth text response.\n",
+        "            \"target_text\": assistant_first_message.get('content'),\n",
+        "\n",
+        "            # List of model-generated function call objects.\n",
+        "            \"output_fc\": extract_function_call(model_output_only),\n",
+        "\n",
+        "            # Model-generated text response.\n",
+        "            \"output_text\": extract_text(model_output_only),\n",
+        "        }\n",
+        "    )\n",
+        "\n",
+        "    if (i + 1) % batch_size == 0:\n",
+        "      print(f\"Eval process: {(i + 1) * 100.0 / len(dataset):.2f}%\")\n",
+        "  return logs\n",
+        "\n",
+        "def get_scored_data_frame(dataset, pipe):\n",
+        "  logs = get_eval_logs(dataset, pipe)\n",
+        "  logs_df = pd.DataFrame.from_records(logs)\n",
+        "\n",
+        "  scored = pd.DataFrame()\n",
+        "  scored['user'] = logs_df['user']\n",
+        "  scored['target_names'] = logs_df['target_fc'].apply(lambda x: [fc['function']['name'] for fc in x])\n",
+        "  scored['output_names'] = logs_df['output_fc'].apply(lambda x: [fc['function']['name'] for fc in x])\n",
+        "  scored[\"target_arguments\"] = logs_df['target_fc'].apply(lambda x: [dict(sorted(fc['function']['arguments'].items())) for fc in x])\n",
+        "  scored[\"output_arguments\"] = logs_df['output_fc'].apply(lambda x: [dict(sorted(fc['function']['arguments'].items())) for fc in x])\n",
+        "  scored['target_text'] = logs_df['target_text']\n",
+        "  scored['output_text'] = logs_df['output_text']\n",
+        "  scored[\"correct_names\"] = scored[\"target_names\"] == scored[\"output_names\"]\n",
+        "  scored[\"correct_arguments\"] = scored[\"target_arguments\"] == scored[\"output_arguments\"]\n",
+        "  scored[\"correct\"] = scored[\"correct_names\"] & scored[\"correct_arguments\"]\n",
+        "\n",
+        "  return scored\n",
+        "\n",
+        "def review(scored):\n",
+        "  scored[\"incorrect_names\"] = scored[\"target_names\"] != scored[\"output_names\"]\n",
+        "  scored[\"incorrect_arguments\"] = scored[\"target_arguments\"] != scored[\"output_arguments\"]\n",
+        "  scored[\"incorrect\"] = scored[\"incorrect_names\"] | scored[\"incorrect_arguments\"]\n",
+        "\n",
+        "  for index, row in scored[scored[\"incorrect\"]].iterrows():\n",
+        "    print(f\"\\033[1mSample #{index} prompt  \\033[0m: {row[\"user\"]}\")\n",
+        "    print(f\"\\033[1mSample #{index} expected\\033[0m: {row[\"target_names\"]}, {row[\"target_arguments\"]}\")\n",
+        "    print(f\"\\033[1mSample #{index} actual  \\033[0m: {row[\"output_names\"]}, {row[\"output_arguments\"]}\")\n",
+        "    print(\"---------------\")\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "0eGq4ZsjjoTl"
+      },
+      "outputs": [],
+      "source": [
+        "#@title Evaluate the base model\n",
+        "\n",
+        "base_scored = get_scored_data_frame(\n",
+        "    eval_dataset,\n",
+        "    pipeline(\"text-generation\", model=gemma_model, device_map=\"auto\", temperature = 0.001),\n",
+        ")\n",
+        "\n",
+        "base_scored"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "ocOK88aEG6R6"
+      },
+      "outputs": [],
+      "source": [
+        "#@title Evaluate the fine-tuned model\n",
+        "\n",
+        "from transformers import pipeline\n",
+        "from random import randint\n",
+        "import re\n",
+        "\n",
+        "# Create a transformers inference pipeline\n",
+        "trained_model = AutoModelForCausalLM.from_pretrained(output_dir, device_map=\"auto\")\n",
+        "tokenizer = AutoTokenizer.from_pretrained(output_dir)\n",
+        "\n",
+        "trained_scored = get_scored_data_frame(\n",
+        "    eval_dataset,\n",
+        "    pipeline(\"text-generation\", model=trained_model, tokenizer=tokenizer, temperature = 0.001)\n",
+        ")\n",
+        "\n",
+        "trained_scored"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "pMY1P8Rtyopt"
+      },
+      "outputs": [],
+      "source": [
+        "#@title Compare the score of the base and fine-tuned models\n",
+        "\n",
+        "# Optional: save the score in json file\n",
+        "trained_scored.to_json('scored_df_20251215_trained.json')\n",
+        "base_scored.to_json('scored_df_20251215_base.json')\n",
+        "\n",
+        "print(f\"\\033[1mBase model score\\033[0m       : {base_scored[\"correct\"].mean()}\")\n",
+        "print(f\"\\033[1mFine-tuned model score\\033[0m : {trained_scored[\"correct\"].mean()}\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "_f-3QvCShs5a"
+      },
+      "source": [
+        "## Review what are not matching\n",
+        "\n",
+        "The score about tell how much eval data get exactly correct function calls. It gives the lower bound of correctness. Some output might not match the eval date but still acceptable. For example, the `show_map` function call below:\n",
+        "\n",
+        "* show_map:{'query': 'Maison Marulaz, Besançon, France'}\n",
+        "* show_map:{'query': 'Maison Marulaz in Besançon, France'}\n",
+        "\n",
+        "Let's take a look at the eval date without exact match. Many of them could also be acceptable."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "y3-Iwa09zC_K"
+      },
+      "outputs": [],
+      "source": [
+        "review(trained_scored)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "86qPcFbHH_kh"
+      },
+      "source": [
+        "Does the model call the function you'd expect?\n",
+        "\n",
+        "If you're not getting the results you want, you can try [using different hyperparameters](#scrollTo=-BJFoOdL0y8w) to train the model, or updating your training dataset to contain more representative examples.\n",
+        "\n",
+        "Once you're happy with the results, you can save your model to Hugging Face Hub."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "H12D9g4X_peV"
+      },
+      "source": [
+        "## Save your model and upload to Hugging Face Hub\n",
+        "**You now have a customized FunctionGemma 270M model! 🎉**\n",
+        "\n",
+        "Upload it to a repository on Hugging Face Hub so you easily share your model or access it later."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "VbeyDcpwi4IB"
+      },
+      "outputs": [],
+      "source": [
+        "from huggingface_hub import ModelCard, ModelCardData, whoami\n",
+        "\n",
+        "trained_model = AutoModelForCausalLM.from_pretrained(output_dir, device_map=\"auto\")\n",
+        "tokenizer = AutoTokenizer.from_pretrained(output_dir)\n",
+        "\n",
+        "#@markdown Name your model\n",
+        "model_name = \"mobile-actions\"    #@param {type:\"string\"}\n",
+        "\n",
+        "username = whoami()['name']\n",
+        "hf_repo_id = f\"{username}/functiongemma-270m-it-{model_name}\"\n",
+        "\n",
+        "repo_url = trained_model.push_to_hub(hf_repo_id, create_repo=True, commit_message=\"Upload model\")\n",
+        "tokenizer.push_to_hub(hf_repo_id)\n",
+        "\n",
+        "card_content = f\"\"\"\n",
+        "---\n",
+        "base_model: {gemma_model}\n",
+        "tags:\n",
+        "- function-calling\n",
+        "- mobile-actions\n",
+        "- gemma\n",
+        "---\n",
+        "A fine-tuned model based on `{gemma_model}`.\"\"\"\n",
+        "card = ModelCard(card_content)\n",
+        "\n",
+        "card.push_to_hub(hf_repo_id)\n",
+        "\n",
+        "print(f\"Uploaded to {repo_url}\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "ePMIkvtMT24J"
+      },
+      "source": [
+        "## Conversion to .litertlm for on-device deployment\n",
+        "\n",
+        "The first step is to install the necessary libraries using the `pip` package installer."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "No47TBwEjroB"
+      },
+      "outputs": [],
+      "source": [
+        "!pip uninstall -y tensorflow\n",
+        "!pip install ai-edge-torch-nightly --force-reinstall\n",
+        "!pip install ai-edge-litert-nightly"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "DimeKTEw7rbE"
+      },
+      "source": [
+        "### Build the .litertlm from the fine-tuned model\n",
+        "\n",
+        "After running the script below, you can find the converted model in located in `/content/litertlm/mobile-actions_q8_ekv1024.litertlm` in the colab environment. Copy it to a persistent storage like Google Drive."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "B1Sl__hlUWNP"
+      },
+      "outputs": [],
+      "source": [
+        "import os\n",
+        "from ai_edge_torch.generative.examples.gemma3 import gemma3\n",
+        "from ai_edge_torch.generative.utilities import converter\n",
+        "from ai_edge_torch.generative.utilities.export_config import ExportConfig\n",
+        "from ai_edge_torch.generative.layers import kv_cache\n",
+        "\n",
+        "# Metadata for FunctionGemma\n",
+        "llm_metadata = r\"\"\"start_token: {\n",
+        "    token_ids: {\n",
+        "        ids: [ 2 ]\n",
+        "    }\n",
+        "}\n",
+        "stop_tokens: {\n",
+        "    token_str: \"<end_of_turn>\"\n",
+        "}\n",
+        "stop_tokens: {\n",
+        "    token_str: \"<start_function_response>\"\n",
+        "}\n",
+        "llm_model_type: {\n",
+        "    function_gemma: {}\n",
+        "}\n",
+        "\"\"\"\n",
+        "\n",
+        "checkpoint_dir = \"/content/mobile-actions-functiongemma\"\n",
+        "\n",
+        "litertlm_output_dir = '/content/litertlm'\n",
+        "os.makedirs(litertlm_output_dir, exist_ok=True)\n",
+        "\n",
+        "# Create the LLM metadata file\n",
+        "metadata_path = os.path.join(litertlm_output_dir, 'base_llm_metadata.textproto')\n",
+        "with open(metadata_path, 'w') as f:\n",
+        "  f.write(llm_metadata)\n",
+        "\n",
+        "# Import the weights and build the PyTorch model\n",
+        "pytorch_model = gemma3.build_model_270m(checkpoint_dir)\n",
+        "\n",
+        "# Setup the export configurations and parameters for text generation models.\n",
+        "export_config = ExportConfig()\n",
+        "export_config.kvcache_layout = kv_cache.KV_LAYOUT_TRANSPOSED\n",
+        "export_config.mask_as_input = True\n",
+        "\n",
+        "# Convert to LiteRT-LM Format\n",
+        "converter.convert_to_litert(\n",
+        "    pytorch_model,\n",
+        "    output_path=litertlm_output_dir,\n",
+        "    output_name_prefix=\"mobile-actions\",\n",
+        "    prefill_seq_len=256,\n",
+        "    kv_cache_max_len=1024,\n",
+        "    quantize=\"dynamic_int8\",\n",
+        "    export_config=export_config,\n",
+        "    tokenizer_model_path=os.path.join(checkpoint_dir, 'tokenizer.model'),\n",
+        "    base_llm_metadata_path=metadata_path,\n",
+        "    output_format=\"litertlm\",\n",
+        ")\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "OtnMtgeLbDsJ"
+      },
+      "source": [
+        "### Save the `.litertlm` on Google Drive\n",
+        "\n",
+        "To deploy the converted model on [Google AI Edge Gallery](https://play.google.com/store/apps/details?id=com.google.ai.edge.gallery), we can first store the model on Google Drive. On the Gallery app, import the model from Google Drive later."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "otpmb9ZkZPpv"
+      },
+      "outputs": [],
+      "source": [
+        "#@title Mounting Google Drive on the colab environment\n",
+        "\n",
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "OIa4FHNebNFb"
+      },
+      "outputs": [],
+      "source": [
+        "#@title Save the `.litertlm` on Google Drive\n",
+        "\n",
+        "!mkdir -p /content/drive/MyDrive/mobile-actions/\n",
+        "!cp /content/litertlm/mobile-actions_q8_ekv1024.litertlm /content/drive/MyDrive/mobile-actions/"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "6f8ff452"
+      },
+      "source": [
+        "## Summary and next steps\n",
+        "\n",
+        "Congratulations! You have completed the first part of [Fine-tune FunctionGemma 270M for Mobile Actions](https://ai.google.dev/gemma/docs/mobile-actions).\n",
+        "\n",
+        "You have successfully finetuned the FunctionGemma 270M with the Mobile Actions dataset and converted it to `.litertlm` format."
+      ]
+    }
+  ],
+  "metadata": {
+    "accelerator": "GPU",
+    "colab": {
+      "name": "[FunctionGemma]Finetune_FunctionGemma_270M_for_Mobile_Actions_with_Hugging_Face.ipynb",
+      "toc_visible": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

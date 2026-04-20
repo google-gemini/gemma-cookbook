@@ -1,0 +1,23 @@
+{
+  "prompt" : "Hi Indian Bakery Central,\nDo you happen to have 10 pendas, and thirty bundi ladoos on hand? Also do you sell a vanilla frosting and chocolate flavor cakes. I'm looking for a 6 inch size",
+  "response" :   {
+    "type": "inquiry",
+    "items": [
+      {
+        "name": "pendas",
+        "quantity": 10
+      },
+      {
+        "name": "bundi ladoos",
+        "quantity": 30
+      },
+      {
+        "name": "cake",
+        "filling": null,
+        "frosting": "vanilla",
+        "flavor": "chocolate",
+        "size": "6 in"
+      }
+    ]
+  }
+}

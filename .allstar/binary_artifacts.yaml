@@ -1,0 +1,4 @@
+# Ignore reason: gradele jar file is used to build example Android app
+ignorePaths:
+- Demos/Gemma-on-Android/Android_App/gradle/wrapper/gradle-wrapper.jar
+- Demos/PaliGemma-on-Android/Android_App/PaliGemma/gradle/wrapper/gradle-wrapper.jar

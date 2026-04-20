@@ -1,0 +1,15 @@
+{
+  "prompt" : "Do you sell carrot cakes with cream cheese frosting?",
+  "response" : {
+    "type": "inquiry",
+    "items": [
+      {
+        "name": "cake",
+        "filling": "null",
+        "frosting": "cream cheese",
+        "flavor": "carrot",
+        "size": "null"
+      }
+    ]
+  }
+}

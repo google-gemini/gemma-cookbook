@@ -1,0 +1,20 @@
+{
+  "note" : "Removed. Model starts overfitting on 'lemon' if you add this",
+
+  "prompt" : "Can I buy 18 halva, as well as a lemon cake with lemon frosting?",
+  "response" : {
+    "type": "inquiry",
+    "items": [
+      {
+        "name": "halva",
+        "quantity": 18
+      },
+      {
+        "filling": null,
+        "frosting": "lemon",
+        "flavor": "lemon",
+        "size": null
+      }
+    ]
+  }
+}

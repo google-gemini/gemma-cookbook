@@ -1,0 +1,16 @@
+{
+  "prompt" : "I'd like four jellabi and three gulab Jamun.",
+  "response" : {
+    "type": "order",
+    "items": [
+      {
+        "name": "Jellabi",
+        "quantity": 4
+      },
+      {
+        "name": "Gulab Jamun",
+        "quantity": 3
+      }
+    ]
+  }
+}
