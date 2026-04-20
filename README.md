@@ -1,7 +1,9 @@
-> **⚠️ Deprecation Notice**
-> This repository is no longer actively maintained. For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
+> [!WARNING]
+> **This repository is deprecated and no longer maintained.**
+> 
+> For the latest Gemma examples and tutorials, please visit the [Gemma Cookbook](https://github.com/google-gemma/cookbook).
 
-# Welcome to the Gemma Cookbook
+# [Deprecated] Welcome to the Gemma Cookbook
 This is a collection of guides and examples for [Google Gemma](https://ai.google.dev/gemma/).
 
 > **Disclaimer:** Gemma is a family of developer-focused models built by Google DeepMind. This cookbook is a collection of guides and examples for Google Gemma. Please keep in mind that Gemma is an open model and can hallucinate as you build on examples in this cookbook.
